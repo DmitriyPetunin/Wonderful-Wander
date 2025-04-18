@@ -17,24 +17,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val googleAuthUiClient by lazy {
-        GoogleAuthUiClient(
-            context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
-        )
-    }
-
-    private lateinit var vm: SignInViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        vm = SignInViewModel(googleAuthUiClient)
 
         setContent {
             WonderfulWanderTheme {
                 Surface() {
-                    MainScreen(vm)
+                    MainScreen()
                 }
             }
         }

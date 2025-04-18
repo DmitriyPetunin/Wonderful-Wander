@@ -1,7 +1,7 @@
 package com.android.practise.wonderfulwander.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.android.practise.wonderfulwander.navigation.AppNavGraph
 import com.android.practise.wonderfulwander.sign_in.SignInViewModel
@@ -10,7 +10,7 @@ import com.android.practise.wonderfulwander.sign_in.SignInViewModel
 
 @Composable
 fun MainScreen(
-    viewModel: SignInViewModel
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
 
