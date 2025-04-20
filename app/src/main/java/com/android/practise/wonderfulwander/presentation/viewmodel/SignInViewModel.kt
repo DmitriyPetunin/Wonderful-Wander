@@ -1,10 +1,14 @@
-package com.android.practise.wonderfulwander.sign_in
+package com.android.practise.wonderfulwander.presentation.viewmodel
 
 
 import android.content.Intent
 import android.content.IntentSender
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClient
+import com.android.practise.wonderfulwander.sign_in.SignInResult
+import com.android.practise.wonderfulwander.sign_in.SignInState
+import com.android.practise.wonderfulwander.sign_in.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

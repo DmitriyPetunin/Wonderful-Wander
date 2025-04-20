@@ -2,6 +2,7 @@ package com.android.practise.wonderfulwander.di
 
 import android.app.Application
 import android.content.Context
+import com.android.practise.service.GeoService
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.Module
@@ -9,12 +10,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DataModule {
+object DataModule {
 
     @Provides
     @Singleton
@@ -23,5 +25,10 @@ class DataModule {
             context = context,
             oneTapClient = Identity.getSignInClient(context)
         )
+    }
+
+    @Provides
+    fun provideGeoService(retrofit: Retrofit): GeoService {
+        return retrofit.create(GeoService::class.java)
     }
 }

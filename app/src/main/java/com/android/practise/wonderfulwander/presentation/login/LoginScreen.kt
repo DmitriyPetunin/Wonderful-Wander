@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation
+package com.android.practise.wonderfulwander.presentation.login
 
 import android.app.Activity.RESULT_OK
 import android.widget.Toast
@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,7 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.practise.wonderfulwander.R
 import com.android.practise.wonderfulwander.navigation.Screen
-import com.android.practise.wonderfulwander.sign_in.SignInViewModel
+import com.android.practise.wonderfulwander.navigation.ScreenBottomNav
+import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
 
 
 @Composable
@@ -92,13 +92,15 @@ fun LoginScreen(
         }
     }
 
-    LaunchedEffect(key1 = user) {
+    LaunchedEffect(key1 = user) { // user exist -> nav to Profile
         if (user?.userId != null){
-            controller.navigate(Screen.ProfileScreen.route)
+            controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.ProfileScreen.route}") {
+                popUpTo(Screen.AuthScreen.route) {inclusive = true} //очистка стека навигации
+            }
         }
     }
 
-    LaunchedEffect(key1 = state.isSignInSuccessful) {
+    LaunchedEffect(key1 = state.isSignInSuccessful) { // sign in is successful -> nav to Profile
         if (state.isSignInSuccessful) {
             Toast.makeText(
                 context,
@@ -106,7 +108,9 @@ fun LoginScreen(
                 Toast.LENGTH_LONG
             ).show()
 
-            controller.navigate(Screen.ProfileScreen.route)
+            controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.ProfileScreen.route}") {
+                popUpTo(Screen.AuthScreen.route) {inclusive = true} //очистка стека навигации
+            }
             signInViewModel.resetState()
         }
     }

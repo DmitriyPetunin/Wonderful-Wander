@@ -11,13 +11,15 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
 
 @Composable
 fun AppNavGraph(
     navHostController: NavHostController,
     authScreen: @Composable () -> Unit,
-    profileScreen: @Composable () -> Unit,
+    walkScreen: @Composable () -> Unit,
+    bottomNavScreen: @Composable (String) -> Unit
 ) {
     NavHost(
         navController = navHostController,
@@ -26,18 +28,16 @@ fun AppNavGraph(
         composable(route = Screen.AuthScreen.route){
             authScreen()
         }
-        composable(route = Screen.eScreen.route){
-            Column (
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ){
-                Text(text = "тополя")
-            }
+        composable(route = Screen.WalkScreen.route){
+            walkScreen()
         }
 
-        composable(route = Screen.ProfileScreen.route){
-            profileScreen()
+        composable(
+            route = "${Screen.BottomNavScreen.route}/{startRoute}",
+            arguments = listOf(navArgument("startRoute") { defaultValue = ScreenBottomNav.MapScreen.route})
+        ){ backStackEntry ->
+            val startRoute = backStackEntry.arguments?.getString("startRoute")
+            bottomNavScreen(startRoute ?: ScreenBottomNav.MapScreen.route)
         }
     }
 }

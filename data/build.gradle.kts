@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    alias(libs.plugins.pluginSerialization)
 }
 
 android {
@@ -34,6 +36,8 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -42,5 +46,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
 
-    implementation(project(":domain"))
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization.json)
 }

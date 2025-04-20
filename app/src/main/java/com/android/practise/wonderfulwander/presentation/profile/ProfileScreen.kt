@@ -1,13 +1,12 @@
-package com.android.practise.wonderfulwander.presentation
+package com.android.practise.wonderfulwander.presentation.profile
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.android.practise.wonderfulwander.navigation.Screen
-import com.android.practise.wonderfulwander.sign_in.SignInViewModel
+import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
 
 @Composable
 fun ProfileScreen (
@@ -46,7 +45,7 @@ fun ProfileScreen (
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

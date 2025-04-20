@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation
+package com.android.practise.wonderfulwander.presentation.registration
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
