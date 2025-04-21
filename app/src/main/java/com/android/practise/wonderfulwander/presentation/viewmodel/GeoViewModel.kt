@@ -15,7 +15,7 @@ class GeoViewModel @Inject constructor(
     val geoService: GeoService
 ):ViewModel() {
 
-    private val _text = MutableStateFlow<String>("55.78874, 49.12214")
+    private val _text = MutableStateFlow("55.78874, 49.12214")
     val text = _text.asStateFlow()
 
     fun getText(string: String){

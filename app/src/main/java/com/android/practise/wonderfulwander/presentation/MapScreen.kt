@@ -2,10 +2,22 @@ package com.android.practise.wonderfulwander.presentation
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +42,8 @@ import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapWindow
+import com.yandex.mapkit.map.SizeChangedListener
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,7 +87,7 @@ fun MapScreen (
                     Animation(Animation.Type.SMOOTH, 1.5f),
                     null
                 )
-                Log.d("Test-Tag","совершили переход в точку ${location.value.latitude} ${location.value.longitude}")
+                //Log.d("Test-Tag","совершили переход в точку ${location.value.latitude} ${location.value.longitude}")
 
                 mapView.map.addCameraListener(object : CameraListener {
                     override fun onCameraPositionChanged(
@@ -84,6 +98,7 @@ fun MapScreen (
                     ) {
                         if (isFinished) {
                             currentCenter = cameraPosition.target
+                            Log.d("TEST-TAG","currentCenter = ${currentCenter.latitude} + ${currentCenter.longitude} ")
                         }
                     }
                 })
@@ -97,17 +112,65 @@ fun MapScreen (
                 .padding(top = 16.dp)
                 .padding(horizontal = 24.dp)
         )
-        LaunchedEffect(Unit) {
-            while (true) {
-                delay(5000) // Задержка в 5 секунд
-                val newCenter = currentCenter
+//        LaunchedEffect(Unit) {
+//            while (true) {
+//                delay(5000) // Задержка в 5 секунд
+//                val newCenter = currentCenter
+//
+//                Log.d("TEST-TAG","newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
+//
+//                geoViewModel.getText("${newCenter.longitude},${newCenter.latitude}")
+//
+//                // Если нужно, можно также обновить состояние location
+//                //location.value = newCenter
+//            }
+//        }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .align(Alignment.CenterStart),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Button(
+                onClick = { changeZoomByStep(mapView = mapView.value!!, value = ZOOM_STEP) },
+                modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
 
-                geoViewModel.getText("${newCenter.latitude},${newCenter.longitude}")
-
-                // Если нужно, можно также обновить состояние location
-                //location.value = newCenter
+            Button(
+                onClick = { changeZoomByStep(mapView = mapView.value!!, value = -ZOOM_STEP) },
+                modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
-
 }
+
+fun changeZoomByStep(mapView: MapView,value: Float) {
+    with(mapView.map?.cameraPosition) {
+        mapView.map?.move(
+            CameraPosition(this!!.target, zoom + value, azimuth, tilt),
+            Animation(com.yandex.mapkit.Animation.Type.SMOOTH, 0.5f),
+            null,
+        )
+    }
+}
+
+private const val ZOOM_STEP = 1f
