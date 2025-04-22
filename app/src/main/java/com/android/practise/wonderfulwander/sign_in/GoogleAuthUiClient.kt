@@ -46,9 +46,9 @@ class GoogleAuthUiClient(
                 },
                 errorMessage = null
             )
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
-            if(e is CancellationException) throw e
+            if (e is CancellationException) throw e
             SignInResult(
                 data = null,
                 errorMessage = e.message
@@ -60,9 +60,9 @@ class GoogleAuthUiClient(
         try {
             oneTapClient.signOut().await()
             auth.signOut()
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
-            if(e is CancellationException) throw e
+            if (e is CancellationException) throw e
         }
     }
 
@@ -96,8 +96,8 @@ class GoogleAuthUiClient(
         }
     }
 
-    suspend fun register(email:String,password:String){
-        val user = auth.createUserWithEmailAndPassword(email,password).await().user
+    suspend fun register(email: String, password: String) {
+        val user = auth.createUserWithEmailAndPassword(email, password).await().user
     }
 
     private fun buildSignInRequest(): BeginSignInRequest {

@@ -104,7 +104,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.4.1")
 
 
-
     //viewmodel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
@@ -132,4 +131,6 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.kotlinx.serialization.converter)
+
+    implementation ("androidx.activity:activity-compose:1.7.0")
 }

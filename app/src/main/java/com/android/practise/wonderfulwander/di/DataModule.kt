@@ -5,6 +5,9 @@ import android.content.Context
 import com.android.practise.service.GeoService
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,11 +23,17 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideGoogleAuthUiClient(@ApplicationContext context:Context):GoogleAuthUiClient{
+    fun provideGoogleAuthUiClient(@ApplicationContext context: Context): GoogleAuthUiClient {
         return GoogleAuthUiClient(
             context = context,
             oneTapClient = Identity.getSignInClient(context)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics{
+        return Firebase.analytics
     }
 
     @Provides

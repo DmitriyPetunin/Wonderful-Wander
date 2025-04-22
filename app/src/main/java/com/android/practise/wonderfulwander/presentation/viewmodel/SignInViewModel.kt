@@ -1,15 +1,19 @@
 package com.android.practise.wonderfulwander.presentation.viewmodel
 
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.practise.wonderfulwander.R
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClient
 import com.android.practise.wonderfulwander.sign_in.SignInResult
 import com.android.practise.wonderfulwander.sign_in.SignInState
 import com.android.practise.wonderfulwander.sign_in.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,8 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    val googleAuthUiClient: GoogleAuthUiClient
-): ViewModel() {
+    val googleAuthUiClient: GoogleAuthUiClient,
+    @ApplicationContext val context:Context
+) : ViewModel() {
 
     private val _state = MutableStateFlow(SignInState())
     val state = _state.asStateFlow()
@@ -40,17 +45,22 @@ class SignInViewModel @Inject constructor(
 
 
     private fun onSignInResult(result: SignInResult) {
-        _state.update { it.copy(
-            isSignInSuccessful = result.data != null,
-            signInError = result.errorMessage
-        ) }
+        _state.update {
+            it.copy(
+                isSignInSuccessful = result.data != null,
+                signInError = result.errorMessage
+            )
+        }
     }
 
 
-    fun signInWithIntent(intent: Intent){
+    fun signInWithIntent(intent: Intent) {
         viewModelScope.launch {
-            _signInResult.value = googleAuthUiClient.signInWithIntent(intent = intent)
-            onSignInResult(_signInResult.value!!)
+            val result = googleAuthUiClient.signInWithIntent(intent = intent)
+            if (result.data != null) {
+                _signInResult.value = result
+                onSignInResult(result)
+            }
         }
     }
 
@@ -58,46 +68,51 @@ class SignInViewModel @Inject constructor(
         _state.update { SignInState() }
     }
 
-    fun signIn(){
+    fun signIn() {
         viewModelScope.launch {
             _signInIntentSender.value = googleAuthUiClient.signIn()
         }
     }
 
-    fun login(email:String,password:String){
-        if (email.isEmpty() || password.isEmpty()){
-            _state.update { it.copy(
-                isSignInSuccessful = false,
-                signInError = "Поля email и пароль не могут быть пустыми"
-            ) }
+    fun login(email: String, password: String) {
+        if (email.isEmpty() || password.isEmpty()) {
+            _state.update {
+                it.copy(
+                    isSignInSuccessful = false,
+                    signInError = context.getString(R.string.validation_email_and_password)
+                )
+            }
             return
         }
         viewModelScope.launch {
-            googleAuthUiClient.login(email,password)
+            googleAuthUiClient.login(email, password)
         }
 
     }
-    fun register(email:String,password:String){
-        if (email.isEmpty() || password.isEmpty()){
-            _state.update { it.copy(
-                isSignInSuccessful = false,
-                signInError = "какая-то фигня"
-            ) }
+
+    fun register(email: String, password: String) {
+        if (email.isEmpty() || password.isEmpty()) {
+            _state.update {
+                it.copy(
+                    isSignInSuccessful = false,
+                    signInError = "какая-то фигня"
+                )
+            }
             return
         }
         viewModelScope.launch {
-            googleAuthUiClient.register(email,password)
+            googleAuthUiClient.register(email, password)
         }
     }
 
-    fun signOut(){
+    fun signOut() {
         viewModelScope.launch {
             googleAuthUiClient.signOut()
             _userdata.value = null
         }
     }
 
-    fun getSignedInUser(){
+    fun getSignedInUser() {
         _userdata.value = googleAuthUiClient.getSignedInUser()
     }
 }

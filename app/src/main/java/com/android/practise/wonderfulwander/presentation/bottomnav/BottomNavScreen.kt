@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation
+package com.android.practise.wonderfulwander.presentation.bottomnav
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android.practise.wonderfulwander.navigation.ScreenBottomNav
-import com.android.practise.wonderfulwander.presentation.profile.ProfileScreen
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreen
 import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
 
 

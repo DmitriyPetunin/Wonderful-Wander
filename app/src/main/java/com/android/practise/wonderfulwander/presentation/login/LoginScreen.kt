@@ -56,24 +56,23 @@ import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewMod
 @Composable
 fun LoginScreen(
     signInViewModel: SignInViewModel,
-    controller:NavHostController
+    controller: NavHostController
 ) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
-    var checked by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val state by signInViewModel.state.collectAsState()
     val user by signInViewModel.userData.collectAsState()
-    val signInIntentSender by  signInViewModel.signInIntentSender.collectAsState()
+    val signInIntentSender by signInViewModel.signInIntentSender.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             if (result.resultCode == RESULT_OK) {
-                signInViewModel.signInWithIntent(result.data!!)
+                result.data?.let { signInViewModel.signInWithIntent(it) }
             }
         }
     )
@@ -93,9 +92,9 @@ fun LoginScreen(
     }
 
     LaunchedEffect(key1 = user) { // user exist -> nav to Profile
-        if (user?.userId != null){
+        if (user?.userId != null) {
             controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.ProfileScreen.route}") {
-                popUpTo(Screen.AuthScreen.route) {inclusive = true} //очистка стека навигации
+                popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
             }
         }
     }
@@ -109,17 +108,19 @@ fun LoginScreen(
             ).show()
 
             controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.ProfileScreen.route}") {
-                popUpTo(Screen.AuthScreen.route) {inclusive = true} //очистка стека навигации
+                popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
             }
             signInViewModel.resetState()
         }
     }
 
     LaunchedEffect(key1 = signInIntentSender) {
-        if (signInIntentSender != null){
-            launcher.launch(
-                IntentSenderRequest.Builder(signInIntentSender!!).build()
-            )
+        if (signInIntentSender != null) {
+            signInIntentSender?.let {
+                launcher.launch(
+                    IntentSenderRequest.Builder(it).build()
+                )
+            }
         }
     }
 
@@ -239,22 +240,6 @@ fun LoginScreen(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-//                            Checkbox(
-//                                checked = checked,
-//                                onCheckedChange = { checked = it },
-//                                modifier = Modifier
-//                                    .padding(start = 12.dp)
-//                                    .size(8.dp)
-//                            )
-//                            Text(
-//                                text = "Remember me",
-//                                modifier = Modifier
-//                                    .padding(start = 20.dp)
-//                            )
-                        }
                         Text(
                             text = "Forgot Password ?",
                             modifier = Modifier
@@ -287,7 +272,10 @@ fun LoginScreen(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            12.dp,
+                            Alignment.CenterHorizontally
+                        ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         HorizontalDivider(
@@ -304,10 +292,13 @@ fun LoginScreen(
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                        horizontalArrangement = Arrangement.spacedBy(
+                            16.dp,
+                            Alignment.CenterHorizontally
+                        )
                     ) {
                         IconButton(
-                            onClick = {signInViewModel.signIn()},
+                            onClick = { signInViewModel.signIn() },
                             modifier = Modifier.size(36.dp)
                         ) {
                             Icon(
@@ -332,7 +323,10 @@ fun LoginScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        12.dp,
+                        Alignment.CenterHorizontally
+                    ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Don’t have an account?")

@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation.profile
+package com.android.practise.wonderfulwander.presentation.bottomnav.profile
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +31,9 @@ import com.android.practise.wonderfulwander.navigation.Screen
 import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
 
 @Composable
-fun ProfileScreen (
+fun ProfileScreen(
     signInViewModel: SignInViewModel,
-    controller:NavHostController
+    controller: NavHostController
 ) {
 
     val userData by signInViewModel.userData.collectAsState()
@@ -45,7 +45,9 @@ fun ProfileScreen (
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -55,7 +57,7 @@ fun ProfileScreen (
             modifier = Modifier,
             style = MaterialTheme.typography.displayLarge
         )
-        if(userData?.profilePictureUrl != null) {
+        if (userData?.profilePictureUrl != null) {
             AsyncImage(
                 model = userData?.profilePictureUrl,
                 contentDescription = "Profile picture",
@@ -66,7 +68,7 @@ fun ProfileScreen (
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if(userData?.username != null) {
+        if (userData?.username != null) {
             Text(
                 text = userData?.username!!,
                 textAlign = TextAlign.Center,
