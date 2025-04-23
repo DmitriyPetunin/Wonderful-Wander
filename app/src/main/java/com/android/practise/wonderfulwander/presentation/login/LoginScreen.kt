@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,12 +46,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.practise.wonderfulwander.R
 import com.android.practise.wonderfulwander.navigation.Screen
 import com.android.practise.wonderfulwander.navigation.ScreenBottomNav
 import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
+import com.android.practise.wonderfulwander.util.validation.EmailValidation
+import com.android.practise.wonderfulwander.util.validation.PasswordValidation
 
 
 @Composable
@@ -66,7 +71,16 @@ fun LoginScreen(
     val context = LocalContext.current
     val state by signInViewModel.state.collectAsState()
     val user by signInViewModel.userData.collectAsState()
+
     val signInIntentSender by signInViewModel.signInIntentSender.collectAsState()
+
+    val isEmailValid by remember {
+        derivedStateOf { EmailValidation.validateEmail(email) }
+    }
+
+    val isPasswordValid by remember {
+        derivedStateOf { PasswordValidation.validatePassword(password) }
+    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
@@ -194,7 +208,16 @@ fun LoginScreen(
                             shape = CircleShape.copy(
                                 topStart = CornerSize(2.dp),
                                 bottomEnd = CornerSize(2.dp)
-                            )
+                            ),
+                            supportingText = {
+                                isEmailValid?.let {
+                                    Text(
+                                        text = it,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            },
+                            singleLine = true
                         )
                     }
 
@@ -223,6 +246,10 @@ fun LoginScreen(
                                     Icon(painter = icon, contentDescription = "")
                                 }
                             },
+                            visualTransformation =
+                                if (passwordVisibility) {
+                                    VisualTransformation.None
+                                } else PasswordVisualTransformation(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.TopStart)
@@ -230,7 +257,16 @@ fun LoginScreen(
                             shape = CircleShape.copy(
                                 topStart = CornerSize(2.dp),
                                 bottomEnd = CornerSize(2.dp)
-                            )
+                            ),
+                            supportingText = {
+                                isPasswordValid?.let {
+                                    Text(
+                                        text = it,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            },
+                            singleLine = true
                         )
                     }
 
