@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.practise.wonderfulwander.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -40,7 +41,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @Composable
-fun MapScreen (
+fun MapScreen(
     geoViewModel: GeoViewModel = hiltViewModel()
 ) {
     val mapView = remember { MutableStateFlow<MapView?>(null) }
@@ -61,38 +62,33 @@ fun MapScreen (
                 MapView(context).apply {
                     mapView.value = this
                 }
-            },
-            modifier = Modifier.fillMaxSize(),
+            }, modifier = Modifier.fillMaxSize(),
 
             update = { mapView ->
 
-                mapView.map.move(
+                mapView.mapWindow.map.move(
                     CameraPosition(
-                        location.value,
-                        17.0f,
-                        150.0f,
-                        00.0f
-                    ),
-                    Animation(Animation.Type.SMOOTH, 1.5f),
-                    null
+                        location.value, 17.0f, 150.0f, 00.0f
+                    ), Animation(Animation.Type.SMOOTH, 1.5f), null
                 )
                 //Log.d("Test-Tag","совершили переход в точку ${location.value.latitude} ${location.value.longitude}")
 
-                mapView.map.addCameraListener(object : CameraListener {
+
+                mapView.mapWindow.map.addCameraListener(object : CameraListener {
                     override fun onCameraPositionChanged(
                         map: Map,
                         cameraPosition: CameraPosition,
                         cameraUpdateReason: CameraUpdateReason,
                         isFinished: Boolean
                     ) {
+                        Log.d("TEST-TAG", "Camera position changed: isFinished = $isFinished")
                         if (isFinished) {
                             currentCenter = cameraPosition.target
                             Log.d("TEST-TAG","currentCenter = ${currentCenter.latitude} + ${currentCenter.longitude} ")
                         }
                     }
                 })
-            }
-        )
+            })
         Text(
             text = locationText,
             style = MaterialTheme.typography.displayMedium,
@@ -102,7 +98,8 @@ fun MapScreen (
                 .padding(horizontal = 24.dp)
         )
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .align(Alignment.CenterStart),
             horizontalAlignment = Alignment.End,
         ) {
@@ -137,24 +134,22 @@ fun MapScreen (
             }
         }
     }
-    LaunchedEffect(currentCenter) {
-
+    LaunchedEffect(Unit) {
+        while (true){
             delay(5000) // Задержка в 5 секунд
             val newCenter = currentCenter
 
-            Log.d("TEST-TAG","newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
+            Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
 
             geoViewModel.getText("${newCenter.longitude},${newCenter.latitude}")
-
-            // Если нужно, можно также обновить состояние location
-            //location.value = newCenter
+        }
     }
 }
 
-fun changeZoomByStep(mapView: MapView,value: Float) {
-    with(mapView.map?.cameraPosition) {
-        mapView.map?.move(
-            CameraPosition(this!!.target, zoom + value, azimuth, tilt),
+fun changeZoomByStep(mapView: MapView, value: Float) {
+    with(mapView.mapWindow.map.cameraPosition) {
+        mapView.mapWindow.map.move(
+            CameraPosition(target, zoom + value, azimuth, tilt),
             Animation(com.yandex.mapkit.Animation.Type.SMOOTH, 0.5f),
             null,
         )
