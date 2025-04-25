@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,7 +40,6 @@ import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
 @Composable
 fun MapScreen(
     geoViewModel: GeoViewModel = hiltViewModel()
@@ -52,6 +52,9 @@ fun MapScreen(
     var currentCenter by remember { mutableStateOf(location.value) }
 
     val locationText by geoViewModel.text.collectAsState()
+
+
+    val state = remember { mutableStateOf(0)}
 
 
     Box(
@@ -81,10 +84,9 @@ fun MapScreen(
                         cameraUpdateReason: CameraUpdateReason,
                         isFinished: Boolean
                     ) {
-                        Log.d("TEST-TAG", "Camera position changed: isFinished = $isFinished")
-                        if (isFinished) {
+                        if(isFinished){
                             currentCenter = cameraPosition.target
-                            Log.d("TEST-TAG","currentCenter = ${currentCenter.latitude} + ${currentCenter.longitude} ")
+                            Log.d("TEST-TAG", " ${currentCenter.latitude}, ${currentCenter.longitude}")
                         }
                     }
                 })
@@ -134,15 +136,21 @@ fun MapScreen(
             }
         }
     }
+
     LaunchedEffect(Unit) {
-        while (true){
-            delay(5000) // Задержка в 5 секунд
-            val newCenter = currentCenter
-
-            Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
-
-            geoViewModel.getText("${newCenter.longitude},${newCenter.latitude}")
+        while (true) {
+            delay(5000)
+            state.value += 1
         }
+    }
+
+    LaunchedEffect(state.value) {
+
+        val newCenter = currentCenter
+
+        Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
+
+        geoViewModel.getText("${newCenter.longitude},${newCenter.latitude}")
     }
 }
 
