@@ -7,8 +7,8 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
 
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 val mapkitApiKey:String = loadMapkitApiKey()
@@ -75,9 +75,10 @@ android {
 
 dependencies {
 
-
-    implementation(project(":domain"))
-    implementation(project(":data"))
+    //Core
+    implementation(project(":core:network"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
