@@ -75,15 +75,6 @@ class SignInViewModel @Inject constructor(
     }
 
     fun login(email: String, password: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            _state.update {
-                it.copy(
-                    isSignInSuccessful = false,
-                    signInError = context.getString(R.string.validation_email_and_password)
-                )
-            }
-            return
-        }
         viewModelScope.launch {
             googleAuthUiClient.login(email, password)
         }

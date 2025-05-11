@@ -1,28 +1,40 @@
-package com.android.practise.wonderfulwander.di
+package com.example.network.di
 
-import android.util.Log
-import com.android.practise.wonderfulwander.BuildConfig
+import com.example.network.BuildConfig
+import com.example.network.interceptor.TokenInterceptor
+import com.example.network.service.GeoService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApplicationModule {
+class NetworkModule {
 
-    const val BASE_URL = "https://geocode-maps.yandex.ru/"
 
     @Provides
-    fun provideRetrofit():Retrofit{
+    @Singleton
+    fun provideGeoService(
+        retrofit: Retrofit
+    ): GeoService {
+        return retrofit.create(GeoService::class.java)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideHttpClient(
+        tokenInterceptor: TokenInterceptor
+    ): OkHttpClient {
 
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
@@ -32,23 +44,33 @@ object ApplicationModule {
             }
         }
 
-        val client = OkHttpClient.Builder()
+        return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request()
                 println("API call made to ${request.url}")
                 chain.proceed(request)
             }
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(tokenInterceptor)
             .build()
+
+    }
+
+
+    @Provides
+    fun provideRetrofit(
+        client: OkHttpClient
+    ): Retrofit {
 
         val converter = "application/json".toMediaType()
 
         val json = Json { ignoreUnknownKeys = true }
 
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(json.asConverterFactory(converter))
             .build()
     }
+
 }

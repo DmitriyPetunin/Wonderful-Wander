@@ -1,8 +1,6 @@
 package com.android.practise.wonderfulwander.di
 
-import android.app.Application
 import android.content.Context
-import com.android.practise.service.GeoService
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.Firebase
@@ -19,7 +17,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object AppModule {
 
     @Provides
     @Singleton
@@ -32,12 +30,7 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics{
+    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
         return Firebase.analytics
-    }
-
-    @Provides
-    fun provideGeoService(retrofit: Retrofit): GeoService {
-        return retrofit.create(GeoService::class.java)
     }
 }

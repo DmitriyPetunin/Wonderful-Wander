@@ -1,4 +1,4 @@
-package com.android.practise.entity
+package com.example.network.model.geo
 
 import kotlinx.serialization.Serializable
 

@@ -21,5 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Wonderful Wander"
 include(":app")
-include(":data")
-include(":domain")
+include(":core:data")
+include(":core:network")
+include(":core:domain")
+include(":feature:loginpage")

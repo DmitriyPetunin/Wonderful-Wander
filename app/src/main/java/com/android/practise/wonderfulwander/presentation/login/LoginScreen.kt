@@ -279,7 +279,8 @@ fun LoginScreen(
                         Text(
                             text = "Forgot Password ?",
                             modifier = Modifier
-                                .clickable { },
+                                .clickable { //TODO(navigate to Forgot PasswordScreen)*//
+                                    },
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -297,7 +298,8 @@ fun LoginScreen(
                     Button(
                         modifier = Modifier.fillMaxWidth(0.8f),
                         onClick = {},
-                        shape = CircleShape.copy(CornerSize(10.dp))
+                        shape = CircleShape.copy(CornerSize(10.dp)),
+                        //enabled = TODO(check valid input field)
                     ) {
                         Text(
                             text = "login",

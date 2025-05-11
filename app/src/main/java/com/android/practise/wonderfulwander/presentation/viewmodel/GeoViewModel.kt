@@ -2,13 +2,9 @@ package com.android.practise.wonderfulwander.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.practise.service.GeoService
-import com.google.firebase.Firebase
+import com.example.domain.usecase.GetActualGeoDataUseCase
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
-import com.yandex.mapkit.search.SearchFactory
-import com.yandex.mapkit.search.SearchManagerType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GeoViewModel @Inject constructor(
-    val geoService: GeoService,
+    private val getActualGeoDataUseCase: GetActualGeoDataUseCase,
     val firebaseAnalytics: FirebaseAnalytics
 ):ViewModel() {
 
@@ -32,10 +28,9 @@ class GeoViewModel @Inject constructor(
                 param("endpoint", "v1/")
                 param("geocode", string)
             }
-            val response = geoService.fetchGeoData(geocode = string)
-            val text = response.response.GeoObjectCollection.featureMember.get(0).GeoObject.metaDataProperty.GeocoderMetaData.text
+            val response = getActualGeoDataUseCase.invoke(string)
 
-            _text.value = text
+            _text.value = response.text
         }
     }
 }

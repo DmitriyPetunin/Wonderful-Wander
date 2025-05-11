@@ -1,0 +1,13 @@
+package com.example.network.service
+
+
+import com.example.network.model.geo.GeoObjectCollectionResponse
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface GeoService {
+    @GET("v1/")
+    suspend fun fetchGeoData(
+        @Query("geocode") geocode: String, //"$longitude,$latitude"
+    ): GeoObjectCollectionResponse
+}
