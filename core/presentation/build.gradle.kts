@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.domain"
+    namespace = "com.example.presentation"
     compileSdk = 35
 
     defaultConfig {
@@ -38,12 +38,14 @@ android {
 dependencies {
 
     //Core
-    implementation(project(path = ":core:base"))
-    implementation(project(path = ":core:presentation"))
+    implementation(project(path=":core:base"))
 
-    implementation(libs.javax.inject)
+
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
 
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
 }

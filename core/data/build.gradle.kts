@@ -38,6 +38,7 @@ android {
 dependencies {
 
     //Core
+    implementation(project(":core:base"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
 

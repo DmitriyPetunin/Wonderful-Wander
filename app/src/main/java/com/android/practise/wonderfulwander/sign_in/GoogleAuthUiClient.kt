@@ -4,22 +4,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.android.practise.wonderfulwander.R
+import com.example.base.state.SignInResult
+import com.example.base.state.UserData
+import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.identity.SignInPassword
-import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.cancellation.CancellationException
+import com.example.base.R as baseR
 
-class GoogleAuthUiClient(
+class GoogleAuthUiClientImpl(
     private val context: Context,
-    private val oneTapClient: SignInClient
-) {
-    private val auth = Firebase.auth
+    private val oneTapClient: SignInClient,
+    private val auth:FirebaseAuth
+): GoogleAuthUiClient {
 
-    suspend fun signIn(): IntentSender? {
+    override suspend fun signIn(): IntentSender? {
         return try {
             val result = oneTapClient.beginSignIn(buildSignInRequest()).await()
             result.pendingIntent?.intentSender
@@ -30,7 +32,7 @@ class GoogleAuthUiClient(
         }
     }
 
-    suspend fun signInWithIntent(intent: Intent): SignInResult {
+    override suspend fun signInWithIntent(intent: Intent): SignInResult {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
@@ -56,7 +58,7 @@ class GoogleAuthUiClient(
         }
     }
 
-    suspend fun signOut() {
+    override suspend fun signOut() {
         try {
             oneTapClient.signOut().await()
             auth.signOut()
@@ -67,7 +69,7 @@ class GoogleAuthUiClient(
     }
 
 
-    fun getSignedInUser(): UserData? = auth.currentUser?.run {
+    override fun getSignedInUser(): UserData? = auth.currentUser?.run {
         UserData(
             userId = uid,
             username = displayName,
@@ -75,7 +77,7 @@ class GoogleAuthUiClient(
         )
     }
 
-    suspend fun login(email: String, password: String): SignInResult {
+    override suspend fun login(email: String, password: String): SignInResult {
         return try {
             val user = auth.signInWithEmailAndPassword(email, password).await().user
 
@@ -96,7 +98,7 @@ class GoogleAuthUiClient(
         }
     }
 
-    suspend fun register(email: String, password: String) {
+    override suspend fun register(email: String, password: String) {
         val user = auth.createUserWithEmailAndPassword(email, password).await().user
     }
 
@@ -106,7 +108,7 @@ class GoogleAuthUiClient(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(context.getString(R.string.web_client_id))
+                    .setServerClientId(context.getString(baseR.string.web_client_id))
                     .build()
             )
             .setAutoSelectEnabled(true)

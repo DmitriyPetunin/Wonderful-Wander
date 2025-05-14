@@ -1,8 +1,8 @@
 package com.example.data.repository
 
-import com.example.domain.entity.ActualGeoLocation
+import com.example.base.model.geo.ActualGeoLocation
 import com.example.domain.repository.GeoRepository
-import com.example.network.service.GeoService
+import com.example.network.service.geo.GeoService
 import javax.inject.Inject
 
 class GeoRepositoryImpl @Inject constructor(

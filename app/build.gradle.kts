@@ -76,9 +76,12 @@ android {
 dependencies {
 
     //Core
-    implementation(project(":core:network"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:data"))
+    implementation(project(path = ":core:navigation"))
+    implementation(project(path = ":core:presentation"))
+    implementation(project(path = ":core:base"))
+    implementation(project(path = ":core:network"))
+    implementation(project(path = ":core:domain"))
+    implementation(project(path = ":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -117,7 +120,6 @@ dependencies {
     //google font
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
 
-
     //Hilt
     implementation("com.google.dagger:hilt-android:2.56.1")
     ksp("com.google.dagger:hilt-android-compiler:2.56.1")
@@ -126,12 +128,4 @@ dependencies {
 
     //Yandex Map
     implementation (libs.maps.mobile)
-
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.logging.interceptor)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit.kotlinx.serialization.converter)
-
-    implementation ("androidx.activity:activity-compose:1.7.0")
 }

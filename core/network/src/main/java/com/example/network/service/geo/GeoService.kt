@@ -1,4 +1,4 @@
-package com.example.network.service
+package com.example.network.service.geo
 
 
 import com.example.network.model.geo.GeoObjectCollectionResponse

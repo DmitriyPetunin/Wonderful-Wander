@@ -1,13 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.example.domain"
+    namespace = "com.example.base"
     compileSdk = 35
 
     defaultConfig {
@@ -37,13 +34,10 @@ android {
 
 dependencies {
 
-    //Core
-    implementation(project(path = ":core:base"))
-    implementation(project(path = ":core:presentation"))
-
-    implementation(libs.javax.inject)
-
-    //Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

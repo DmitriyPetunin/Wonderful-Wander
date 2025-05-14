@@ -1,8 +1,8 @@
 package com.example.domain.di
 
 import com.example.domain.repository.GeoRepository
-import com.example.domain.usecase.GetActualGeoDataUseCase
 import com.example.domain.usecase.GetActualGeoDataUseCaseImpl
+import com.example.presentation.usecase.GetActualGeoDataUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

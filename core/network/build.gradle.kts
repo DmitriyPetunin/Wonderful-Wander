@@ -20,7 +20,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String","BASE_URL", value = "\"https://geocode-maps.yandex.ru/\"")
+        buildConfigField("String","GEO_CODER_BASE_URL", value = "\"https://geocode-maps.yandex.ru/\"")
+        buildConfigField("String","API_BASE_URL", value = "\"http://localhost:8080/\"")
     }
 
     buildTypes {
@@ -47,6 +48,9 @@ android {
 dependencies {
 
     implementation(libs.bundles.network.deps)
+
+    implementation("com.auth0.android:jwtdecode:2.0.2")
+
 
     //Hilt
     implementation(libs.hilt.android)

@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.util.validation
+package com.example.base.util.validation
 
 class PasswordValidation {
     companion object{

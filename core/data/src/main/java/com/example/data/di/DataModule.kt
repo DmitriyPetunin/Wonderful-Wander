@@ -1,6 +1,5 @@
 package com.example.data.di
 
-import android.content.Context
 import com.example.data.repository.GeoRepositoryImpl
 import com.example.domain.repository.GeoRepository
 import dagger.Binds
