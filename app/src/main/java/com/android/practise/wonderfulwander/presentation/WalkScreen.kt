@@ -51,10 +51,8 @@ fun WalkScreen() {
     }
 
     if (hasCameraPermission) {
-        // Ваш существующий код для WalkScreen
         WalkScreenContent()
     } else {
-        // Показать диалог или сообщение о том, что разрешение не предоставлено
         PermissionDeniedDialog(onDismiss = { /* Обработка отклонения */ })
     }
 }

@@ -43,8 +43,9 @@ import androidx.compose.ui.unit.dp
 import com.android.practise.wonderfulwander.R
 
 @Composable
-@Preview
-fun RegistrationScreen() {
+fun RegistrationScreen(
+    onButtonClick: () -> Unit
+) {
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -53,7 +54,7 @@ fun RegistrationScreen() {
     var passwordVisibility by remember { mutableStateOf(false) }
 
 
-    var icon = if (passwordVisibility) {
+    val icon = if (passwordVisibility) {
         painterResource(R.drawable.ic_visibility_foreground)
     } else painterResource(R.drawable.ic_visibility_off_foreground)
 
@@ -218,7 +219,7 @@ fun RegistrationScreen() {
                         .fillMaxWidth(),
                 ) {
                     Button(
-                        onClick = {},
+                        onClick = {onButtonClick()},
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 48.dp),
@@ -283,8 +284,8 @@ fun RegistrationScreen() {
 //                        Text(text = "Sign up",
 //                            softWrap = true)
 //                    }
-
-                    //Text(text = "Sign up", modifier = Modifier.clickable {  })
+//
+//                    Text(text = "Sign up", modifier = Modifier.clickable {  })
                 }
             }
         }

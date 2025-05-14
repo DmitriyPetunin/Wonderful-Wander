@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.sign_in
+package com.example.base.state
 
 data class SignInState(
     val isSignInSuccessful: Boolean = false,

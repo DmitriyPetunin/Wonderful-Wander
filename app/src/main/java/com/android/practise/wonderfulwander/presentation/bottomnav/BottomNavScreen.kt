@@ -20,9 +20,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.android.practise.wonderfulwander.navigation.ScreenBottomNav
+import com.example.navigation.ScreenBottomNav
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreen
-import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
+import com.example.navigation.Screen
+import com.example.presentation.viewmodel.SignInViewModel
 
 
 @Composable
@@ -49,15 +50,25 @@ fun BottomNavScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(ScreenBottomNav.MapScreen.route) { MapScreen() }
+
             composable(ScreenBottomNav.PhotosScreen.route) { PhotosScreen() }
-            composable(ScreenBottomNav.ProfileScreen.route) { ProfileScreen(controller = navController, signInViewModel = signInViewModel) }
+
+            composable(ScreenBottomNav.ProfileScreen.route) {
+                ProfileScreen(
+                    onButtonClick = {
+                        navController.navigate(
+                            Screen.AuthScreen.route
+                        )
+                    }, signInViewModel = signInViewModel
+                )
+            }
         }
 
     }
 }
 
 @Composable
-fun MyBottomNavigationBar(navController: NavHostController, currentRoute: String?){
+fun MyBottomNavigationBar(navController: NavHostController, currentRoute: String?) {
 
     val items = listOf(
         ScreenBottomNav.MapScreen,
@@ -81,7 +92,8 @@ fun MyBottomNavigationBar(navController: NavHostController, currentRoute: String
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true // сохранение состояния прокрутки, ввод данных
                         }
-                        launchSingleTop = true // если экран уже находится в верхней части стека навигации, он не будет добавлен повторно.
+                        launchSingleTop =
+                            true // если экран уже находится в верхней части стека навигации, он не будет добавлен повторно.
                         restoreState = true // восстановление состояния экрана
                     }
                 },

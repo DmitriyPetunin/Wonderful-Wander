@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,8 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
-import com.android.practise.wonderfulwander.presentation.viewmodel.GeoViewModel
+import com.example.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
@@ -54,7 +52,7 @@ fun MapScreen(
     val locationText by geoViewModel.text.collectAsState()
 
 
-    val state = remember { mutableStateOf(0)}
+    var state by remember { mutableStateOf(0) }
 
 
     Box(
@@ -84,9 +82,12 @@ fun MapScreen(
                         cameraUpdateReason: CameraUpdateReason,
                         isFinished: Boolean
                     ) {
-                        if(isFinished){
+                        if (isFinished) {
                             currentCenter = cameraPosition.target
-                            Log.d("TEST-TAG", " ${currentCenter.latitude}, ${currentCenter.longitude}")
+                            Log.d(
+                                "TEST-TAG",
+                                " ${currentCenter.latitude}, ${currentCenter.longitude}"
+                            )
                         }
                     }
                 })
@@ -140,11 +141,11 @@ fun MapScreen(
     LaunchedEffect(Unit) {
         while (true) {
             delay(5000)
-            state.value += 1
+            state += 1
         }
     }
 
-    LaunchedEffect(state.value) {
+    LaunchedEffect(state) {
 
         val newCenter = currentCenter
 

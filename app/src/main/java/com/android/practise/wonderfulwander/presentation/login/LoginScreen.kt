@@ -51,17 +51,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.practise.wonderfulwander.R
-import com.android.practise.wonderfulwander.navigation.Screen
-import com.android.practise.wonderfulwander.navigation.ScreenBottomNav
-import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
-import com.android.practise.wonderfulwander.util.validation.EmailValidation
-import com.android.practise.wonderfulwander.util.validation.PasswordValidation
+import com.example.base.util.validation.EmailValidation
+import com.example.base.util.validation.PasswordValidation
+import com.example.navigation.Screen
+import com.example.presentation.viewmodel.SignInViewModel
 
 
 @Composable
 fun LoginScreen(
     signInViewModel: SignInViewModel,
-    controller: NavHostController
+    onNavigateToProfile: () -> Unit,
+    onButtonClick: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -107,9 +107,7 @@ fun LoginScreen(
 
     LaunchedEffect(key1 = user) { // user exist -> nav to Profile
         if (user?.userId != null) {
-            controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.ProfileScreen.route}") {
-                popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
-            }
+            onNavigateToProfile()
         }
     }
 
@@ -121,9 +119,8 @@ fun LoginScreen(
                 Toast.LENGTH_LONG
             ).show()
 
-            controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.ProfileScreen.route}") {
-                popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
-            }
+            onNavigateToProfile()
+
             signInViewModel.resetState()
         }
     }
@@ -297,7 +294,7 @@ fun LoginScreen(
                 ) {
                     Button(
                         modifier = Modifier.fillMaxWidth(0.8f),
-                        onClick = {},
+                        onClick = {onButtonClick()},
                         shape = CircleShape.copy(CornerSize(10.dp)),
                         //enabled = TODO(check valid input field)
                     ) {

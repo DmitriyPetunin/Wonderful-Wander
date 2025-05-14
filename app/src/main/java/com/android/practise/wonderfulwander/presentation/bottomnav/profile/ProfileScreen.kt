@@ -27,13 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.android.practise.wonderfulwander.navigation.Screen
-import com.android.practise.wonderfulwander.presentation.viewmodel.SignInViewModel
+import com.example.navigation.Screen
+import com.example.presentation.viewmodel.SignInViewModel
 
 @Composable
 fun ProfileScreen(
     signInViewModel: SignInViewModel,
-    controller: NavHostController
+    onButtonClick: () -> Unit
 ) {
 
     val userData by signInViewModel.userData.collectAsState()
@@ -54,7 +54,7 @@ fun ProfileScreen(
 
         Text(
             text = "Profile",
-            modifier = Modifier,
+            modifier = Modifier.align(Alignment.Start),
             style = MaterialTheme.typography.displayLarge
         )
         if (userData?.profilePictureUrl != null) {
@@ -80,7 +80,7 @@ fun ProfileScreen(
         Button(onClick = {
             signInViewModel.signOut()
             signInViewModel.resetState()
-            controller.navigate(Screen.AuthScreen.route)
+            onButtonClick()
             Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
         }) {
             Text(text = "Sign out")

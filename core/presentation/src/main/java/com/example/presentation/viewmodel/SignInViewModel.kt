@@ -1,17 +1,15 @@
-package com.android.practise.wonderfulwander.presentation.viewmodel
+package com.example.presentation.viewmodel
 
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.practise.wonderfulwander.R
-import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClient
-import com.android.practise.wonderfulwander.sign_in.SignInResult
-import com.android.practise.wonderfulwander.sign_in.SignInState
-import com.android.practise.wonderfulwander.sign_in.UserData
+import com.example.base.state.SignInResult
+import com.example.base.state.SignInState
+import com.example.base.state.UserData
+import com.example.presentation.googleclient.GoogleAuthUiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    val googleAuthUiClient: GoogleAuthUiClient,
-    @ApplicationContext val context:Context
+    private val googleAuthUiClient: GoogleAuthUiClient,
+    @ApplicationContext val context: Context
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SignInState())
@@ -39,9 +37,6 @@ class SignInViewModel @Inject constructor(
 
     private val _signInResult = MutableStateFlow<SignInResult?>(null)
     val signInResult = _signInResult.asStateFlow()
-
-//    private val _signOut = MutableStateFlow(false)
-//    val signOut = _signOut.asStateFlow()
 
 
     private fun onSignInResult(result: SignInResult) {
@@ -92,7 +87,7 @@ class SignInViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            googleAuthUiClient.register(email, password)
+            // useCase.invoke()
         }
     }
 

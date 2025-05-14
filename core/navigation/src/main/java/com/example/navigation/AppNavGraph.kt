@@ -1,13 +1,6 @@
-package com.android.practise.wonderfulwander.navigation
+package com.example.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,6 +9,7 @@ import androidx.navigation.navArgument
 
 @Composable
 fun AppNavGraph(
+    startDestination:String,
     navHostController: NavHostController,
     authScreen: @Composable () -> Unit,
     walkScreen: @Composable () -> Unit,
@@ -23,7 +17,7 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = Screen.AuthScreen.route
+        startDestination = startDestination
     ){
         composable(route = Screen.AuthScreen.route){
             authScreen()
