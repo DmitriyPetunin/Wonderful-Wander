@@ -21,7 +21,13 @@ fun MainScreen(
     AppNavGraph(
         startDestination = Screen.AuthScreen.route,
         navHostController = navController,
-        authScreen = { LoginScreen(signInViewModel = viewModel, onButtonClick = {navigateToProfileScreen(controller = navController)}) },
+        authScreen = {
+            LoginScreen(
+                signInViewModel = viewModel,
+                onNavigateToProfile = { navigateToProfileScreen(controller = navController) },
+                onButtonClick = {}
+                )
+        },
         bottomNavScreen = { startRoute ->
             BottomNavScreen(
                 navController = navController,
@@ -32,7 +38,8 @@ fun MainScreen(
         walkScreen = { WalkScreen() }
     )
 }
-fun navigateToProfileScreen(controller:NavController){
+
+fun navigateToProfileScreen(controller: NavController) {
     controller.navigate(Screen.BottomNavScreen.route + "/${com.example.navigation.ScreenBottomNav.ProfileScreen.route}") {
         popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
     }

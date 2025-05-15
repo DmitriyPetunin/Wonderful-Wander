@@ -1,5 +1,6 @@
 package com.android.practise.wonderfulwander.presentation.registration
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,28 +37,50 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.practise.wonderfulwander.R
+import com.example.base.action.RegistrationAction
+import com.example.base.event.RegistrationEvent
+import com.example.base.model.user.RegisterUserParam
+import com.example.presentation.viewmodel.RegisterViewModel
 
 @Composable
 fun RegistrationScreen(
-    onButtonClick: () -> Unit
+    onButtonClick: () -> Unit,
+    registerViewModel: RegisterViewModel
 ) {
+    val context = LocalContext.current
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var cpassword by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
 
 
     val icon = if (passwordVisibility) {
         painterResource(R.drawable.ic_visibility_foreground)
     } else painterResource(R.drawable.ic_visibility_off_foreground)
+
+    LaunchedEffect(Unit) {
+        registerViewModel.event.collect { event ->
+            when (event) {
+                is RegistrationEvent.NavigateToMapScreen -> {
+                    onButtonClick()
+                }
+                is RegistrationEvent.ShowErrorMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -214,12 +238,86 @@ fun RegistrationScreen(
                         shape = CircleShape.copy(topStart = CornerSize(2.dp), bottomEnd = CornerSize(2.dp))
                     )
                 }
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "FirstName",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(top = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = firstName,
+                        onValueChange = { newText -> firstName = newText },
+                        placeholder = { Text(text = "Username") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.AccountCircle,
+                                contentDescription = ""
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(top = 24.dp)
+                            .fillMaxWidth(),
+                        shape = CircleShape.copy(
+                            topStart = CornerSize(2.dp),
+                            bottomEnd = CornerSize(2.dp)
+                        ),
+                    )
+                }
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "LastName",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(top = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = lastName,
+                        onValueChange = { newText -> lastName = newText },
+                        placeholder = { Text(text = "Username") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.AccountCircle,
+                                contentDescription = ""
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(top = 24.dp)
+                            .fillMaxWidth(),
+                        shape = CircleShape.copy(
+                            topStart = CornerSize(2.dp),
+                            bottomEnd = CornerSize(2.dp)
+                        ),
+                    )
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                 ) {
                     Button(
-                        onClick = {onButtonClick()},
+                        onClick = {
+                            registerViewModel.updateState(
+                                RegisterUserParam(
+                                    username = username,
+                                    password = password,
+                                    confirmPassword = cpassword,
+                                    email = email,
+                                    firstName = firstName,
+                                    lastName = lastName,
+                                )
+                            )
+                            registerViewModel.onAction(RegistrationAction.SubmitRegistration)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 48.dp),

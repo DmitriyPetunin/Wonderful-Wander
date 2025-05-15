@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.base.event.GeoUiEvent
 import com.example.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -46,13 +47,11 @@ fun MapScreen(
 
     val context = LocalContext.current
 
-    val location = remember { mutableStateOf(Point(55.78874, 49.12214)) } // Тукая
-    var currentCenter by remember { mutableStateOf(location.value) }
+    var currentCenter by remember { mutableStateOf(Point(55.78874, 49.12214)) } // Тукая
 
-    val locationText by geoViewModel.text.collectAsState()
+    val mapScreenState by geoViewModel.geoState.collectAsState()
 
-
-    var state by remember { mutableStateOf(0) }
+    var counterState by remember { mutableStateOf(0) }
 
 
     Box(
@@ -69,7 +68,7 @@ fun MapScreen(
 
                 mapView.mapWindow.map.move(
                     CameraPosition(
-                        location.value, 17.0f, 150.0f, 00.0f
+                        currentCenter, 17.0f, 150.0f, 00.0f
                     ), Animation(Animation.Type.SMOOTH, 1.5f), null
                 )
                 //Log.d("Test-Tag","совершили переход в точку ${location.value.latitude} ${location.value.longitude}")
@@ -91,9 +90,10 @@ fun MapScreen(
                         }
                     }
                 })
-            })
+            }
+        )
         Text(
-            text = locationText,
+            text = mapScreenState.text,
             style = MaterialTheme.typography.displayMedium,
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -141,17 +141,18 @@ fun MapScreen(
     LaunchedEffect(Unit) {
         while (true) {
             delay(5000)
-            state += 1
+            counterState += 1
         }
     }
 
-    LaunchedEffect(state) {
+    LaunchedEffect(counterState) {
 
         val newCenter = currentCenter
 
         Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
 
-        geoViewModel.getText("${newCenter.longitude},${newCenter.latitude}")
+        geoViewModel.onEvent(GeoUiEvent.InteractionTwo(input = "${newCenter.longitude},${newCenter.latitude}"))
+
     }
 }
 

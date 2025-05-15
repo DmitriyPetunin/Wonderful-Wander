@@ -3,7 +3,6 @@ package com.android.practise.wonderfulwander.sign_in
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import com.android.practise.wonderfulwander.R
 import com.example.base.state.SignInResult
 import com.example.base.state.UserData
 import com.example.presentation.googleclient.GoogleAuthUiClient

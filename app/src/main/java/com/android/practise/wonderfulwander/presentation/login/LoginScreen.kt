@@ -294,7 +294,10 @@ fun LoginScreen(
                 ) {
                     Button(
                         modifier = Modifier.fillMaxWidth(0.8f),
-                        onClick = {onButtonClick()},
+                        onClick = {
+//                            signInViewModel.login(state())
+//                            onButtonClick()
+                        },
                         shape = CircleShape.copy(CornerSize(10.dp)),
                         //enabled = TODO(check valid input field)
                     ) {
@@ -343,16 +346,16 @@ fun LoginScreen(
                             )
                         }
 
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.vk_icon),
-                                contentDescription = "vk",
-                                tint = Color.Unspecified
-                            )
-                        }
+//                        IconButton(
+//                            onClick = {},
+//                            modifier = Modifier.size(36.dp)
+//                        ) {
+//                            Icon(
+//                                painter = painterResource(R.drawable.vk_icon),
+//                                contentDescription = "vk",
+//                                tint = Color.Unspecified
+//                            )
+//                        }
                     }
                 }
 

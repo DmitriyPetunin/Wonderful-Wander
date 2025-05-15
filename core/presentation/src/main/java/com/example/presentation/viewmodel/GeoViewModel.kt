@@ -2,6 +2,8 @@ package com.example.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.base.event.GeoUiEvent
+import com.example.base.state.GeoState
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,10 +18,19 @@ class GeoViewModel @Inject constructor(
     //val firebaseAnalytics: FirebaseAnalytics
 ):ViewModel() {
 
-    private val _text = MutableStateFlow("55.78874, 49.12214")
-    val text = _text.asStateFlow()
+    private val _geoState = MutableStateFlow(GeoState())
+    val geoState = _geoState.asStateFlow()
 
-    fun getText(string: String){
+    fun onEvent(event: GeoUiEvent){
+        when(event){
+            is GeoUiEvent.InteractionOne -> {}
+            is GeoUiEvent.InteractionTwo -> {
+                getText(event.input)
+            }
+        }
+    }
+
+    private fun getText(string: String){
         viewModelScope.launch {
 
 //            firebaseAnalytics.logEvent("api_call"){
@@ -28,7 +39,7 @@ class GeoViewModel @Inject constructor(
 //            }
             val response = getActualGeoDataUseCase.invoke(string)
 
-            _text.value = response.text
+            _geoState.value = _geoState.value.copy(response.text)
         }
     }
 }
