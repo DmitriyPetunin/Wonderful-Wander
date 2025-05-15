@@ -60,7 +60,7 @@ class RegisterViewModel @Inject constructor(
                 onSuccess = { resultRegister ->
                     when(resultRegister.status) {
                         "success" -> {
-                            _event.tryEmit(RegistrationEvent.NavigateToHomeScreen)
+                            _event.tryEmit(RegistrationEvent.NavigateToMapScreen)
                             RegistrationState(isSuccess = true)
                         }
 
