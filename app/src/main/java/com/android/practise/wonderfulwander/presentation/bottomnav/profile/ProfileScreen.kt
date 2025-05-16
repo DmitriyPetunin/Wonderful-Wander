@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.base.action.profile.ProfileAction
+import com.example.base.event.profile.ProfileEvent
 import com.example.navigation.Screen
 import com.example.presentation.viewmodel.SignInViewModel
 
@@ -39,6 +41,19 @@ fun ProfileScreen(
     val userData by signInViewModel.userData.collectAsState()
 
     val context = LocalContext.current
+
+
+    LaunchedEffect(Unit) {
+        signInViewModel.event.collect { event ->
+            when(event){
+                is ProfileEvent.NavigateToFriendsPage -> TODO("navigate to FriendsPage")
+                is ProfileEvent.NavigateToAuthPage -> {
+                    onButtonClick()
+                    Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         signInViewModel.getSignedInUser()
@@ -78,12 +93,14 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
         Button(onClick = {
-            signInViewModel.signOut()
-            signInViewModel.resetState()
-            onButtonClick()
-            Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
+            signInViewModel.onAction(ProfileAction.SignOut)
         }) {
             Text(text = "Sign out")
+        }
+        Button(onClick = {
+            signInViewModel.onAction(ProfileAction.SubmitGetAllFriends)
+        }) {
+            Text(text = "Получить список друзей")
         }
     }
 }

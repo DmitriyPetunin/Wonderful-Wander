@@ -4,10 +4,13 @@ import com.example.base.model.user.LoginResponse
 import com.example.base.model.user.LoginUserParam
 import com.example.base.model.user.RegisterResponse
 import com.example.base.model.user.RegisterUserParam
+import com.example.base.model.user.friends.Friend
 
 interface UserRepository {
 
-    suspend fun login(inputParam:LoginUserParam):LoginResponse
+    suspend fun login(inputParam:LoginUserParam): LoginResponse
 
-    suspend fun register(inputParam: RegisterUserParam):RegisterResponse
+    suspend fun register(inputParam: RegisterUserParam): RegisterResponse
+
+    suspend fun getAllFriends(): List<Friend>
 }

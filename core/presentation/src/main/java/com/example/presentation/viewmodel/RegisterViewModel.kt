@@ -1,11 +1,10 @@
 package com.example.presentation.viewmodel
 
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.base.action.RegistrationAction
-import com.example.base.event.RegistrationEvent
+import com.example.base.action.register.RegistrationAction
+import com.example.base.event.register.RegistrationEvent
 import com.example.base.model.user.RegisterUserParam
 import com.example.base.state.RegistrationState
 import com.example.presentation.usecase.RegisterUseCase
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject

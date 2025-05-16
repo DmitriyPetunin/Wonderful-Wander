@@ -1,6 +1,7 @@
 package com.example.network.di
 
 import com.example.network.BuildConfig
+import com.example.network.interceptor.AuthInterceptor
 import com.example.network.interceptor.TokenInterceptor
 import com.example.network.service.auth.AuthService
 import com.example.network.service.geo.GeoService
@@ -11,6 +12,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -55,10 +57,19 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(
-        tokenInterceptor: TokenInterceptor
-    ): OkHttpClient {
+    @Named(GeoCoderClient)
+    fun provideGeoCoderClient(tokenInterceptor: TokenInterceptor): OkHttpClient {
+        return createOkHttpClient(tokenInterceptor)
+    }
 
+    @Provides
+    @Singleton
+    @Named(ApiClient)
+    fun provideApiClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        return createOkHttpClient(authInterceptor)
+    }
+
+    private fun createOkHttpClient(vararg interceptors:Interceptor):OkHttpClient{
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
@@ -74,15 +85,17 @@ class NetworkModule {
                 chain.proceed(request)
             }
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(tokenInterceptor)
+            .apply {
+                interceptors.forEach { addInterceptor(it) }
+            }
             .build()
-
     }
 
 
     @Provides
     @Named(value = GeoCoderRetrofit)
     fun provideGeoCoderRetrofit(
+        @Named(value = GeoCoderClient)
         client: OkHttpClient
     ): Retrofit {
 
@@ -100,6 +113,7 @@ class NetworkModule {
     @Provides
     @Named(value = ApiRetrofit)
     fun provideApiRetrofit(
+        @Named(ApiClient)
         client: OkHttpClient
     ): Retrofit {
 
@@ -117,6 +131,9 @@ class NetworkModule {
     companion object {
         const val GeoCoderRetrofit = "GeoCoderRetrofit"
         const val ApiRetrofit = "ApiRetrofit"
+
+        const val GeoCoderClient = "GeoCoderClient"
+        const val ApiClient = "ApiClient"
     }
 
 }

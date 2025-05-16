@@ -6,13 +6,17 @@ import android.content.Intent
 import android.content.IntentSender
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.base.action.profile.ProfileAction
+import com.example.base.event.profile.ProfileEvent
 import com.example.base.state.SignInResult
 import com.example.base.state.SignInState
 import com.example.base.state.UserData
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,6 +41,10 @@ class SignInViewModel @Inject constructor(
 
     private val _signInResult = MutableStateFlow<SignInResult?>(null)
     val signInResult = _signInResult.asStateFlow()
+
+
+    private val _event = MutableSharedFlow<ProfileEvent>()
+    val event: SharedFlow<ProfileEvent> = _event
 
 
     private fun onSignInResult(result: SignInResult) {
@@ -91,14 +99,26 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun signOut() {
+    private fun signOut() {
         viewModelScope.launch {
             googleAuthUiClient.signOut()
+            _event.emit(ProfileEvent.NavigateToAuthPage)
             _userdata.value = null
         }
     }
 
     fun getSignedInUser() {
         _userdata.value = googleAuthUiClient.getSignedInUser()
+    }
+
+
+    fun onAction(action: ProfileAction){
+        when(action){
+            ProfileAction.SignOut -> {
+                signOut()
+                resetState()
+            }
+            ProfileAction.SubmitGetAllFriends -> TODO()
+        }
     }
 }
