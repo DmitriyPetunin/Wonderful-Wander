@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,13 +32,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.base.action.WalkAction
+import com.example.base.state.WalkState
+import com.example.presentation.viewmodel.WalkViewModel
 import java.io.File
 
 @Composable
-fun WalkScreen() {
-    var hasCameraPermission by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+fun WalkScreenRoute(
+    walkViewModel: WalkViewModel = hiltViewModel(),
+){
+    val state by walkViewModel.state.collectAsState()
+
+    WalkScreen(state = state, walkViewModel::onAction)
+}
+
+@Composable
+fun WalkScreen(
+    state: WalkState,
+    onAction: (WalkAction) -> Unit
+) {
+    var hasCameraPermission = state.hasCameraPermission
 
     // Request camera permission
     val permissionLauncher = rememberLauncherForActivityResult(
