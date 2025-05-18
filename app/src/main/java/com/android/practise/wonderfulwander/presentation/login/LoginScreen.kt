@@ -1,6 +1,7 @@
 package com.android.practise.wonderfulwander.presentation.login
 
 import android.app.Activity.RESULT_OK
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -33,6 +34,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -52,86 +54,58 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.practise.wonderfulwander.R
+import com.example.base.action.LoginAction
+import com.example.base.event.LoginEvent
+import com.example.base.event.profile.ProfileEvent
+import com.example.base.state.LoginState
 import com.example.base.util.validation.EmailValidation
 import com.example.base.util.validation.PasswordValidation
 import com.example.navigation.Screen
 import com.example.presentation.viewmodel.SignInViewModel
+import kotlinx.coroutines.flow.collect
 
 @Composable
-internal fun LoginScreenRoute(
+fun LoginScreenRoute(
     signInViewModel: SignInViewModel = viewModel(),
+    onNavigateToProfile: () -> Unit,
 ){
 
-
-}
-
-@Composable
-fun LoginScreen(
-    signInViewModel: SignInViewModel,
-    onNavigateToProfile: () -> Unit,
-) {
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisibility by remember { mutableStateOf(false) }
-
-    val context = LocalContext.current
-
-    val state by signInViewModel.state.collectAsState()
-    val user by signInViewModel.userData.collectAsState()
+    val loginState by signInViewModel.state.collectAsState()
 
     val signInIntentSender by signInViewModel.signInIntentSender.collectAsState()
 
-    val isEmailValid by remember {
-        derivedStateOf { EmailValidation.validateEmail(email) }
-    }
+    val context = LocalContext.current
 
-    val isPasswordValid by remember {
-        derivedStateOf { PasswordValidation.validatePassword(password) }
+//    LaunchedEffect(Unit) {
+//        signInViewModel.getSignedInUser()
+//    }
+
+    LaunchedEffect(Unit) {
+        signInViewModel.event.collect{ event ->
+            when(event) {
+                LoginEvent.ErrorLogin -> {
+                    loginState.signInError?.let { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                    }
+                }
+                LoginEvent.SuccessLogin -> {
+                    Toast.makeText(context, "Sign in successful", Toast.LENGTH_LONG).show()
+
+                    onNavigateToProfile()
+                }
+                LoginEvent.UserExist -> TODO()
+            }
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             if (result.resultCode == RESULT_OK) {
-                result.data?.let { signInViewModel.signInWithIntent(it) }
+                result.data?.let { signInViewModel.onAction(LoginAction.SignInWithIntent(it)) }
             }
         }
     )
-
-    val icon = if (passwordVisibility) {
-        painterResource(R.drawable.ic_visibility_foreground)
-    } else painterResource(R.drawable.ic_visibility_off_foreground)
-
-    LaunchedEffect(Unit) {
-        signInViewModel.getSignedInUser()
-    }
-
-    LaunchedEffect(key1 = state.signInError) {
-        state.signInError?.let { error ->
-            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    LaunchedEffect(key1 = user) { // user exist -> nav to Profile
-        if (user?.userId != null) {
-            onNavigateToProfile()
-        }
-    }
-
-    LaunchedEffect(key1 = state.isSignInSuccessful) { // sign in is successful -> nav to Profile
-        if (state.isSignInSuccessful) {
-            Toast.makeText(
-                context,
-                "Sign in successful",
-                Toast.LENGTH_LONG
-            ).show()
-
-            onNavigateToProfile()
-
-            signInViewModel.resetState()
-        }
-    }
 
     LaunchedEffect(key1 = signInIntentSender) {
         if (signInIntentSender != null) {
@@ -143,7 +117,30 @@ fun LoginScreen(
         }
     }
 
+    LoginScreen(state = loginState,signInViewModel::onAction)
+}
 
+@Composable
+fun LoginScreen(
+    state: LoginState,
+    onAction: (LoginAction) -> Unit
+) {
+
+    var email = state.email
+    var password = state.password
+    var passwordVisibility by remember { mutableStateOf(false) }
+
+    val isEmailValid by remember {
+        derivedStateOf { EmailValidation.validateEmail(email) }
+    }
+
+    val isPasswordValid by remember {
+        derivedStateOf { PasswordValidation.validatePassword(password) }
+    }
+
+    val icon = if (passwordVisibility) {
+        painterResource(R.drawable.ic_visibility_foreground)
+    } else painterResource(R.drawable.ic_visibility_off_foreground)
 
     Column(
         modifier = Modifier
@@ -200,7 +197,7 @@ fun LoginScreen(
 
                         OutlinedTextField(
                             value = email,
-                            onValueChange = { newText -> email = newText },
+                            onValueChange = { onAction(LoginAction.UpdateEmailField(it)) },
                             placeholder = { Text(text = "Email") },
                             leadingIcon = { Icon(Icons.Default.Email, contentDescription = "") },
                             keyboardOptions = KeyboardOptions(
@@ -240,7 +237,7 @@ fun LoginScreen(
 
                         OutlinedTextField(
                             value = password,
-                            onValueChange = { newText -> password = newText },
+                            onValueChange = { onAction(LoginAction.UpdatePasswordField(it)) },
                             placeholder = { Text(text = "Password") },
                             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "") },
                             keyboardOptions = KeyboardOptions(
@@ -302,10 +299,7 @@ fun LoginScreen(
                 ) {
                     Button(
                         modifier = Modifier.fillMaxWidth(0.8f),
-                        onClick = {
-//                            signInViewModel.login(state())
-//                            onButtonClick()
-                        },
+                        onClick = { onAction(LoginAction.SubmitLoginButton) },
                         shape = CircleShape.copy(CornerSize(10.dp)),
                         //enabled = TODO(check valid input field)
                     ) {
@@ -344,7 +338,7 @@ fun LoginScreen(
                         )
                     ) {
                         IconButton(
-                            onClick = { signInViewModel.signIn() },
+                            onClick = { onAction(LoginAction.SignInWithGoogle) },
                             modifier = Modifier.size(36.dp)
                         ) {
                             Icon(

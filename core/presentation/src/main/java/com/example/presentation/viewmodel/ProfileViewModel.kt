@@ -38,10 +38,11 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-    fun onAction(action: ProfileAction) {
+    fun onAction(action: ProfileAction){
         when(action){
             ProfileAction.SignOut -> {
-
+                signOut()
+                resetState()
             }
             ProfileAction.SubmitGetAllFriends -> TODO()
         }

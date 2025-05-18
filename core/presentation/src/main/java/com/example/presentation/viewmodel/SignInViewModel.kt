@@ -4,10 +4,14 @@ package com.example.presentation.viewmodel
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.base.action.LoginAction
 import com.example.base.action.profile.ProfileAction
+import com.example.base.event.LoginEvent
 import com.example.base.event.profile.ProfileEvent
+import com.example.base.state.LoginState
 import com.example.base.state.SignInResult
 import com.example.base.state.SignInState
 import com.example.base.state.UserData
@@ -29,96 +33,92 @@ class SignInViewModel @Inject constructor(
     @ApplicationContext val context: Context
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(SignInState())
+    private val _state:MutableStateFlow<LoginState> = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
 
-    private val _userdata = MutableStateFlow<UserData?>(null)
-    val userData = _userdata.asStateFlow()
 
     private val _signInIntentSender = MutableStateFlow<IntentSender?>(null)
     val signInIntentSender = _signInIntentSender.asStateFlow()
 
+    private val _event = MutableSharedFlow<LoginEvent>()
+    val event: SharedFlow<LoginEvent> = _event
 
-    private val _signInResult = MutableStateFlow<SignInResult?>(null)
-    val signInResult = _signInResult.asStateFlow()
-
-
-    private val _event = MutableSharedFlow<ProfileEvent>()
-    val event: SharedFlow<ProfileEvent> = _event
-
-
-    private fun onSignInResult(result: SignInResult) {
-        _state.update {
-            it.copy(
-                isSignInSuccessful = result.data != null,
-                signInError = result.errorMessage
-            )
-        }
-    }
-
-
-    fun signInWithIntent(intent: Intent) {
+    private fun signInWithIntent(intent: Intent) {
         viewModelScope.launch {
             val result = googleAuthUiClient.signInWithIntent(intent = intent)
             if (result.data != null) {
                 _signInResult.value = result
-                onSignInResult(result)
+                updateSignInResult(result)
             }
         }
     }
 
-    fun resetState() {
-        _state.update { SignInState() }
-    }
 
-    fun signIn() {
+    private fun signIn() {
         viewModelScope.launch {
             _signInIntentSender.value = googleAuthUiClient.signIn()
         }
     }
 
-    fun login(email: String, password: String) {
-        viewModelScope.launch {
-            googleAuthUiClient.login(email, password)
-        }
+    private fun login() {
+
+
+        TODO("валидация")
+
+        //useCase
+        resetState()
 
     }
 
-    fun register(email: String, password: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            _state.update {
-                it.copy(
-                    isSignInSuccessful = false,
-                    signInError = "какая-то фигня"
-                )
-            }
-            return
-        }
-        viewModelScope.launch {
-            // useCase.invoke()
+    private fun getSignedInUser() {
+        _state.update {
+            it.copy(data = googleAuthUiClient.getSignedInUser())
         }
     }
 
-    private fun signOut() {
-        viewModelScope.launch {
-            googleAuthUiClient.signOut()
-            _event.emit(ProfileEvent.NavigateToAuthPage)
-            _userdata.value = null
-        }
-    }
 
-    fun getSignedInUser() {
-        _userdata.value = googleAuthUiClient.getSignedInUser()
-    }
-
-
-    fun onAction(action: ProfileAction){
+    fun onAction(action: LoginAction){
         when(action){
-            ProfileAction.SignOut -> {
-                signOut()
-                resetState()
+            is LoginAction.SubmitLoginButton -> {
+                login()
             }
-            ProfileAction.SubmitGetAllFriends -> TODO()
+            is LoginAction.UpdateEmailField -> {
+                updateEmail(action.input)
+            }
+            is LoginAction.UpdatePasswordField -> {
+                updatePassword(action.input)
+            }
+
+            is LoginAction.SignInWithIntent -> {
+                signInWithIntent(action.intent)
+            }
+
+            is LoginAction.SignInWithGoogle -> {
+                signIn()
+            }
+        }
+
+    }
+
+    private fun updateEmail(input:String){
+        _state.update {
+            it.copy(email = input)
+        }
+    }
+    private fun updatePassword(input:String){
+        _state.update {
+            it.copy(password = input)
+        }
+    }
+    private fun resetState() {
+        _state.update { LoginState() }
+    }
+    private fun updateSignInResult(result: SignInResult) {
+        _state.update {
+            it.copy(
+                isSignInSuccessful = result.data != null,
+                signInError = result.errorMessage
+            )
         }
     }
 }
