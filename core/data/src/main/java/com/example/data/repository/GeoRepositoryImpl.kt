@@ -12,8 +12,13 @@ class GeoRepositoryImpl @Inject constructor(
     override suspend fun getActualGeoData(geocodeData:String): ActualGeoLocation {
         val response = geoService.fetchGeoData(geocode = geocodeData)
 
-        val text = response.response.GeoObjectCollection.featureMember.get(0).GeoObject.metaDataProperty.GeocoderMetaData.text
+        val listFeature = response.response.GeoObjectCollection.featureMember
 
+
+        var text = ""
+        if(listFeature.isNotEmpty()){
+            text = listFeature[0].GeoObject.metaDataProperty.GeocoderMetaData.text
+        }
         return ActualGeoLocation(text = text)
     }
 }

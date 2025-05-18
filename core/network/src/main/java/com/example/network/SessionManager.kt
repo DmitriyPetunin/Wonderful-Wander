@@ -13,16 +13,14 @@ class SessionManager(
     private var sharedPreferences =
         context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
 
-    // Method to check if the access token has expired
     fun isAccessTokenExpired(): Boolean {
         val currentDate = Date()
 
         val token = getAccessToken()
-        val fifteenMinutesInMillis = TimeUnit.MINUTES.toMillis(15)
 
         val accessTokenExpirationTime = extractTokenExpiration(token)
 
-        return accessTokenExpirationTime != null && accessTokenExpirationTime.time - currentDate.time >= fifteenMinutesInMillis
+        return accessTokenExpirationTime != null && accessTokenExpirationTime.time - currentDate.time >= FIFTEEN_MINUTES
 
     }
 
@@ -58,10 +56,12 @@ class SessionManager(
     }
 
     companion object{
+        const val FIFTEEN_MINUTES = 15 * 60 * 1000L
         const val SHARED_PREFS_NAME = "shared_prefs_name"
         const val ACCESS_TOKEN = "access_token"
         const val REFRESH_TOKEN = "refresh_token"
         const val DEFAULT_NAME_ACCESS_TOKEN = "default_access"
         const val DEFAULT_NAME_REFRESH_TOKEN = "default_refresh"
     }
+
 }

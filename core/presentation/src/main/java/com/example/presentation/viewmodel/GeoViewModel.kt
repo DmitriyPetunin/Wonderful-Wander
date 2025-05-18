@@ -2,6 +2,7 @@ package com.example.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.base.event.GeoUiAction
 import com.example.base.event.GeoUiEvent
 import com.example.base.state.GeoState
 import com.example.presentation.usecase.GetActualGeoDataUseCase
@@ -21,11 +22,11 @@ class GeoViewModel @Inject constructor(
     private val _geoState = MutableStateFlow(GeoState())
     val geoState = _geoState.asStateFlow()
 
-    fun onEvent(event: GeoUiEvent){
-        when(event){
-            is GeoUiEvent.InteractionOne -> {}
-            is GeoUiEvent.InteractionTwo -> {
-                getText(event.input)
+    fun onAction(action: GeoUiAction){
+        when(action){
+            is GeoUiAction.InteractionOne -> {}
+            is GeoUiAction.InteractionTwo -> {
+                getText(action.input)
             }
         }
     }

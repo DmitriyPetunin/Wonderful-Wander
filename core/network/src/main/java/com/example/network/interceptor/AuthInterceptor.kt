@@ -6,6 +6,7 @@ import com.example.network.service.user.UserService
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import okio.IOException
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
@@ -20,13 +21,21 @@ class AuthInterceptor @Inject constructor(
         if (accessToken != SessionManager.DEFAULT_NAME_ACCESS_TOKEN && sessionManager.isAccessTokenExpired()) {
             val refreshToken = sessionManager.getRefreshToken()
 
+
+
             // Make the token refresh request
             val refreshedToken = runBlocking {
-                val response = authService.refreshAccessToken(requestToken = refreshToken)
-                // Update the refreshed access token and its expiration time in the session
-                sessionManager.saveAccessToken(response.accessToken)
-                sessionManager.saveRefreshToken(response.refreshToken)
-                response.accessToken
+                try {
+                    val response = authService.refreshAccessToken(requestToken = refreshToken)
+
+                    // Update the refreshed access token and its expiration time in the session
+                    sessionManager.saveAccessToken(response.accessToken)
+                    sessionManager.saveRefreshToken(response.refreshToken)
+                    response.accessToken
+                }catch (e: Exception){
+                    e.printStackTrace()
+                    throw RuntimeException(e.message)
+                }
             }
 
             if (refreshToken != SessionManager.DEFAULT_NAME_REFRESH_TOKEN) {
