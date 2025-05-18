@@ -23,11 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.base.event.GeoUiAction
+import com.example.base.action.GeoAction
 import com.example.base.state.GeoState
 import com.example.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
@@ -39,25 +38,24 @@ import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+
 @Composable
 fun MapScreenRoute(
     geoViewModel: GeoViewModel = hiltViewModel()
-){
+) {
     val mapScreenState by geoViewModel.geoState.collectAsState()
 
-    MapScreen(state = mapScreenState,geoViewModel::onAction)
+    MapScreen(state = mapScreenState, geoViewModel::onAction)
 }
 
 @Composable
 fun MapScreen(
     state: GeoState,
-    onAction: (GeoUiAction) -> Unit
+    onAction: (GeoAction) -> Unit
 ) {
     val mapView = remember { MutableStateFlow<MapView?>(null) }
 
-    val context = LocalContext.current
-
-    var currentCenter by remember { mutableStateOf(Point(55.78874, 49.12214)) } // Тукая
+    val currentCenter = state.point
 
     var counterState by remember { mutableStateOf(0) }
 
@@ -76,7 +74,7 @@ fun MapScreen(
 
                 mapView.mapWindow.map.move(
                     CameraPosition(
-                        currentCenter, ZOOM, AZIMUTH, TILT
+                        Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
                     ), Animation(Animation.Type.SMOOTH, 1.5f), null
                 )
                 //Log.d("Test-Tag","совершили переход в точку ${location.value.latitude} ${location.value.longitude}")
@@ -90,7 +88,12 @@ fun MapScreen(
                         isFinished: Boolean
                     ) {
                         if (isFinished) {
-                            currentCenter = cameraPosition.target
+                            onAction(
+                                GeoAction.UpdateCurrentCenter(
+                                    longitude = cameraPosition.target.longitude,
+                                    latitude = cameraPosition.target.latitude
+                                )
+                            )
                             Log.d(
                                 "TEST-TAG",
                                 " ${currentCenter.latitude}, ${currentCenter.longitude}"
@@ -115,7 +118,14 @@ fun MapScreen(
             horizontalAlignment = Alignment.End,
         ) {
             Button(
-                onClick = { mapView.value?.let { changeZoomByStep(mapView = it, value = ZOOM_STEP) } },
+                onClick = {
+                    mapView.value?.let {
+                        changeZoomByStep(
+                            mapView = it,
+                            value = ZOOM_STEP
+                        )
+                    }
+                },
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -130,7 +140,14 @@ fun MapScreen(
             }
 
             Button(
-                onClick = { mapView.value?.let { changeZoomByStep(mapView = it, value = -ZOOM_STEP) } },
+                onClick = {
+                    mapView.value?.let {
+                        changeZoomByStep(
+                            mapView = it,
+                            value = -ZOOM_STEP
+                        )
+                    }
+                },
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -158,9 +175,12 @@ fun MapScreen(
         val newCenter = currentCenter
 
         Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
-
-        onAction(GeoUiAction.InteractionTwo(input = "${newCenter.longitude},${newCenter.latitude}"))
-
+        onAction(
+            GeoAction.UpdateCurrentCenter(
+                latitude = newCenter.latitude,
+                longitude = newCenter.longitude
+            )
+        )
     }
 }
 

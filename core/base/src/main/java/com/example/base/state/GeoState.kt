@@ -1,6 +1,12 @@
 package com.example.base.state
 
 
-data class GeoState (
-    val text:String = "Площадь Тукая"
+data class GeoState(
+    val text: String = "Площадь Тукая",
+    val point: Point = Point(latitude = 55.78874, longitude = 49.12214),
+)
+
+data class Point(
+    val latitude: Double,
+    val longitude: Double,
 )
