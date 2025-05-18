@@ -15,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.navigation.ScreenBottomNav
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreen
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreenRoute
 import com.example.navigation.Screen
 import com.example.presentation.viewmodel.SignInViewModel
 
@@ -30,7 +33,6 @@ import com.example.presentation.viewmodel.SignInViewModel
 fun BottomNavScreen(
     navController: NavHostController,
     startRoute: String = ScreenBottomNav.MapScreen.route,
-    signInViewModel: SignInViewModel
 ) {
 
     val bottomBarNavController = rememberNavController()
@@ -49,21 +51,21 @@ fun BottomNavScreen(
             startDestination = startRoute,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(ScreenBottomNav.MapScreen.route) { MapScreen() }
+            composable(ScreenBottomNav.MapScreen.route) { MapScreenRoute() }
 
             composable(ScreenBottomNav.PhotosScreen.route) { PhotosScreen() }
 
             composable(ScreenBottomNav.ProfileScreen.route) {
-                ProfileScreen(
-                    onButtonClick = {
-                        navController.navigate(
-                            Screen.AuthScreen.route
-                        )
-                    }, signInViewModel = signInViewModel
-                )
+                ProfileScreenRoute(navigateToAuthScreen = {navigateToAuthScreen(controller = navController)})
             }
         }
 
+    }
+}
+
+private fun navigateToAuthScreen(controller: NavController) {
+    controller.navigate(Screen.AuthScreen.route) {
+        popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
     }
 }
 
