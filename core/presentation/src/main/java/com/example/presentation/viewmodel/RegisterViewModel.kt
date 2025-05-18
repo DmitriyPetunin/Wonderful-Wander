@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase
-):ViewModel() {
+) : ViewModel() {
 
     private val _state: MutableStateFlow<RegistrationState> = MutableStateFlow(RegistrationState())
     val state = _state.asStateFlow()
@@ -29,43 +30,67 @@ class RegisterViewModel @Inject constructor(
     val event: SharedFlow<RegistrationEvent> = _event
 
 
-    fun updateState(param: RegisterUserParam){
-        _state.value = RegistrationState(
-            username = param.username,
-            email = param.email,
-            password = param.password,
-            firstName = param.firstName,
-            lastName = param.lastName
-        )
+    fun onAction(action: RegistrationAction) {
+        when (action) {
+            RegistrationAction.SubmitRegistration -> {
+                register()
+            }
+
+            is RegistrationAction.UpdateCPasswordField -> {
+                updateCPasswordState(action.input)
+            }
+
+            is RegistrationAction.UpdateEmailField -> {
+                updateEmailState(action.input)
+            }
+            is RegistrationAction.UpdateFirstNameField -> {
+                updateFirstNameState(action.input)
+            }
+            is RegistrationAction.UpdateLastNameField -> {
+                updateLastNameState(action.input)
+            }
+            is RegistrationAction.UpdatePasswordField -> {
+                updatePasswordState(action.input)
+            }
+            is RegistrationAction.UpdateUserNameField -> {
+                updateUserNameState(action.input)
+            }
+        }
     }
 
     private fun register() {
-        _state.value = _state.value.copy(isLoading = true)
+        _state.update {
+            it.copy(isLoading = true)
+        }
 
         viewModelScope.launch {
             val result = runCatching {
-                registerUseCase.invoke(RegisterUserParam(
-                    email = _state.value.email,
-                    username = _state.value.username,
-                    password = _state.value.password,
-                    confirmPassword = _state.value.password,
-                    firstName = _state.value.firstName,
-                    lastName = _state.value.lastName
-                ))
+                registerUseCase.invoke(
+                    RegisterUserParam(
+                        email = _state.value.email,
+                        username = _state.value.username,
+                        password = _state.value.password,
+                        confirmPassword = _state.value.password,
+                        firstName = _state.value.firstName,
+                        lastName = _state.value.lastName
+                    )
+                )
             }
 
             _state.value = result.fold(
                 onSuccess = { resultRegister ->
-                    when(resultRegister.status) {
+                    when (resultRegister.status) {
                         "success" -> {
-                            _event.tryEmit(RegistrationEvent.NavigateToMapScreen)
+                            _event.emit(RegistrationEvent.NavigateToMapScreen)
                             RegistrationState(isSuccess = true)
                         }
 
-                        else -> {RegistrationState(isSuccess = false)}
+                        else -> {
+                            RegistrationState(isSuccess = false)
+                        }
                     }
                 },
-                onFailure = {exception ->
+                onFailure = { exception ->
                     when (exception) {
 
                         is IOException -> {
@@ -85,11 +110,39 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun onAction(action: RegistrationAction){
-        when(action){
-            RegistrationAction.SubmitRegistration -> {
-                register()
-            }
+    private fun updateEmailState(input: String) {
+        _state.update {
+            it.copy(email = input)
+        }
+    }
+
+    private fun updatePasswordState(input: String) {
+        _state.update {
+            it.copy(password = input)
+        }
+    }
+
+    private fun updateCPasswordState(input: String) {
+        _state.update {
+            it.copy(cpassword = input)
+        }
+    }
+
+    private fun updateUserNameState(input: String) {
+        _state.update {
+            it.copy(username = input)
+        }
+    }
+
+    private fun updateFirstNameState(input: String) {
+        _state.update {
+            it.copy(firstName = input)
+        }
+    }
+
+    private fun updateLastNameState(input: String) {
+        _state.update {
+            it.copy(lastName = input)
         }
     }
 }

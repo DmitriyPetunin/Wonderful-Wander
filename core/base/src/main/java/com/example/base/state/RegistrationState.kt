@@ -4,6 +4,7 @@ data class RegistrationState(
 
     val username: String = "",
     val password: String = "",
+    val cpassword: String = "",
     val email: String = "",
     val firstName: String = "",
     val lastName: String = "",

@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.practise.wonderfulwander.R
 import com.example.base.util.validation.EmailValidation
@@ -56,12 +57,18 @@ import com.example.base.util.validation.PasswordValidation
 import com.example.navigation.Screen
 import com.example.presentation.viewmodel.SignInViewModel
 
+@Composable
+internal fun LoginScreenRoute(
+    signInViewModel: SignInViewModel = viewModel(),
+){
+
+
+}
 
 @Composable
 fun LoginScreen(
     signInViewModel: SignInViewModel,
     onNavigateToProfile: () -> Unit,
-    onButtonClick: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -69,6 +76,7 @@ fun LoginScreen(
     var passwordVisibility by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+
     val state by signInViewModel.state.collectAsState()
     val user by signInViewModel.userData.collectAsState()
 

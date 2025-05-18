@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,32 +42,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.practise.wonderfulwander.R
 import com.example.base.action.register.RegistrationAction
 import com.example.base.event.register.RegistrationEvent
 import com.example.base.model.user.RegisterUserParam
+import com.example.base.state.RegistrationState
 import com.example.presentation.viewmodel.RegisterViewModel
 
+
+
 @Composable
-fun RegistrationScreen(
+fun RegistrationScreenRoute(
     onButtonClick: () -> Unit,
-    registerViewModel: RegisterViewModel
-) {
+    registerViewModel: RegisterViewModel = hiltViewModel()
+){
+
     val context = LocalContext.current
 
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var cpassword by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var passwordVisibility by remember { mutableStateOf(false) }
+    val state by registerViewModel.state.collectAsState()
 
-
-    val icon = if (passwordVisibility) {
-        painterResource(R.drawable.ic_visibility_foreground)
-    } else painterResource(R.drawable.ic_visibility_off_foreground)
 
     LaunchedEffect(Unit) {
         registerViewModel.event.collect { event ->
@@ -80,6 +77,29 @@ fun RegistrationScreen(
             }
         }
     }
+
+    RegistrationScreen(state = state, registerViewModel::onAction)
+}
+
+
+@Composable
+fun RegistrationScreen(
+    state: RegistrationState,
+    onAction: (RegistrationAction) -> Unit
+) {
+
+    val username = state.username
+    val email = state.email
+    val password = state.password
+    val cpassword = state.cpassword
+    val firstName = state.firstName
+    val lastName = state.lastName
+    var passwordVisibility by remember { mutableStateOf(false) }
+
+
+    val icon = if (passwordVisibility) {
+        painterResource(R.drawable.ic_visibility_foreground)
+    } else painterResource(R.drawable.ic_visibility_off_foreground)
 
     Column(
         modifier = Modifier
@@ -123,7 +143,7 @@ fun RegistrationScreen(
                     )
                     OutlinedTextField(
                         value = username,
-                        onValueChange = { newText -> username = newText },
+                        onValueChange = { onAction(RegistrationAction.UpdateUserNameField(it)) },
                         placeholder = { Text(text = "Username") },
                         leadingIcon = {
                             Icon(
@@ -156,7 +176,7 @@ fun RegistrationScreen(
 
                     OutlinedTextField(
                         value = email,
-                        onValueChange = { newText -> email = newText },
+                        onValueChange = { onAction(RegistrationAction.UpdateEmailField(it)) },
                         placeholder = { Text(text = "Email") },
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = "") },
                         keyboardOptions = KeyboardOptions(
@@ -187,7 +207,7 @@ fun RegistrationScreen(
 
                     OutlinedTextField(
                         value = password,
-                        onValueChange = { newText -> password = newText },
+                        onValueChange = { onAction(RegistrationAction.UpdatePasswordField(it)) },
                         placeholder = { Text(text = "Password") },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "") },
                         keyboardOptions = KeyboardOptions(
@@ -219,7 +239,7 @@ fun RegistrationScreen(
 
                     OutlinedTextField(
                         value = cpassword,
-                        onValueChange = { newText -> cpassword = newText },
+                        onValueChange = { onAction(RegistrationAction.UpdateCPasswordField(it)) },
                         placeholder = { Text(text = "Password") },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "") },
                         keyboardOptions = KeyboardOptions(
@@ -249,8 +269,8 @@ fun RegistrationScreen(
                     )
                     OutlinedTextField(
                         value = firstName,
-                        onValueChange = { newText -> firstName = newText },
-                        placeholder = { Text(text = "Username") },
+                        onValueChange = { onAction(RegistrationAction.UpdateFirstNameField(it)) },
+                        placeholder = { Text(text = "FirstName") },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.AccountCircle,
@@ -280,8 +300,8 @@ fun RegistrationScreen(
                     )
                     OutlinedTextField(
                         value = lastName,
-                        onValueChange = { newText -> lastName = newText },
-                        placeholder = { Text(text = "Username") },
+                        onValueChange = { onAction(RegistrationAction.UpdateLastNameField(it)) },
+                        placeholder = { Text(text = "SecondName") },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.AccountCircle,
@@ -304,19 +324,7 @@ fun RegistrationScreen(
                         .fillMaxWidth(),
                 ) {
                     Button(
-                        onClick = {
-                            registerViewModel.updateState(
-                                RegisterUserParam(
-                                    username = username,
-                                    password = password,
-                                    confirmPassword = cpassword,
-                                    email = email,
-                                    firstName = firstName,
-                                    lastName = lastName,
-                                )
-                            )
-                            registerViewModel.onAction(RegistrationAction.SubmitRegistration)
-                        },
+                        onClick = { onAction(RegistrationAction.SubmitRegistration) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 48.dp),

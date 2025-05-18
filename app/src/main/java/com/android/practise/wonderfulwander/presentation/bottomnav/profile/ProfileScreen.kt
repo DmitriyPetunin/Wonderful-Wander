@@ -25,39 +25,54 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.base.action.profile.ProfileAction
 import com.example.base.event.profile.ProfileEvent
+import com.example.base.state.ProfileState
 import com.example.navigation.Screen
+import com.example.presentation.viewmodel.ProfileViewModel
 import com.example.presentation.viewmodel.SignInViewModel
 
 @Composable
-fun ProfileScreen(
-    signInViewModel: SignInViewModel,
-    onButtonClick: () -> Unit
-) {
+fun ProfileScreenRoute(
+    navigateToAuthScreen: () -> Unit,
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+){
 
-    val userData by signInViewModel.userData.collectAsState()
+    val state by profileViewModel.state.collectAsState()
 
     val context = LocalContext.current
 
 
     LaunchedEffect(Unit) {
-        signInViewModel.event.collect { event ->
+        profileViewModel.getSignedInUser()
+    }
+
+    LaunchedEffect(Unit) {
+        profileViewModel.event.collect { event ->
             when(event){
                 is ProfileEvent.NavigateToFriendsPage -> TODO("navigate to FriendsPage")
                 is ProfileEvent.NavigateToAuthPage -> {
-                    onButtonClick()
+                    navigateToAuthScreen()
                     Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    LaunchedEffect(Unit) {
-        signInViewModel.getSignedInUser()
-    }
+    ProfileScreen(state = state, profileViewModel::onAction)
+}
+
+@Composable
+fun ProfileScreen(
+    state: ProfileState,
+    onAction: (ProfileAction) -> Unit
+) {
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -72,9 +87,9 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.Start),
             style = MaterialTheme.typography.displayLarge
         )
-        if (userData?.profilePictureUrl != null) {
+        if (state?.profilePictureUrl != null) {
             AsyncImage(
-                model = userData?.profilePictureUrl,
+                model = state?.profilePictureUrl,
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(150.dp)
@@ -83,9 +98,9 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if (userData?.username != null) {
+        if (state?.username != null) {
             Text(
-                text = userData?.username!!,
+                text = state?.username!!,
                 textAlign = TextAlign.Center,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.SemiBold
@@ -93,12 +108,12 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
         Button(onClick = {
-            signInViewModel.onAction(ProfileAction.SignOut)
+            onAction(ProfileAction.SignOut)
         }) {
             Text(text = "Sign out")
         }
         Button(onClick = {
-            signInViewModel.onAction(ProfileAction.SubmitGetAllFriends)
+            onAction(ProfileAction.SubmitGetAllFriends)
         }) {
             Text(text = "Получить список друзей")
         }
