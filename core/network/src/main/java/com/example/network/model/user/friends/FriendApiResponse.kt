@@ -1,9 +1,4 @@
 package com.example.network.model.user.friends
-
-
-
-
-
 data class FriendApiResponse(
     val listOfFriends:List<FriendApi>?,
     val timestamp:String?,

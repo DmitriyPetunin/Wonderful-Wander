@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wonderful Wander</string>
+    <string name="photosScreen">Фотографии</string>
+    <string name="web_client_id">440843948660-g0oln4bpo40q78o7e4q6a6f8j7voja60.apps.googleusercontent.com</string>
+
+    <string name="validation_email_and_password">Поля email и пароль не могут быть пустыми</string>
+</resources>
