@@ -5,9 +5,9 @@ import com.example.domain.repository.UserRepository
 import com.example.presentation.usecase.GetAllFriendsUseCase
 
 class GetAllFriendsUseCaseImpl(
-    val userRepository: UserRepository
+    private val userRepository: UserRepository
 ): GetAllFriendsUseCase {
-    override suspend fun invoke(): List<Friend> {
+    override suspend fun invoke(): Result<List<Friend>> {
         return userRepository.getAllFriends()
     }
 }
