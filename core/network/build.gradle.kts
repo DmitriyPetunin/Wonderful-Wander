@@ -47,6 +47,9 @@ android {
 
 dependencies {
 
+    //Core 
+    implementation(project(path =":core:base"))
+
     implementation(libs.bundles.network.deps)
 
     implementation("com.auth0.android:jwtdecode:2.0.2")

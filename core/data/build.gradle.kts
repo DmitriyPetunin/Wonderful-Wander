@@ -49,6 +49,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+
+    implementation(libs.bundles.network.deps)
+
     //Inject
     implementation(libs.javax.inject)
 

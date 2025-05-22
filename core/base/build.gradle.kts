@@ -34,10 +34,9 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    //Inject
+    implementation(libs.javax.inject)
+
+    implementation("com.auth0.android:jwtdecode:2.0.2")
+
 }
