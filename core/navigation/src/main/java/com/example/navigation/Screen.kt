@@ -1,10 +1,15 @@
 package com.example.navigation
 
 sealed class Screen(
-    val route:String
+    val route: String
 ) {
-    object AuthScreen: Screen("authScreen")
-    object WalkScreen: Screen("walkScreen")
+    data object AuthScreen : Screen("authScreen")
+    data object WalkScreen : Screen("walkScreen")
 
-    object BottomNavScreen: Screen(route = "bottomNavScreen")
+    data object RegisterScreen : Screen("registerScreen")
+    data object UpdateProfileInfoScreen : Screen("updateProfileInfoScreen")
+
+    data object FriendsScreen: Screen("friendsScreen")
+
+    data object BottomNavScreen : Screen(route = "bottomNavScreen")
 }

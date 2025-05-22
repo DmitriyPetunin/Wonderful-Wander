@@ -51,6 +51,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.practise.wonderfulwander.R
@@ -66,8 +67,8 @@ import kotlinx.coroutines.flow.collect
 
 @Composable
 fun LoginScreenRoute(
-    signInViewModel: SignInViewModel = viewModel(),
-    onNavigateToProfile: () -> Unit,
+    signInViewModel: SignInViewModel = hiltViewModel(),
+    navigateToProfile: () -> Unit,
 ){
 
     val loginState by signInViewModel.state.collectAsState()
@@ -77,7 +78,7 @@ fun LoginScreenRoute(
     val context = LocalContext.current
 
 //    LaunchedEffect(Unit) {
-//        signInViewModel.getSignedInUser()
+//        navigateToProfile()
 //    }
 
     LaunchedEffect(Unit) {
@@ -89,11 +90,13 @@ fun LoginScreenRoute(
                     }
                 }
                 LoginEvent.SuccessLogin -> {
+                    navigateToProfile()
                     Toast.makeText(context, "Sign in successful", Toast.LENGTH_LONG).show()
-
-                    onNavigateToProfile()
                 }
-                LoginEvent.UserExist -> TODO()
+                LoginEvent.UserExist -> {
+                    navigateToProfile()
+                    Toast.makeText(context, "UserExist", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -126,17 +129,12 @@ fun LoginScreen(
     onAction: (LoginAction) -> Unit
 ) {
 
-    var email = state.email
-    var password = state.password
+    val email = state.email
+    val password = state.password
+    val supportingTextEmail = state.supportingTextEmail
+    val supportingTextPassword = state.supportingTextPassword
+
     var passwordVisibility by remember { mutableStateOf(false) }
-
-    val isEmailValid by remember {
-        derivedStateOf { EmailValidation.validateEmail(email) }
-    }
-
-    val isPasswordValid by remember {
-        derivedStateOf { PasswordValidation.validatePassword(password) }
-    }
 
     val icon = if (passwordVisibility) {
         painterResource(R.drawable.ic_visibility_foreground)
@@ -212,12 +210,7 @@ fun LoginScreen(
                                 bottomEnd = CornerSize(2.dp)
                             ),
                             supportingText = {
-                                isEmailValid?.let {
-                                    Text(
-                                        text = it,
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                }
+                                Text(text = supportingTextEmail.orEmpty())
                             },
                             singleLine = true
                         )
@@ -261,12 +254,7 @@ fun LoginScreen(
                                 bottomEnd = CornerSize(2.dp)
                             ),
                             supportingText = {
-                                isPasswordValid?.let {
-                                    Text(
-                                        text = it,
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                }
+                                Text(text = supportingTextPassword.orEmpty())
                             },
                             singleLine = true
                         )
@@ -276,7 +264,7 @@ fun LoginScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.End
                     ) {
                         Text(
                             text = "Forgot Password ?",
@@ -301,7 +289,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(0.8f),
                         onClick = { onAction(LoginAction.SubmitLoginButton) },
                         shape = CircleShape.copy(CornerSize(10.dp)),
-                        //enabled = TODO(check valid input field)
+                        enabled = state.inputFieldsIsValid
                     ) {
                         Text(
                             text = "login",
@@ -347,17 +335,6 @@ fun LoginScreen(
                                 tint = Color.Unspecified
                             )
                         }
-
-//                        IconButton(
-//                            onClick = {},
-//                            modifier = Modifier.size(36.dp)
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(R.drawable.vk_icon),
-//                                contentDescription = "vk",
-//                                tint = Color.Unspecified
-//                            )
-//                        }
                     }
                 }
 

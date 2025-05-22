@@ -8,8 +8,8 @@ import javax.inject.Inject
 
 class LoginUseCaseImpl @Inject constructor(
     private val userRepository: UserRepository
-):LoginUseCase {
-    override suspend fun invoke(inputParam: LoginUserParam): LoginResponse {
+) : LoginUseCase {
+    override suspend fun invoke(inputParam: LoginUserParam): Result<LoginResponse> {
         return userRepository.login(inputParam)
     }
 }

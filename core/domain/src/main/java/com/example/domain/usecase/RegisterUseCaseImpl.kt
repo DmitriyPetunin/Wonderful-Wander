@@ -9,7 +9,7 @@ import javax.inject.Inject
 class RegisterUseCaseImpl @Inject constructor(
     private val userRepository: UserRepository
 ):RegisterUseCase {
-    override suspend fun invoke(inputParam: RegisterUserParam): RegisterResponse {
+    override suspend fun invoke(inputParam: RegisterUserParam): Result<RegisterResponse> {
         return userRepository.register(inputParam)
     }
 }

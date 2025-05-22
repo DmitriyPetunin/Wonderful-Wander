@@ -64,18 +64,16 @@ class RegisterViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val result = runCatching {
-                registerUseCase.invoke(
+            val result = registerUseCase.invoke(
                     RegisterUserParam(
-                        email = _state.value.email,
-                        username = _state.value.username,
-                        password = _state.value.password,
-                        confirmPassword = _state.value.password,
-                        firstName = _state.value.firstName,
-                        lastName = _state.value.lastName
+                        email = state.value.email,
+                        username = state.value.username,
+                        password = state.value.password,
+                        confirmPassword = state.value.password,
+                        firstName = state.value.firstName,
+                        lastName = state.value.lastName
                     )
                 )
-            }
 
             _state.value = result.fold(
                 onSuccess = { resultRegister ->

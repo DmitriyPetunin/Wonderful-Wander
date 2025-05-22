@@ -1,29 +1,149 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.example.base.model.user.LoginResponse
 import com.example.base.model.user.LoginUserParam
 import com.example.base.model.user.RegisterResponse
 import com.example.base.model.user.RegisterUserParam
 import com.example.base.model.user.friends.Friend
 import com.example.domain.repository.UserRepository
-import com.example.network.SessionManager
+import com.example.base.SessionManager
+import com.example.base.enums.PhotosVisibility
+import com.example.base.enums.WalkVisibility
+import com.example.base.model.user.ProfileInfo
+import com.example.base.model.user.UpdateProfileParam
+import com.example.base.model.user.friends.UpdateProfileResult
+import com.example.data.mapper.FriendApiToFriendDomainMapper
+import com.example.data.mapper.ProfileResponseToProfileInfoMapper
+import com.example.network.model.user.login.req.LoginRequestParam
+import com.example.network.model.user.profile.req.UpdateProfileRequestParam
+import com.example.network.model.user.register.req.RegisterUserRequestParam
 import com.example.network.service.user.UserService
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userService: UserService,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val profileInfoMapper: ProfileResponseToProfileInfoMapper,
+    private val friendApiToFriendDomainMapper: FriendApiToFriendDomainMapper
 ): UserRepository {
-    override suspend fun login(inputParam: LoginUserParam): LoginResponse {
-        TODO("Not yet implemented")
+
+    override suspend fun login(inputParam: LoginUserParam): Result<LoginResponse> {
+        return try {
+            val response = userService.login(LoginRequestParam(inputParam.email,inputParam.password))
+
+            if(response.isSuccessful){
+                response.body()?.let {
+                    it.accessToken?.let { sessionManager.saveAccessToken(it) }
+                    it.refreshToken?.let { sessionManager.saveRefreshToken(it) }
+                }
+                Result.success(LoginResponse(status = "success"))
+            } else {
+                Result.failure(Exception("Failed to delete profile: ${response.code()}"))
+            }
+        } catch (e:Exception){
+            Result.failure(e)
+        }
     }
 
-    override suspend fun register(inputParam: RegisterUserParam): RegisterResponse {
-        TODO("Not yet implemented")
+    override suspend fun register(inputParam: RegisterUserParam): Result<RegisterResponse> {
+        return try {
+            val response = userService.register(
+                RegisterUserRequestParam(
+                    username = inputParam.username,
+                    password = inputParam.password,
+                    cpassword = inputParam.confirmPassword,
+                    email = inputParam.email,
+                    firstname = inputParam.firstName,
+                    lastname = inputParam.lastName,
+                )
+            )
+
+            if(response.isSuccessful){
+                Result.success(RegisterResponse(status = "success"))
+            } else{
+                Result.failure(Exception("Failed register : ${response.code()}"))
+            }
+        }catch (e:Exception){
+            Result.failure(e)
+        }
     }
 
-    override suspend fun getAllFriends(): List<Friend> {
-        //return userService.getFriends(id = "")
-        TODO("add mapper and get userId from manager")
+    override suspend fun getProfileInfo(): Result<ProfileInfo> {
+        return try {
+            val response = userService.getProfile()
+
+            if (response.isSuccessful){
+                response.body()?.userId?.let { sessionManager.saveUserId(it) }
+                Result.success(profileInfoMapper.invoke(response.body()))
+            } else {
+                Result.failure(Exception("Failed to delete profile: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateProfileInfo(inputParam: UpdateProfileParam): Result<UpdateProfileResult> {
+
+        return try {
+            val response = userService.updateProfile(
+                UpdateProfileRequestParam(
+                    email = inputParam.email,
+                    firstname = inputParam.firstName,
+                    lastname = inputParam.lastName,
+                    bio = inputParam.bio,
+                    photoVisibility = PhotosVisibility.toStringValue(inputParam.photoVisibility),
+                    walkVisibility = WalkVisibility.toStringValue(inputParam.walkVisibility)
+                )
+            )
+
+            if (response.isSuccessful) {
+                Result.success(UpdateProfileResult(status = "success"))
+            } else {
+                Result.failure(Exception("Failed update profile info: ${response.code()}"))
+            }
+        }catch (e:Exception){
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteProfile(): Result<Unit> {
+        return try {
+            val response = userService.deleteProfile()
+
+            if (response.isSuccessful) {
+                sessionManager.clearSession()
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Failed to delete profile: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Log.d("TEST-TAG", "Error while deleting profile")
+            Result.failure(e)
+        }
+    }
+
+
+    override suspend fun getAllFriends(): Result<List<Friend>> {
+        val userId = sessionManager.getUserId()
+
+        return try {
+            val response = userService.getFriends(id = userId)
+
+            if (response.isSuccessful){
+                Result.success(response.body()?.listOfFriends?.map {
+                    friendApiToFriendDomainMapper.invoke(it)
+                }?: emptyList()
+                )
+            } else{
+                Result.failure(Exception("Failed to get friends: ${response.code()}"))
+            }
+
+
+        } catch (e:Exception){
+            Log.d("TEST-TAG", "Error get friends for userId = ${userId}")
+            Result.failure(e)
+        }
     }
 }

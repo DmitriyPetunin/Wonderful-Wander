@@ -14,8 +14,4 @@ interface GoogleAuthUiClient {
     suspend fun signOut()
 
     fun getSignedInUser():UserData?
-
-    suspend fun login(email: String, password: String): SignInResult
-
-    suspend fun register(email: String, password: String)
 }
