@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation.bottomnav
+package com.android.practise.wonderfulwander.presentation.bottomnav.photos
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,8 +16,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.navigation.ScreenBottomNav
 import com.example.base.R as baseR
 
+
+@Composable
+fun PhotosScreenRoute(
+
+){
+    PhotosScreen()
+}
 
 @Composable
 fun PhotosScreen(

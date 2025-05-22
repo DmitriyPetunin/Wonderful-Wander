@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation.bottomnav
+package com.android.practise.wonderfulwander.presentation.bottomnav.map
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
