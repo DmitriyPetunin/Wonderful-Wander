@@ -1,16 +1,14 @@
 package com.example.network.interceptor
 
-import com.example.network.SessionManager
+import com.example.base.SessionManager
 import com.example.network.service.auth.AuthService
-import com.example.network.service.user.UserService
+import dagger.Lazy
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import okio.IOException
-import javax.inject.Inject
 
-class AuthInterceptor @Inject constructor(
-    private val authService: AuthService,
+class AuthInterceptor (
+    private val authService: Lazy<AuthService>,
     private val sessionManager: SessionManager
 ):Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -22,16 +20,16 @@ class AuthInterceptor @Inject constructor(
             val refreshToken = sessionManager.getRefreshToken()
 
 
-
             // Make the token refresh request
             val refreshedToken = runBlocking {
                 try {
-                    val response = authService.refreshAccessToken(requestToken = refreshToken)
+                    val response = authService.get().refreshAccessToken(requestToken = refreshToken)
 
-                    // Update the refreshed access token and its expiration time in the session
-                    sessionManager.saveAccessToken(response.accessToken)
-                    sessionManager.saveRefreshToken(response.refreshToken)
-                    response.accessToken
+                    if (response.isSuccessful){
+                        response.body()?.let { sessionManager.saveAccessToken(it.accessToken) }
+                        response.body()?.let { sessionManager.saveRefreshToken(it.refreshToken) }
+                    }
+                    sessionManager.getAccessToken()
                 }catch (e: Exception){
                     e.printStackTrace()
                     throw RuntimeException(e.message)

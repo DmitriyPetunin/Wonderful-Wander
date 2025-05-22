@@ -14,7 +14,8 @@ fun AppNavGraph(
     authScreen: @Composable () -> Unit,
     registerScreen: @Composable () -> Unit,
     walkScreen: @Composable () -> Unit,
-    bottomNavScreen: @Composable (String) -> Unit
+    bottomNavScreen: @Composable (String) -> Unit,
+    updateProfileScreen: @Composable () -> Unit
 ) {
     NavHost(
         navController = navHostController,
@@ -25,6 +26,12 @@ fun AppNavGraph(
         }
         composable(route = Screen.WalkScreen.route) {
             walkScreen()
+        }
+        composable(route = Screen.UpdateProfileInfoScreen.route) {
+            updateProfileScreen()
+        }
+        composable(route = Screen.RegisterScreen.route) {
+            registerScreen()
         }
 
         composable(

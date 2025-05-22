@@ -4,6 +4,7 @@ import android.content.Context
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClientImpl
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
@@ -25,13 +26,19 @@ object AppModule {
     @Singleton
     fun provideGoogleAuthUiClient(
         @ApplicationContext context: Context,
-        authFirebase: FirebaseAuth
+        authFirebase: FirebaseAuth,
+        signInClient: SignInClient
     ): GoogleAuthUiClient {
         return GoogleAuthUiClientImpl(
             context = context,
-            oneTapClient = Identity.getSignInClient(context),
+            oneTapClient = signInClient,
             auth = authFirebase
         )
+    }
+    @Provides
+    @Singleton
+    fun provideSignInClient(@ApplicationContext context: Context): SignInClient {
+        return Identity.getSignInClient(context)
     }
 
     @Provides

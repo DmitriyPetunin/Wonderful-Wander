@@ -15,18 +15,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.android.practise.wonderfulwander.presentation.bottomnav.map.MapScreenRoute
+import com.android.practise.wonderfulwander.presentation.bottomnav.photos.PhotosScreen
+import com.android.practise.wonderfulwander.presentation.bottomnav.photos.PhotosScreenRoute
 import com.example.navigation.ScreenBottomNav
-import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreen
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreenRoute
 import com.example.navigation.Screen
-import com.example.presentation.viewmodel.SignInViewModel
 
 
 @Composable
@@ -53,10 +53,15 @@ fun BottomNavScreen(
         ) {
             composable(ScreenBottomNav.MapScreen.route) { MapScreenRoute() }
 
-            composable(ScreenBottomNav.PhotosScreen.route) { PhotosScreen() }
+            composable(ScreenBottomNav.PhotosScreen.route) { PhotosScreenRoute() }
 
             composable(ScreenBottomNav.ProfileScreen.route) {
-                ProfileScreenRoute(navigateToAuthScreen = {navigateToAuthScreen(controller = navController)})
+                ProfileScreenRoute(
+                    navigateToAuthScreen = { navigateToAuthScreen(controller = navController) },
+                    navigateToFriendsScreen = {navigateToFriendsScreen(controller = navController)},
+                    navigateToUpdateScreen = { navigateToUpdateProfileInfoScreen(controller = navController) },
+                    navigateToRegisterScreen = {navigateToRegisterScreen(controller = navController)},
+                )
             }
         }
 
@@ -66,6 +71,24 @@ fun BottomNavScreen(
 private fun navigateToAuthScreen(controller: NavController) {
     controller.navigate(Screen.AuthScreen.route) {
         popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
+    }
+}
+
+private fun navigateToRegisterScreen(controller: NavController) {
+    controller.navigate(Screen.RegisterScreen.route) {
+        popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
+    }
+}
+
+private fun navigateToFriendsScreen(controller: NavController) {
+    controller.navigate(Screen.FriendsScreen.route) {
+        popUpTo(Screen.AuthScreen.route) { inclusive = true } //очистка стека навигации
+    }
+}
+
+private fun navigateToUpdateProfileInfoScreen(controller: NavController) {
+    controller.navigate(Screen.UpdateProfileInfoScreen.route) {
+        popUpTo(Screen.UpdateProfileInfoScreen.route) { inclusive = true } //очистка стека навигации
     }
 }
 
