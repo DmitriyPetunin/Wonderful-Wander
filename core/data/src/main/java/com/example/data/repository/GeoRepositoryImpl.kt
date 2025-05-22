@@ -9,16 +9,25 @@ class GeoRepositoryImpl @Inject constructor(
     private val geoService: GeoService
 ): GeoRepository {
 
-    override suspend fun getActualGeoData(geocodeData:String): ActualGeoLocation {
-        val response = geoService.fetchGeoData(geocode = geocodeData)
+    override suspend fun getActualGeoData(geocodeData:String): Result<ActualGeoLocation> {
+        return try {
+            val response = geoService.fetchGeoData(geocode = geocodeData)
 
-        val listFeature = response.response.GeoObjectCollection.featureMember
+            if (response.isSuccessful) {
+                val listFeature = response.body()?.response?.GeoObjectCollection?.featureMember
 
-
-        var text = ""
-        if(listFeature.isNotEmpty()){
-            text = listFeature[0].GeoObject.metaDataProperty.GeocoderMetaData.text
+                Result.success(listFeature?.let {
+                    if (it.isNotEmpty()) {
+                        ActualGeoLocation(text = it[0].GeoObject.metaDataProperty.GeocoderMetaData.text)
+                    } else {
+                        ActualGeoLocation("")
+                    }
+                }?: ActualGeoLocation(""))
+            } else {
+                Result.failure(Exception("Failed with code ${response.code()}"))
+            }
+        } catch (e:Exception){
+            Result.failure(e)
         }
-        return ActualGeoLocation(text = text)
     }
 }

@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GeoObjectCollectionResponse(
-    val response: Response
+    val response: GeoResponse
 )
 
 @Serializable
-data class Response(
+data class GeoResponse(
     val GeoObjectCollection: GeoObjectCollection
 )
 

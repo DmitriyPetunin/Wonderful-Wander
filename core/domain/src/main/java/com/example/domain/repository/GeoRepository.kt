@@ -4,5 +4,5 @@ import com.example.base.model.geo.ActualGeoLocation
 
 interface GeoRepository {
 
-    suspend fun getActualGeoData(geocodeData:String): ActualGeoLocation
+    suspend fun getActualGeoData(geocodeData:String): Result<ActualGeoLocation>
 }

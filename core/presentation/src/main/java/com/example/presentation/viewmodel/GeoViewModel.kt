@@ -1,5 +1,6 @@
 package com.example.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.GeoAction
@@ -43,9 +44,8 @@ class GeoViewModel @Inject constructor(
 //                param("endpoint", "v1/")
 //                param("geocode", string)
 //            }
-            val response = runCatching {
-                getActualGeoDataUseCase.invoke(geocodeString = "${geoState.value.point.longitude},${geoState.value.point.latitude}")
-            }
+            val response = getActualGeoDataUseCase.invoke(geocodeString = "${geoState.value.point.longitude},${geoState.value.point.latitude}")
+
 
             _geoState.update {
                 it.copy(
@@ -53,7 +53,8 @@ class GeoViewModel @Inject constructor(
                     onSuccess = {
                         it.text
                     },
-                    onFailure = {
+                    onFailure = { exception ->
+                        Log.d("TEST-TAG","ошибка при получении информации")
                         "ошибка при получении информации"
                     }
                 ))

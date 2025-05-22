@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetActualGeoDataUseCaseImpl @Inject constructor(
     private val geoRepository: GeoRepository
 ): GetActualGeoDataUseCase {
-    override suspend fun invoke(geocodeString:String): ActualGeoLocation {
+    override suspend fun invoke(geocodeString:String): Result<ActualGeoLocation> {
         return geoRepository.getActualGeoData(geocodeString)
     }
 }
