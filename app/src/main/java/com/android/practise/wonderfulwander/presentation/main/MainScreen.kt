@@ -8,6 +8,7 @@ import com.example.navigation.AppNavGraph
 import com.android.practise.wonderfulwander.presentation.WalkScreen
 import com.android.practise.wonderfulwander.presentation.WalkScreenRoute
 import com.android.practise.wonderfulwander.presentation.bottomnav.BottomNavScreen
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.UpdateProfileScreenRoute
 import com.android.practise.wonderfulwander.presentation.login.LoginScreen
 import com.android.practise.wonderfulwander.presentation.login.LoginScreenRoute
 import com.android.practise.wonderfulwander.presentation.registration.RegistrationScreen
@@ -25,7 +26,7 @@ fun MainScreen() {
         startDestination = Screen.AuthScreen.route,
         navHostController = navController,
         authScreen = {
-            LoginScreenRoute(onNavigateToProfile = { navigateToProfileScreen(navController) })
+            LoginScreenRoute(navigateToProfile = { navigateToProfileScreen(navController) })
         },
         bottomNavScreen = { startRoute ->
             BottomNavScreen(
@@ -34,7 +35,8 @@ fun MainScreen() {
             )
         },
         walkScreen = { WalkScreenRoute() },
-        registerScreen = { RegistrationScreenRoute(onButtonClick = { navigateToMapScreen(controller = navController) }) }
+        registerScreen = { RegistrationScreenRoute(onButtonClick = { navigateToMapScreen(controller = navController) }) },
+        updateProfileScreen = { UpdateProfileScreenRoute(navigateToProfile = {navigateToProfileScreen(controller = navController)}) }
     )
 }
 
