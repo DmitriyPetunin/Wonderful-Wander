@@ -1,5 +1,7 @@
 package com.example.network.di
 
+import android.content.Context
+import com.example.base.SessionManager
 import com.example.network.BuildConfig
 import com.example.network.interceptor.AuthInterceptor
 import com.example.network.interceptor.TokenInterceptor
@@ -7,9 +9,11 @@ import com.example.network.service.auth.AuthService
 import com.example.network.service.geo.GeoService
 import com.example.network.service.user.UserService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -17,7 +21,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -48,7 +51,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideAuthService(
-        @Named(ApiRetrofit)
+        @Named("AuthRetrofit")
         retrofit: Retrofit
     ): AuthService {
         return retrofit.create(AuthService::class.java)
@@ -65,11 +68,58 @@ class NetworkModule {
     @Provides
     @Singleton
     @Named(ApiClient)
-    fun provideApiClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideApiClient(
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient {
         return createOkHttpClient(authInterceptor)
     }
 
-    private fun createOkHttpClient(vararg interceptors:Interceptor):OkHttpClient{
+    @Provides
+    @Singleton
+    fun provideSessionManager(
+        @ApplicationContext context: Context
+    ):SessionManager = SessionManager(context = context)
+
+
+    @Provides
+    @Singleton
+    @Named("AuthOkHttpClient")  // Клиент без AuthInterceptor (для AuthService)
+    fun provideAuthOkHttpClient(): OkHttpClient {
+        return createOkHttpClient()  // Без AuthInterceptor!
+    }
+
+
+    @Provides
+    @Singleton
+    @Named("AuthRetrofit")  // Retrofit для AuthService (без цикла)
+    fun provideAuthRetrofit(
+        @Named("AuthOkHttpClient") client: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.API_BASE_URL)
+            .client(client)
+            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .build()
+    }
+
+
+
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(
+        sessionManager: SessionManager,
+        authService: Lazy<AuthService>
+    ) = AuthInterceptor(authService = authService, sessionManager = sessionManager)
+
+
+
+
+
+
+
+
+    private fun createOkHttpClient(vararg interceptors: Interceptor):OkHttpClient{
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
