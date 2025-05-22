@@ -34,31 +34,60 @@ import com.example.base.event.profile.ProfileEvent
 import com.example.base.state.ProfileState
 import com.example.navigation.Screen
 import com.example.presentation.viewmodel.ProfileViewModel
-import com.example.presentation.viewmodel.SignInViewModel
 
 @Composable
 fun ProfileScreenRoute(
     navigateToAuthScreen: () -> Unit,
+    navigateToRegisterScreen: () -> Unit,
+    navigateToFriendsScreen: () -> Unit,
+    navigateToUpdateScreen: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
-){
+) {
 
-    val state by profileViewModel.state.collectAsState()
+    val state by profileViewModel.stateProfile.collectAsState()
 
     val context = LocalContext.current
 
-
-    LaunchedEffect(Unit) {
-        profileViewModel.getSignedInUser()
-    }
+//    LaunchedEffect(Unit) {
+//        profileViewModel.getSignedInUser()
+//    }
 
     LaunchedEffect(Unit) {
         profileViewModel.event.collect { event ->
-            when(event){
-                is ProfileEvent.NavigateToFriendsPage -> TODO("navigate to FriendsPage")
+            when (event) {
+                is ProfileEvent.NavigateToFriendsPage -> {
+                    navigateToFriendsScreen()
+                    Toast.makeText(context, "NavigateToFriendsPage", Toast.LENGTH_SHORT).show()
+                }
+
                 is ProfileEvent.NavigateToAuthPage -> {
                     navigateToAuthScreen()
                     Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
                 }
+
+                is ProfileEvent.NavigateToSubscribersPage -> {
+
+                }
+
+                is ProfileEvent.NavigateToSubscriptionsPage -> {
+
+                }
+
+                is ProfileEvent.NavigateToUpdateScreenPage -> {
+                    navigateToUpdateScreen()
+                    Toast.makeText(context, "NavigateToUpdateScreenPage", Toast.LENGTH_SHORT).show()
+                }
+
+                is ProfileEvent.ShowError -> {
+                    navigateToAuthScreen()
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+
+                ProfileEvent.NavigateToRegisterPage -> {
+                    navigateToRegisterScreen()
+                    Toast.makeText(context, "NavigateToRegisterPage", Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
             }
         }
     }
@@ -71,8 +100,6 @@ fun ProfileScreen(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit
 ) {
-
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -87,9 +114,9 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.Start),
             style = MaterialTheme.typography.displayLarge
         )
-        if (state?.profilePictureUrl != null) {
+        if (state?.avatarUrl != null) {
             AsyncImage(
-                model = state?.profilePictureUrl,
+                model = state?.avatarUrl,
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(150.dp)
@@ -116,6 +143,26 @@ fun ProfileScreen(
             onAction(ProfileAction.SubmitGetAllFriends)
         }) {
             Text(text = "Получить список друзей")
+        }
+        Button(onClick = {
+            onAction(ProfileAction.SubmitGetAllSubscribers)
+        }) {
+            Text(text = "Получить список подписчиков")
+        }
+        Button(onClick = {
+            onAction(ProfileAction.SubmitGetAllSubscriptions)
+        }) {
+            Text(text = "Получить список подписок")
+        }
+        Button(onClick = {
+            onAction(ProfileAction.SubmitUpdateProfileInfo)
+        }) {
+            Text(text = "Изменить данные профиля")
+        }
+        Button(onClick = {
+            onAction(ProfileAction.SubmitDeleteProfile)
+        }) {
+            Text(text = "удалить аккаунт")
         }
     }
 }

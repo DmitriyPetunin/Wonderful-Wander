@@ -7,6 +7,6 @@ data class UpdateProfileRequestParam(
     val firstname:String,
     val lastname:String,
     val bio:String,
-    val photoVisibility:String,
-    val walkVisibility:String
+    val photoVisibility: String,
+    val walkVisibility: String
 )
