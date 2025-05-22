@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,8 +7,21 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
 
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+}
+
+val mapkitApiKey:String = loadMapkitApiKey()
+
+fun loadMapkitApiKey(): String {
+    val properties = Properties()
+    val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
+
+    localPropertiesFile.inputStream().use { stream ->
+        properties.load(stream)
+    }
+
+    return properties.getProperty("MAPKIT_API_KEY", "")
 }
 
 android {
@@ -24,6 +39,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "MAPKIT_API_KEY", "\"$mapkitApiKey\"")
     }
 
     buildTypes {
@@ -43,6 +60,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -57,9 +75,13 @@ android {
 
 dependencies {
 
-
-    implementation(project(":domain"))
-    implementation(project(":data"))
+    //Core
+    implementation(project(path = ":core:navigation"))
+    implementation(project(path = ":core:presentation"))
+    implementation(project(path = ":core:base"))
+    implementation(project(path = ":core:network"))
+    implementation(project(path = ":core:domain"))
+    implementation(project(path = ":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -80,27 +102,30 @@ dependencies {
 
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.android.gms:play-services-auth:20.4.1")
-
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.analytics)
+    implementation("com.google.android.gms:play-services-auth:20.4.1")
 
 
     //viewmodel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
     implementation ("androidx.navigation:navigation-compose:2.5.3")
-    implementation ("io.coil-kt:coil-compose:2.2.2")
+
+    //Coil
+    implementation ("io.coil-kt:coil-compose:2.4.0")
 
 
     //google font
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
-
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.56.1")
     ksp("com.google.dagger:hilt-android-compiler:2.56.1")
 
     implementation(libs.androidx.hilt.navigation.compose)
+
+    //Yandex Map
+    implementation (libs.maps.mobile)
 }

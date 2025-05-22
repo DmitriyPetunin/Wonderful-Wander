@@ -1,0 +1,58 @@
+package com.example.network.interceptor
+
+import com.example.base.SessionManager
+import com.example.network.service.auth.AuthService
+import dagger.Lazy
+import kotlinx.coroutines.runBlocking
+import okhttp3.Interceptor
+import okhttp3.Response
+
+class AuthInterceptor (
+    private val authService: Lazy<AuthService>,
+    private val sessionManager: SessionManager
+):Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+
+        val originalRequest = chain.request()
+        val accessToken = sessionManager.getAccessToken()
+
+        if (accessToken != SessionManager.DEFAULT_NAME_ACCESS_TOKEN && sessionManager.isAccessTokenExpired()) {
+            val refreshToken = sessionManager.getRefreshToken()
+
+
+            // Make the token refresh request
+            val refreshedToken = runBlocking {
+                try {
+                    val response = authService.get().refreshAccessToken(requestToken = refreshToken)
+
+                    if (response.isSuccessful){
+                        response.body()?.let { sessionManager.saveAccessToken(it.accessToken) }
+                        response.body()?.let { sessionManager.saveRefreshToken(it.refreshToken) }
+                    }
+                    sessionManager.getAccessToken()
+                }catch (e: Exception){
+                    e.printStackTrace()
+                    throw RuntimeException(e.message)
+                }
+            }
+
+            if (refreshToken != SessionManager.DEFAULT_NAME_REFRESH_TOKEN) {
+                // Create a new request with the refreshed access token
+                val newRequest = originalRequest.newBuilder()
+                    .header("Authorization", "Bearer $refreshedToken")
+                    .build()
+
+                // Retry the request with the new access token
+                return chain.proceed(newRequest)
+            }
+        }
+
+        // Add the access token to the request header
+        val authorizedRequest = originalRequest.newBuilder()
+            .header("Authorization", "Bearer $accessToken")
+            .build()
+
+        return chain.proceed(authorizedRequest)
+
+    }
+}
