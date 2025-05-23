@@ -1,23 +1,23 @@
 package com.example.domain.repository
 
-import com.example.base.model.user.LoginResponse
-import com.example.base.model.user.LoginUserParam
-import com.example.base.model.user.ProfileInfo
-import com.example.base.model.user.RegisterResponse
-import com.example.base.model.user.RegisterUserParam
-import com.example.base.model.user.UpdateProfileParam
+import com.example.base.model.user.login.LoginResult
+import com.example.base.model.user.login.LoginUserParam
+import com.example.base.model.user.register.RegisterResult
+import com.example.base.model.user.register.RegisterUserParam
+import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.base.model.user.friends.Friend
-import com.example.base.model.user.friends.UpdateProfileResult
+import com.example.base.model.user.profile.ProfileInfoResult
+import com.example.base.model.user.profile.UpdateProfileResult
 
 interface UserRepository {
 
-    suspend fun login(inputParam:LoginUserParam): Result<LoginResponse>
+    suspend fun login(inputParam: LoginUserParam): Result<LoginResult>
 
-    suspend fun register(inputParam: RegisterUserParam): Result<RegisterResponse>
+    suspend fun register(inputParam: RegisterUserParam): Result<RegisterResult>
 
     suspend fun getAllFriends(): Result<List<Friend>>
 
-    suspend fun getProfileInfo(): Result<ProfileInfo>
+    suspend fun getProfileInfo(): Result<ProfileInfoResult>
 
     suspend fun updateProfileInfo(inputParam: UpdateProfileParam): Result<UpdateProfileResult>
 

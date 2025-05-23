@@ -210,7 +210,10 @@ fun LoginScreen(
                                 bottomEnd = CornerSize(2.dp)
                             ),
                             supportingText = {
-                                Text(text = supportingTextEmail.orEmpty())
+                                Text(
+                                    text = supportingTextEmail.orEmpty(),
+                                    color = MaterialTheme.colorScheme.error,
+                                )
                             },
                             singleLine = true
                         )
@@ -254,7 +257,10 @@ fun LoginScreen(
                                 bottomEnd = CornerSize(2.dp)
                             ),
                             supportingText = {
-                                Text(text = supportingTextPassword.orEmpty())
+                                Text(
+                                    text = supportingTextPassword.orEmpty(),
+                                    color = MaterialTheme.colorScheme.error
+                                )
                             },
                             singleLine = true
                         )

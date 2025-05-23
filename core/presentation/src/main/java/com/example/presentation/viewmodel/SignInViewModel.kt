@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.LoginAction
 import com.example.base.event.LoginEvent
-import com.example.base.model.user.LoginUserParam
+import com.example.base.model.user.login.LoginUserParam
 import com.example.base.state.LoginState
 import com.example.base.state.SignInResult
 import com.example.base.util.validation.EmailValidation

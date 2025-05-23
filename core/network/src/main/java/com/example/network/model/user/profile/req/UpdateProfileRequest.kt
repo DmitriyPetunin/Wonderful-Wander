@@ -2,7 +2,7 @@ package com.example.network.model.user.profile.req
 
 
 
-data class UpdateProfileRequestParam(
+data class UpdateProfileRequest(
     val email:String,
     val firstname:String,
     val lastname:String,

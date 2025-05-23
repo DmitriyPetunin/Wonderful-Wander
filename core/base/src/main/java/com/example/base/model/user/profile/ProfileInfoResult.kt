@@ -1,10 +1,10 @@
-package com.example.base.model.user
+package com.example.base.model.user.profile
 
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.Role
 import com.example.base.enums.WalkVisibility
 
-class ProfileInfo(
+class ProfileInfoResult(
     val userId: String,
 
     val username: String,
@@ -24,7 +24,7 @@ class ProfileInfo(
     val walkVisibility: WalkVisibility, //enum
 ) {
     companion object {
-        val EMPTY = ProfileInfo(
+        val EMPTY = ProfileInfoResult(
             userId = "",
             username = "",
             email = "",

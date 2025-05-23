@@ -1,4 +1,4 @@
-package com.example.base.model.user
+package com.example.base.model.user.register
 
 class RegisterUserParam(
     val username: String,

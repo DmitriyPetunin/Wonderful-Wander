@@ -1,4 +1,4 @@
-package com.example.base.model.user
+package com.example.base.model.user.profile
 
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility

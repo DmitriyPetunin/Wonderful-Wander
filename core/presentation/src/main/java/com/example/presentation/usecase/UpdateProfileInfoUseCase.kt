@@ -1,8 +1,8 @@
 package com.example.presentation.usecase
 
-import com.example.base.model.user.ProfileInfo
-import com.example.base.model.user.UpdateProfileParam
+import com.example.base.model.user.profile.ProfileInfoResult
+import com.example.base.model.user.profile.UpdateProfileParam
 
 interface UpdateProfileInfoUseCase {
-    suspend fun invoke(param: UpdateProfileParam): Result<ProfileInfo>
+    suspend fun invoke(param: UpdateProfileParam): Result<ProfileInfoResult>
 }

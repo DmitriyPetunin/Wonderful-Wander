@@ -8,8 +8,7 @@ import com.example.base.action.profile.ProfileAction
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
 import com.example.base.event.profile.ProfileEvent
-import com.example.base.model.user.ProfileInfo
-import com.example.base.model.user.UpdateProfileParam
+import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
 import com.example.presentation.googleclient.GoogleAuthUiClient
@@ -172,7 +171,7 @@ class ProfileViewModel @Inject constructor(
             )
             _stateProfile.update { currentState ->
                 response.fold(
-                    onSuccess = { result:ProfileInfo ->
+                    onSuccess = { result ->
                         currentState.copy(
                             userId = result.userId,
                             email = result.email,

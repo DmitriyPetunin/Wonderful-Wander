@@ -1,8 +1,8 @@
 package com.example.presentation.usecase
 
-import com.example.base.model.user.RegisterResponse
-import com.example.base.model.user.RegisterUserParam
+import com.example.base.model.user.register.RegisterResult
+import com.example.base.model.user.register.RegisterUserParam
 
 interface RegisterUseCase {
-    suspend fun invoke(inputParam:RegisterUserParam): Result<RegisterResponse>
+    suspend fun invoke(inputParam: RegisterUserParam): Result<RegisterResult>
 }

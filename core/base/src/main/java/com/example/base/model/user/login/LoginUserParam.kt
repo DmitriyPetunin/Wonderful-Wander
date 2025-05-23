@@ -1,4 +1,4 @@
-package com.example.base.model.user
+package com.example.base.model.user.login
 
 class LoginUserParam(
     val email:String,

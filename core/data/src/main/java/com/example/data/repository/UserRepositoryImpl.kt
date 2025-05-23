@@ -1,43 +1,45 @@
 package com.example.data.repository
 
 import android.util.Log
-import com.example.base.model.user.LoginResponse
-import com.example.base.model.user.LoginUserParam
-import com.example.base.model.user.RegisterResponse
-import com.example.base.model.user.RegisterUserParam
+import com.example.base.model.user.login.LoginResult
+import com.example.base.model.user.login.LoginUserParam
+import com.example.base.model.user.register.RegisterResult
+import com.example.base.model.user.register.RegisterUserParam
 import com.example.base.model.user.friends.Friend
 import com.example.domain.repository.UserRepository
 import com.example.base.SessionManager
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
-import com.example.base.model.user.ProfileInfo
-import com.example.base.model.user.UpdateProfileParam
-import com.example.base.model.user.friends.UpdateProfileResult
+import com.example.base.model.user.profile.ProfileInfoResult
+import com.example.base.model.user.profile.UpdateProfileParam
+import com.example.base.model.user.profile.UpdateProfileResult
 import com.example.data.mapper.FriendApiToFriendDomainMapper
 import com.example.data.mapper.ProfileResponseToProfileInfoMapper
-import com.example.network.model.user.login.req.LoginRequestParam
-import com.example.network.model.user.profile.req.UpdateProfileRequestParam
-import com.example.network.model.user.register.req.RegisterUserRequestParam
+import com.example.network.model.user.login.req.LoginRequest
+import com.example.network.model.user.profile.req.UpdateProfileRequest
+import com.example.network.model.user.register.req.RegisterUserRequest
+import com.example.network.service.auth.AuthService
 import com.example.network.service.user.UserService
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
+    private val authService: AuthService,
     private val userService: UserService,
     private val sessionManager: SessionManager,
     private val profileInfoMapper: ProfileResponseToProfileInfoMapper,
     private val friendApiToFriendDomainMapper: FriendApiToFriendDomainMapper
 ): UserRepository {
 
-    override suspend fun login(inputParam: LoginUserParam): Result<LoginResponse> {
+    override suspend fun login(inputParam: LoginUserParam): Result<LoginResult> {
         return try {
-            val response = userService.login(LoginRequestParam(inputParam.email,inputParam.password))
+            val response = authService.login(LoginRequest(inputParam.email,inputParam.password))
 
             if(response.isSuccessful){
                 response.body()?.let {
                     it.accessToken?.let { sessionManager.saveAccessToken(it) }
                     it.refreshToken?.let { sessionManager.saveRefreshToken(it) }
                 }
-                Result.success(LoginResponse(status = "success"))
+                Result.success(LoginResult(status = "success"))
             } else {
                 Result.failure(Exception("Failed to delete profile: ${response.code()}"))
             }
@@ -46,10 +48,10 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun register(inputParam: RegisterUserParam): Result<RegisterResponse> {
+    override suspend fun register(inputParam: RegisterUserParam): Result<RegisterResult> {
         return try {
-            val response = userService.register(
-                RegisterUserRequestParam(
+            val response = authService.register(
+                RegisterUserRequest(
                     username = inputParam.username,
                     password = inputParam.password,
                     cpassword = inputParam.confirmPassword,
@@ -60,7 +62,7 @@ class UserRepositoryImpl @Inject constructor(
             )
 
             if(response.isSuccessful){
-                Result.success(RegisterResponse(status = "success"))
+                Result.success(RegisterResult(status = "success"))
             } else{
                 Result.failure(Exception("Failed register : ${response.code()}"))
             }
@@ -69,7 +71,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProfileInfo(): Result<ProfileInfo> {
+    override suspend fun getProfileInfo(): Result<ProfileInfoResult> {
         return try {
             val response = userService.getProfile()
 
@@ -88,7 +90,7 @@ class UserRepositoryImpl @Inject constructor(
 
         return try {
             val response = userService.updateProfile(
-                UpdateProfileRequestParam(
+                UpdateProfileRequest(
                     email = inputParam.email,
                     firstname = inputParam.firstName,
                     lastname = inputParam.lastName,

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.register.RegistrationAction
 import com.example.base.event.register.RegistrationEvent
-import com.example.base.model.user.RegisterUserParam
+import com.example.base.model.user.register.RegisterUserParam
 import com.example.base.state.RegistrationState
 import com.example.presentation.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

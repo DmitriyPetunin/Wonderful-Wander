@@ -1,6 +1,6 @@
 package com.example.domain.usecase
 
-import com.example.base.model.geo.ActualGeoLocation
+import com.example.base.model.geo.ActualGeoLocationResult
 import com.example.domain.repository.GeoRepository
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import javax.inject.Inject
@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetActualGeoDataUseCaseImpl @Inject constructor(
     private val geoRepository: GeoRepository
 ): GetActualGeoDataUseCase {
-    override suspend fun invoke(geocodeString:String): Result<ActualGeoLocation> {
+    override suspend fun invoke(geocodeString:String): Result<ActualGeoLocationResult> {
         return geoRepository.getActualGeoData(geocodeString)
     }
 }

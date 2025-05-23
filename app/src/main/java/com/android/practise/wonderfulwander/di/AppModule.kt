@@ -2,6 +2,7 @@ package com.android.practise.wonderfulwander.di
 
 import android.content.Context
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClientImpl
+import com.example.base.SessionManager
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -51,5 +52,11 @@ object AppModule {
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth {
         return Firebase.auth
+    }
+
+    @Provides
+    @Singleton
+    fun provideSessionManager(@ApplicationContext context: Context): SessionManager {
+        return SessionManager(context)
     }
 }

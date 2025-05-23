@@ -6,8 +6,9 @@ import dagger.Lazy
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
 
-class AuthInterceptor (
+class AuthInterceptor @Inject constructor(
     private val authService: Lazy<AuthService>,
     private val sessionManager: SessionManager
 ):Interceptor {

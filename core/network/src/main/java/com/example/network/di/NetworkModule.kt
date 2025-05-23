@@ -51,7 +51,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideAuthService(
-        @Named("AuthRetrofit")
+        @Named(AuthRetrofit)
         retrofit: Retrofit
     ): AuthService {
         return retrofit.create(AuthService::class.java)
@@ -61,8 +61,10 @@ class NetworkModule {
     @Provides
     @Singleton
     @Named(GeoCoderClient)
-    fun provideGeoCoderClient(tokenInterceptor: TokenInterceptor): OkHttpClient {
-        return createOkHttpClient(tokenInterceptor)
+    fun provideGeoCoderClient(
+        tokenInterceptor: TokenInterceptor
+    ): OkHttpClient {
+        return buildOkHttpClient(tokenInterceptor)
     }
 
     @Provides
@@ -71,55 +73,60 @@ class NetworkModule {
     fun provideApiClient(
         authInterceptor: AuthInterceptor
     ): OkHttpClient {
-        return createOkHttpClient(authInterceptor)
+        return buildOkHttpClient(authInterceptor)
     }
 
     @Provides
     @Singleton
-    fun provideSessionManager(
-        @ApplicationContext context: Context
-    ):SessionManager = SessionManager(context = context)
-
-
-    @Provides
-    @Singleton
-    @Named("AuthOkHttpClient")  // Клиент без AuthInterceptor (для AuthService)
+    @Named(AuthOkHttpClient)  // Клиент без AuthInterceptor (для AuthService)
     fun provideAuthOkHttpClient(): OkHttpClient {
-        return createOkHttpClient()  // Без AuthInterceptor!
+        return buildOkHttpClient()  // Без AuthInterceptor!
     }
 
 
     @Provides
-    @Singleton
-    @Named("AuthRetrofit")  // Retrofit для AuthService (без цикла)
-    fun provideAuthRetrofit(
-        @Named("AuthOkHttpClient") client: OkHttpClient
+    @Named(value = GeoCoderRetrofit)
+    fun provideGeoCoderRetrofit(
+        @Named(value = GeoCoderClient)
+        client: OkHttpClient
     ): Retrofit {
+        return buildRetrofit(url = BuildConfig.GEO_CODER_BASE_URL,client = client)
+    }
+
+    @Provides
+    @Named(value = ApiRetrofit)
+    fun provideApiRetrofit(
+        @Named(ApiClient)
+        client: OkHttpClient
+    ): Retrofit {
+        return buildRetrofit(url = BuildConfig.API_BASE_URL,client = client)
+    }
+
+    @Provides
+    @Singleton
+    @Named(AuthRetrofit)  // Retrofit для AuthService
+    fun provideAuthRetrofit(
+        @Named(AuthOkHttpClient)
+        client: OkHttpClient
+    ): Retrofit {
+        return buildRetrofit(url = BuildConfig.API_BASE_URL,client = client)
+    }
+
+
+
+    private fun buildRetrofit(url: String, client: OkHttpClient):Retrofit{
+        val converter = "application/json".toMediaType()
+
+        val json = Json { ignoreUnknownKeys = true }
+
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL)
+            .baseUrl(url)
             .client(client)
-            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory(converter))
             .build()
     }
 
-
-
-
-    @Provides
-    @Singleton
-    fun provideAuthInterceptor(
-        sessionManager: SessionManager,
-        authService: Lazy<AuthService>
-    ) = AuthInterceptor(authService = authService, sessionManager = sessionManager)
-
-
-
-
-
-
-
-
-    private fun createOkHttpClient(vararg interceptors: Interceptor):OkHttpClient{
+    private fun buildOkHttpClient(vararg interceptors: Interceptor):OkHttpClient{
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
@@ -141,49 +148,14 @@ class NetworkModule {
             .build()
     }
 
-
-    @Provides
-    @Named(value = GeoCoderRetrofit)
-    fun provideGeoCoderRetrofit(
-        @Named(value = GeoCoderClient)
-        client: OkHttpClient
-    ): Retrofit {
-
-        val converter = "application/json".toMediaType()
-
-        val json = Json { ignoreUnknownKeys = true }
-
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.GEO_CODER_BASE_URL)
-            .client(client)
-            .addConverterFactory(json.asConverterFactory(converter))
-            .build()
-    }
-
-    @Provides
-    @Named(value = ApiRetrofit)
-    fun provideApiRetrofit(
-        @Named(ApiClient)
-        client: OkHttpClient
-    ): Retrofit {
-
-        val converter = "application/json".toMediaType()
-
-        val json = Json { ignoreUnknownKeys = true }
-
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL)
-            .client(client)
-            .addConverterFactory(json.asConverterFactory(converter))
-            .build()
-    }
-
     companion object {
         const val GeoCoderRetrofit = "GeoCoderRetrofit"
         const val ApiRetrofit = "ApiRetrofit"
+        const val AuthRetrofit = "AuthRetrofit"
 
         const val GeoCoderClient = "GeoCoderClient"
         const val ApiClient = "ApiClient"
+        const val AuthOkHttpClient = "AuthOkHttpClient"
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.network.model.user.register.req
 
-class RegisterUserRequestParam (
+class RegisterUserRequest (
     val username: String,
     val password: String,
     val cpassword: String,
