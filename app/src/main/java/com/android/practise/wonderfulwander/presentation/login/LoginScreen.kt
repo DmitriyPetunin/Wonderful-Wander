@@ -65,6 +65,8 @@ import com.example.navigation.Screen
 import com.example.presentation.viewmodel.SignInViewModel
 import kotlinx.coroutines.flow.collect
 
+import com.example.base.R as baseR
+
 @Composable
 fun LoginScreenRoute(
     signInViewModel: SignInViewModel = hiltViewModel(),
@@ -137,8 +139,8 @@ fun LoginScreen(
     var passwordVisibility by remember { mutableStateOf(false) }
 
     val icon = if (passwordVisibility) {
-        painterResource(R.drawable.ic_visibility_foreground)
-    } else painterResource(R.drawable.ic_visibility_off_foreground)
+        painterResource(baseR.drawable.ic_visibility_foreground)
+    } else painterResource(baseR.drawable.ic_visibility_off_foreground)
 
     Column(
         modifier = Modifier
@@ -336,7 +338,7 @@ fun LoginScreen(
                             modifier = Modifier.size(36.dp)
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.google_icon),
+                                painter = painterResource(baseR.drawable.google_icon),
                                 contentDescription = "google",
                                 tint = Color.Unspecified
                             )

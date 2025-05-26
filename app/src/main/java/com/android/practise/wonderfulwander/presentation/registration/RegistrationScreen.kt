@@ -49,6 +49,7 @@ import com.example.base.action.register.RegistrationAction
 import com.example.base.event.register.RegistrationEvent
 import com.example.base.state.RegistrationState
 import com.example.presentation.viewmodel.RegisterViewModel
+import com.example.base.R as baseR
 
 
 
@@ -96,8 +97,8 @@ fun RegistrationScreen(
 
 
     val icon = if (passwordVisibility) {
-        painterResource(R.drawable.ic_visibility_foreground)
-    } else painterResource(R.drawable.ic_visibility_off_foreground)
+        painterResource(baseR.drawable.ic_visibility_foreground)
+    } else painterResource(baseR.drawable.ic_visibility_off_foreground)
 
     Column(
         modifier = Modifier
@@ -359,14 +360,14 @@ fun RegistrationScreen(
                         onClick = {},
                         modifier = Modifier.size(36.dp)
                     ) {
-                        Icon(painter = painterResource(R.drawable.google_icon), contentDescription = "google", tint = Color.Unspecified)
+                        Icon(painter = painterResource(baseR.drawable.google_icon), contentDescription = "google", tint = Color.Unspecified)
                     }
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(painter = painterResource(R.drawable.vk_icon), contentDescription = "vk",tint = Color.Unspecified)
-                    }
+//                    IconButton(
+//                        onClick = {},
+//                        modifier = Modifier.size(36.dp)
+//                    ) {
+//                        Icon(painter = painterResource(R.drawable.vk_icon), contentDescription = "vk",tint = Color.Unspecified)
+//                    }
                 }
                 Row(
                     modifier = Modifier
