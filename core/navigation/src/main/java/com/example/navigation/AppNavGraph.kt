@@ -15,7 +15,12 @@ fun AppNavGraph(
     registerScreen: @Composable () -> Unit,
     walkScreen: @Composable () -> Unit,
     bottomNavScreen: @Composable (String) -> Unit,
-    updateProfileScreen: @Composable () -> Unit
+    updateProfileScreen: @Composable () -> Unit,
+    createWalkScreen: @Composable () -> Unit,
+    createPostScreen: @Composable () -> Unit,
+    peopleScreen: @Composable (String) -> Unit,
+    uploadPhotoScreen: @Composable () -> Unit,
+    personProfile: @Composable (String) -> Unit
 ) {
     NavHost(
         navController = navHostController,
@@ -32,6 +37,36 @@ fun AppNavGraph(
         }
         composable(route = Screen.RegisterScreen.route) {
             registerScreen()
+        }
+        composable(route = Screen.CreatePostScreen.route) {
+            createPostScreen()
+        }
+        composable(route = Screen.BottomNavScreen.route) {
+            bottomNavScreen(ScreenBottomNav.ProfileScreen.route)
+        }
+        composable(route = Screen.CreateWalkScreen.route) {
+            createWalkScreen()
+        }
+        composable(route = Screen.UploadPhotoScreen.route){
+            uploadPhotoScreen()
+        }
+        composable(
+            route = "${Screen.PersonProfileScreen.route}/{userId}",
+            arguments = listOf(navArgument("userId"){
+                defaultValue = ""
+            })
+        ){ backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            personProfile(userId?:"")
+        }
+        composable(
+            route = "${Screen.PeopleScreen.route}/{listType}",
+            arguments = listOf(navArgument("listType") {
+                defaultValue = "friends"
+            })
+        ) { backStackEntry ->
+            val listType = backStackEntry.arguments?.getString("listType")
+            peopleScreen(listType ?: "friends")
         }
 
         composable(
