@@ -56,7 +56,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSessionManager(@ApplicationContext context: Context): SessionManager {
+    fun provideSessionManager(
+        @ApplicationContext context: Context
+    ): SessionManager {
         return SessionManager(context)
     }
 }
