@@ -1,7 +1,6 @@
 package com.android.practise.wonderfulwander.presentation.login
 
 import android.app.Activity.RESULT_OK
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -26,6 +25,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,9 +34,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,18 +50,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import com.android.practise.wonderfulwander.R
-import com.example.base.action.LoginAction
-import com.example.base.event.LoginEvent
-import com.example.base.event.profile.ProfileEvent
+import com.example.base.action.login.LoginAction
+import com.example.base.event.login.LoginEvent
 import com.example.base.state.LoginState
-import com.example.base.util.validation.EmailValidation
-import com.example.base.util.validation.PasswordValidation
-import com.example.navigation.Screen
 import com.example.presentation.viewmodel.SignInViewModel
-import kotlinx.coroutines.flow.collect
 
 import com.example.base.R as baseR
 
@@ -141,6 +131,10 @@ fun LoginScreen(
     val icon = if (passwordVisibility) {
         painterResource(baseR.drawable.ic_visibility_foreground)
     } else painterResource(baseR.drawable.ic_visibility_off_foreground)
+
+    if(state.isLoading){
+        CircularProgressIndicator()
+    }
 
     Column(
         modifier = Modifier

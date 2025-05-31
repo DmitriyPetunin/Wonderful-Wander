@@ -1,4 +1,4 @@
-package com.example.base.event
+package com.example.base.event.login
 
 sealed interface LoginEvent {
     data object UserExist: LoginEvent

@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.IntentSender
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.base.action.LoginAction
-import com.example.base.event.LoginEvent
+import com.example.base.action.login.LoginAction
+import com.example.base.event.login.LoginEvent
 import com.example.base.model.user.login.LoginUserParam
 import com.example.base.state.LoginState
 import com.example.base.state.SignInResult
@@ -58,6 +58,9 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun login() {
+        _state.update {
+            it.copy(isLoading = true)
+        }
         viewModelScope.launch {
             val response = loginUseCase.invoke(
                 LoginUserParam(
@@ -65,8 +68,9 @@ class SignInViewModel @Inject constructor(
                     password = state.value.password
                 )
             )
-
-
+        }
+        _state.update {
+            it.copy(isLoading = false)
         }
         resetState()
 
