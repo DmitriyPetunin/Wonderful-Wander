@@ -7,6 +7,7 @@ import com.example.network.interceptor.AuthInterceptor
 import com.example.network.interceptor.TokenInterceptor
 import com.example.network.service.auth.AuthService
 import com.example.network.service.geo.GeoService
+import com.example.network.service.post.PostService
 import com.example.network.service.user.UserService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Lazy
@@ -46,6 +47,14 @@ class NetworkModule {
         retrofit: Retrofit
     ): UserService {
         return retrofit.create(UserService::class.java)
+    }
+    @Provides
+    @Singleton
+    fun providePostService(
+        @Named(ApiRetrofit)
+        retrofit: Retrofit
+    ): PostService {
+        return retrofit.create(PostService::class.java)
     }
 
     @Provides
