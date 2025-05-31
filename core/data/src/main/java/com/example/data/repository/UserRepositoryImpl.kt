@@ -5,11 +5,13 @@ import com.example.base.model.user.login.LoginResult
 import com.example.base.model.user.login.LoginUserParam
 import com.example.base.model.user.register.RegisterResult
 import com.example.base.model.user.register.RegisterUserParam
-import com.example.base.model.user.friends.Friend
+import com.example.base.model.user.People
 import com.example.domain.repository.UserRepository
 import com.example.base.SessionManager
+import com.example.base.Test
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
+import com.example.base.model.user.profile.PersonProfileInfoResult
 import com.example.base.model.user.profile.ProfileInfoResult
 import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.base.model.user.profile.UpdateProfileResult
@@ -28,13 +30,13 @@ class UserRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
     private val profileInfoMapper: ProfileResponseToProfileInfoMapper,
     private val friendApiToFriendDomainMapper: FriendApiToFriendDomainMapper
-): UserRepository {
+) : UserRepository {
 
     override suspend fun login(inputParam: LoginUserParam): Result<LoginResult> {
         return try {
-            val response = authService.login(LoginRequest(inputParam.email,inputParam.password))
+            val response = authService.login(LoginRequest(inputParam.email, inputParam.password))
 
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 response.body()?.let {
                     it.accessToken?.let { sessionManager.saveAccessToken(it) }
                     it.refreshToken?.let { sessionManager.saveRefreshToken(it) }
@@ -43,7 +45,7 @@ class UserRepositoryImpl @Inject constructor(
             } else {
                 Result.failure(Exception("Failed to delete profile: ${response.code()}"))
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
@@ -61,12 +63,12 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
 
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 Result.success(RegisterResult(status = "success"))
-            } else{
+            } else {
                 Result.failure(Exception("Failed register : ${response.code()}"))
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
@@ -75,7 +77,7 @@ class UserRepositoryImpl @Inject constructor(
         return try {
             val response = userService.getProfile()
 
-            if (response.isSuccessful){
+            if (response.isSuccessful) {
                 response.body()?.userId?.let { sessionManager.saveUserId(it) }
                 Result.success(profileInfoMapper.invoke(response.body()))
             } else {
@@ -105,7 +107,7 @@ class UserRepositoryImpl @Inject constructor(
             } else {
                 Result.failure(Exception("Failed update profile info: ${response.code()}"))
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
@@ -127,25 +129,45 @@ class UserRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getAllFriends(): Result<List<Friend>> {
-        val userId = sessionManager.getUserId()
+    override suspend fun getAllFriends(): Result<List<People>> {
+//        val userId = sessionManager.getUserId()
+//
+//        return try {
+//            val response = userService.getFriends(id = userId)
+//
+//            if (response.isSuccessful){
+//                Result.success(response.body()?.listOfFriends?.map {
+//                    friendApiToFriendDomainMapper.invoke(it)
+//                }?: emptyList()
+//                )
+//            } else{
+//                Result.failure(Exception("Failed to get friends: ${response.code()}"))
+//            }
+//
+//
+//        } catch (e:Exception){
+//            Log.d("TEST-TAG", "Error get friends for userId = ${userId}")
+//            Result.failure(e)
+//        }
+        return Result.success(Test.listOfPeople)
+    }
 
-        return try {
-            val response = userService.getFriends(id = userId)
+    override suspend fun getAllFollowing(): Result<List<People>> {
+        return Result.success(Test.listOfPeople)
+    }
 
-            if (response.isSuccessful){
-                Result.success(response.body()?.listOfFriends?.map {
-                    friendApiToFriendDomainMapper.invoke(it)
-                }?: emptyList()
+    override suspend fun getAllFollowers(): Result<List<People>> {
+        return Result.success(Test.listOfPeople)
+    }
+
+    override suspend fun getPersonProfileInfoById(id: String): Result<PersonProfileInfoResult> {
+        val user = Test.listOfPeople.find { it.userId == id }
+        return user?.let { Result.success(
+                PersonProfileInfoResult(
+                    userName = user.username,
+                    avatarUrl = user.avatarUrl
                 )
-            } else{
-                Result.failure(Exception("Failed to get friends: ${response.code()}"))
-            }
-
-
-        } catch (e:Exception){
-            Log.d("TEST-TAG", "Error get friends for userId = ${userId}")
-            Result.failure(e)
-        }
+            )
+        }?: Result.failure(Exception("пу пу пу"))
     }
 }

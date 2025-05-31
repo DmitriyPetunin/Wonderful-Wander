@@ -5,7 +5,8 @@ import com.example.base.model.user.login.LoginUserParam
 import com.example.base.model.user.register.RegisterResult
 import com.example.base.model.user.register.RegisterUserParam
 import com.example.base.model.user.profile.UpdateProfileParam
-import com.example.base.model.user.friends.Friend
+import com.example.base.model.user.People
+import com.example.base.model.user.profile.PersonProfileInfoResult
 import com.example.base.model.user.profile.ProfileInfoResult
 import com.example.base.model.user.profile.UpdateProfileResult
 
@@ -15,12 +16,18 @@ interface UserRepository {
 
     suspend fun register(inputParam: RegisterUserParam): Result<RegisterResult>
 
-    suspend fun getAllFriends(): Result<List<Friend>>
+    suspend fun getAllFriends(): Result<List<People>>
+
+    suspend fun getAllFollowing(): Result<List<People>>
+
+    suspend fun getAllFollowers(): Result<List<People>>
 
     suspend fun getProfileInfo(): Result<ProfileInfoResult>
 
     suspend fun updateProfileInfo(inputParam: UpdateProfileParam): Result<UpdateProfileResult>
 
     suspend fun deleteProfile(): Result<Unit>
+
+    suspend fun getPersonProfileInfoById(id:String):Result<PersonProfileInfoResult>
 
 }

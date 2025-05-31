@@ -1,7 +1,8 @@
 package com.example.network.service.user
 
-import com.example.network.model.user.follows.SubscribeUserResponse
-import com.example.network.model.user.friends.FriendApiResponse
+import com.example.network.model.user.people.SubscribeUserResponse
+import com.example.network.model.user.friends.PeopleApiResponse
+import com.example.network.model.user.people.GetPersonProfileInfo
 import com.example.network.model.user.profile.res.GetProfileResponse
 import com.example.network.model.user.profile.req.UpdateProfileRequest
 import com.example.network.model.user.profile.res.DeleteProfileResponse
@@ -25,7 +26,21 @@ interface UserService {
         @Query("page") page: Int = 1,
         @Query("size") size: Int = 10,
         @Path("userId") id: String
-    ): Response<FriendApiResponse>
+    ): Response<PeopleApiResponse>
+
+    @GET("/api/users/{userId}/following")
+    suspend fun getFollowing(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 10,
+        @Path("userId") id: String
+    ): Response<PeopleApiResponse>
+
+    @GET("/api/users/{userId}/followers")
+    suspend fun getFollowers(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 10,
+        @Path("userId") id: String
+    ): Response<PeopleApiResponse>
 
 
     @PUT("/api/users/me")
@@ -41,4 +56,9 @@ interface UserService {
     suspend fun followUser(
         @Path("targetUserId") id:String
     ): Response<SubscribeUserResponse>
+
+    @GET("/api/users/{targetUserId}")
+    suspend fun getProfileByUserId(
+        @Path("targetUserId") id:String
+    ):Response<GetPersonProfileInfo>
 }
