@@ -1,5 +1,8 @@
 package com.example.base.state
 
-data class ListScreenState<T> (
-    val listOfPeople: List<T> = emptyList()
+import com.example.base.model.user.People
+
+data class ListScreenState (
+    val people: String = "",
+    val listOfPeople: List<People> = emptyList()
 )

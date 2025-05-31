@@ -13,6 +13,7 @@ import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.example.presentation.usecase.DeleteUserProfileUseCase
+import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,6 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
+    private val getPersonProfileInfoByIdUseCase: GetPersonProfileInfoByIdUseCase,
     private val deleteUserProfileUseCase: DeleteUserProfileUseCase,
     private val updateUserUseCase: UpdateProfileInfoUseCase,
     private val googleAuthUiClient: GoogleAuthUiClient,
@@ -34,10 +36,13 @@ class ProfileViewModel @Inject constructor(
     val stateProfile = _stateProfile.asStateFlow()
 
 
-    private val _stateUpdateProfile: MutableStateFlow<UpdateProfileState> = MutableStateFlow(UpdateProfileState())
+    private val _stateUpdateProfile: MutableStateFlow<UpdateProfileState> =
+        MutableStateFlow(UpdateProfileState())
     val stateUpdateProfile = _stateUpdateProfile.asStateFlow()
 
-    private val _event = MutableSharedFlow<ProfileEvent>()
+    private val _event = MutableSharedFlow<ProfileEvent>(
+//        replay = 1
+    )
     val event: SharedFlow<ProfileEvent> = _event
 
 
@@ -62,8 +67,18 @@ class ProfileViewModel @Inject constructor(
                 }
             }
 
-            ProfileAction.SubmitGetAllSubscribers -> TODO()
-            ProfileAction.SubmitGetAllSubscriptions -> TODO()
+            ProfileAction.SubmitGetAllFollowers -> {
+                viewModelScope.launch {
+                    _event.emit(ProfileEvent.NavigateToFollowersPage)
+                }
+            }
+
+            ProfileAction.SubmitGetAllFollowing -> {
+                viewModelScope.launch {
+                    _event.emit(ProfileEvent.NavigateToFollowingPage)
+                }
+            }
+
             ProfileAction.SubmitUpdateProfileInfo -> {
                 viewModelScope.launch {
                     _event.emit(ProfileEvent.NavigateToUpdateScreenPage)
@@ -72,6 +87,12 @@ class ProfileViewModel @Inject constructor(
 
             ProfileAction.SubmitDeleteProfile -> {
                 deleteProfile()
+            }
+
+            is ProfileAction.UpdateDropDawnVisible -> {
+                _stateProfile.update {
+                    it.copy(dropDownMenuVisible = action.isVisible)
+                }
             }
         }
     }
@@ -136,6 +157,24 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun getPersonProfileInfoById(id: String) {
+        viewModelScope.launch {
+            val response = getPersonProfileInfoByIdUseCase.invoke(id)
+
+            response.fold(
+                onSuccess = { model ->
+                    _stateProfile.update {
+                        it.copy(username = model.userName, avatarUrl = model.avatarUrl)
+                    }
+                },
+                onFailure = { exception ->
+                    Log.d("TEST-TAG","${exception.message}")
+                    exception.printStackTrace()
+                }
+            )
+        }
+    }
+
     private fun deleteProfile() {
         viewModelScope.launch {
 
@@ -160,14 +199,14 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
 
             val response = updateUserUseCase.invoke(
-                    UpdateProfileParam(
-                        email = stateUpdateProfile.value.email,
-                        firstName = stateUpdateProfile.value.firstName,
-                        lastName = stateUpdateProfile.value.lastName,
-                        bio = stateUpdateProfile.value.bio,
-                        photoVisibility = PhotosVisibility.fromString(stateUpdateProfile.value.photoVisibility),
-                        walkVisibility = WalkVisibility.fromString(stateUpdateProfile.value.walkVisibility),
-                    )
+                UpdateProfileParam(
+                    email = stateUpdateProfile.value.email,
+                    firstName = stateUpdateProfile.value.firstName,
+                    lastName = stateUpdateProfile.value.lastName,
+                    bio = stateUpdateProfile.value.bio,
+                    photoVisibility = PhotosVisibility.fromString(stateUpdateProfile.value.photoVisibility),
+                    walkVisibility = WalkVisibility.fromString(stateUpdateProfile.value.walkVisibility),
+                )
             )
             _stateProfile.update { currentState ->
                 response.fold(

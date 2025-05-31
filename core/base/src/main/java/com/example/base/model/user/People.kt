@@ -1,12 +1,12 @@
-package com.example.base.model.user.friends
+package com.example.base.model.user
 
-class Friend (
-    val userId: String,
+data class People (
+    var userId: String,
     val avatarUrl: String,
     val username: String,
 ){
     companion object {
-        val EMPTY = Friend(
+        val EMPTY = People(
             userId = "",
             avatarUrl = "",
             username = ""

@@ -4,8 +4,8 @@ sealed interface ProfileEvent {
     data object NavigateToAuthPage: ProfileEvent
     data object NavigateToRegisterPage: ProfileEvent
     data object NavigateToFriendsPage: ProfileEvent
-    data object NavigateToSubscriptionsPage: ProfileEvent
-    data object NavigateToSubscribersPage: ProfileEvent
+    data object NavigateToFollowersPage: ProfileEvent
+    data object NavigateToFollowingPage: ProfileEvent
     data object NavigateToUpdateScreenPage: ProfileEvent
 
     data object UpdateProfileInfo: ProfileEvent

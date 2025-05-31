@@ -1,17 +1,17 @@
 package com.example.data.mapper
 
-import com.example.base.model.user.friends.Friend
+import com.example.base.model.user.People
 import com.example.network.model.user.friends.FriendApi
 import javax.inject.Inject
 
-class FriendApiToFriendDomainMapper @Inject constructor(): (FriendApi?) -> Friend {
-    override fun invoke(friendApi: FriendApi?): Friend {
+class FriendApiToFriendDomainMapper @Inject constructor(): (FriendApi?) -> People {
+    override fun invoke(friendApi: FriendApi?): People {
         return friendApi?.let {
-            Friend(
+            People(
                 userId = friendApi.userId.orEmpty(),
                 avatarUrl = friendApi.avatarUrl.orEmpty(),
                 username = friendApi.username.orEmpty()
             )
-        }?: Friend.EMPTY
+        }?: People.EMPTY
     }
 }

@@ -1,15 +1,13 @@
 package com.example.domain.usecase
 
-import com.example.base.Test
 import com.example.base.model.user.People
 import com.example.domain.repository.UserRepository
-import com.example.presentation.usecase.GetAllFriendsUseCase
-import javax.inject.Inject
+import com.example.presentation.usecase.GetAllFollowersUseCase
 
-class GetAllFriendsUseCaseImpl @Inject constructor(
+class GetAllFollowersUseCaseImpl(
     private val userRepository: UserRepository
-): GetAllFriendsUseCase {
+): GetAllFollowersUseCase {
     override suspend fun invoke(): Result<List<People>> {
-        return userRepository.getAllFriends()
+        return userRepository.getAllFollowers()
     }
 }

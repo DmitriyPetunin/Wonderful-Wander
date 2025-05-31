@@ -1,12 +1,15 @@
 package com.example.network.model.user.friends
 
-data class FriendApiResponse(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PeopleApiResponse(
     val listOfFriends: List<FriendApi>?,
     val timestamp: String?,
     val error: String?,
     val message: String?
 )
-
+@Serializable
 data class FriendApi(
 
     val userId: String?,

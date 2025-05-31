@@ -1,8 +1,5 @@
 package com.example.base.state
 
-import com.example.base.enums.PhotosVisibility
-import com.example.base.enums.WalkVisibility
-
 data class ProfileState (
     val userId: String = "",
     val username: String = "",
@@ -11,11 +8,12 @@ data class ProfileState (
     val lastName:String = "",
     val email: String = "",
     val bio: String = "",
+    val dropDownMenuVisible:Boolean = false,
 
     val photoVisibility: String = "PUBLIC",
     val walkVisibility: String = "PUBLIC",
 
-    val followersCount: Int = 0,
-    val followingCount: Int = 0,
-    val friendsCount: Int = 0,
+    val followersCount: Int = 391,
+    val followingCount: Int = 120,
+    val friendsCount: Int = 71,
 )

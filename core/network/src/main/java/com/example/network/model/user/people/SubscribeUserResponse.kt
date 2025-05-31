@@ -1,4 +1,4 @@
-package com.example.network.model.user.follows
+package com.example.network.model.user.people
 
 import kotlinx.serialization.Serializable
 

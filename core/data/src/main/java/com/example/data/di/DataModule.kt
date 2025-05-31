@@ -1,8 +1,10 @@
 package com.example.data.di
 
 import com.example.data.repository.GeoRepositoryImpl
+import com.example.data.repository.PostRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
 import com.example.domain.repository.GeoRepository
+import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -29,5 +31,11 @@ interface DataModule {
     fun bindUserRepository(
         impl: UserRepositoryImpl
     ): UserRepository
+
+    @Binds
+    @Singleton
+    fun bindPostRepository(
+        impl: PostRepositoryImpl
+    ): PostRepository
 
 }
