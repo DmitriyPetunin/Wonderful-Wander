@@ -9,6 +9,7 @@ plugins {
 
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("com.google.firebase.crashlytics")
 }
 
 val mapkitApiKey:String = loadMapkitApiKey()
@@ -105,7 +106,14 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.crashlytics)
+
+
     implementation("com.google.android.gms:play-services-auth:20.4.1")
+
+    //Glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 
     //viewmodel
@@ -127,5 +135,5 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     //Yandex Map
-    implementation (libs.maps.mobile)
+    implementation(libs.maps.mobile)
 }

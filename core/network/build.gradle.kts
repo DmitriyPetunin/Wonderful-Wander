@@ -54,7 +54,7 @@ dependencies {
 
     implementation("com.auth0.android:jwtdecode:2.0.2")
 
-
+    testImplementation(libs.junit)
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
