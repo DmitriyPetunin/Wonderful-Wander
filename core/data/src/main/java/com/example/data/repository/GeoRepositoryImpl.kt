@@ -3,6 +3,7 @@ package com.example.data.repository
 import com.example.base.model.geo.ActualGeoLocationResult
 import com.example.domain.repository.GeoRepository
 import com.example.network.service.geo.GeoService
+import java.sql.ResultSet
 import javax.inject.Inject
 
 class GeoRepositoryImpl @Inject constructor(

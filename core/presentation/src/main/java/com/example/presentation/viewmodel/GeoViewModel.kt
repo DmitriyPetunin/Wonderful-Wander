@@ -3,7 +3,7 @@ package com.example.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.base.action.GeoAction
+import com.example.base.action.geo.GeoAction
 import com.example.base.state.GeoState
 import com.example.base.state.Point
 import com.example.presentation.usecase.GetActualGeoDataUseCase
@@ -29,14 +29,21 @@ class GeoViewModel @Inject constructor(
             is GeoAction.UpdateCurrentCenter -> {
                 updateCurrentCenter(action.latitude, action.longitude)
             }
+            is GeoAction.UpdateText ->{
+                updateText()
+            }
         }
     }
 
     private fun updateCurrentCenter(latitude: Double, longitude: Double) {
-
         _geoState.update {
             it.copy(point = Point(latitude = latitude, longitude = longitude))
         }
+    }
+
+    private fun updateText() {
+
+        Log.d("updateCurrentCenter","latitude = ${geoState.value.point.latitude} longitude = ${geoState.value.point.longitude}")
 
         viewModelScope.launch {
 
@@ -46,18 +53,18 @@ class GeoViewModel @Inject constructor(
 //            }
             val response = getActualGeoDataUseCase.invoke(geocodeString = "${geoState.value.point.longitude},${geoState.value.point.latitude}")
 
-
-            _geoState.update {
-                it.copy(
-                    text = response.fold(
-                    onSuccess = {
-                        it.text
+            _geoState.update { state ->
+                response.fold(
+                    onSuccess = { model ->
+                        state.copy(
+                            text = model.text
+                            )
                     },
-                    onFailure = { exception ->
-                        Log.d("TEST-TAG","ошибка при получении информации")
-                        "ошибка при получении информации"
+                    onFailure = {exception ->
+                        exception.printStackTrace()
+                        state.copy(text = "пу пу пу ошибочка")
                     }
-                ))
+                )
             }
         }
     }
