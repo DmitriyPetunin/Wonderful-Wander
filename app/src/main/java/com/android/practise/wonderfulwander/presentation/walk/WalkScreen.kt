@@ -1,7 +1,6 @@
-package com.android.practise.wonderfulwander.presentation
+package com.android.practise.wonderfulwander.presentation.walk
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +15,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,16 +24,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.base.action.WalkAction
+import com.android.practise.wonderfulwander.presentation.permission.CameraPermissionRequest
+import com.example.base.action.walk.WalkAction
 import com.example.base.state.WalkState
 import com.example.presentation.viewmodel.WalkViewModel
 import java.io.File
@@ -42,7 +39,7 @@ import java.io.File
 @Composable
 fun WalkScreenRoute(
     walkViewModel: WalkViewModel = hiltViewModel(),
-){
+) {
     val state by walkViewModel.state.collectAsState()
 
     WalkScreen(state = state, walkViewModel::onAction)
@@ -53,35 +50,34 @@ fun WalkScreen(
     state: WalkState,
     onAction: (WalkAction) -> Unit
 ) {
-    var hasCameraPermission = state.hasCameraPermission
+    val hasCameraPermission = state.hasCameraPermission
 
-    // Request camera permission
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasCameraPermission = isGranted
-    }
-
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(android.Manifest.permission.CAMERA)
-    }
+    CameraPermissionRequest(
+        onPermissionGranted = { onAction(WalkAction.UpdateCameraPermission(isGranted = true)) },
+        permissionDeniedContent = {
+            //повторный запрос к разрешению
+        },
+    )
 
     if (hasCameraPermission) {
         WalkScreenContent()
-    } else {
-        PermissionDeniedDialog(onDismiss = { /* Обработка отклонения */ })
     }
 }
 
 @Composable
-fun PermissionDeniedDialog(onDismiss: () -> Unit) {
+fun PermissionDeniedDialog(onDismiss: () -> Unit, onGoToSettings: () -> Unit) {
     AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Camera Permission Required") },
-        text = { Text("This app requires camera permission to take photos.") },
+        onDismissRequest = {},
+        title = { Text("Доступ к камере отклонён") },
+        text = { Text("Для работы с камерой необходимо разрешение. Перейдите в настройки?") },
         confirmButton = {
-            Button(onClick = onDismiss) {
-                Text("OK")
+            TextButton(onClick = { onGoToSettings() }) {
+                Text("Settings")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("Dismiss")
             }
         }
     )
