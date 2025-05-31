@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import java.util.Date
-import javax.inject.Inject
 
 class SessionManager (
     context: Context
