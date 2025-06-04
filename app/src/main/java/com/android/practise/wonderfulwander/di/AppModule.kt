@@ -11,6 +11,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.crashlytics.crashlytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,6 +54,10 @@ object AppModule {
     fun provideFirebaseAuth(): FirebaseAuth {
         return Firebase.auth
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseCrashlytics() = Firebase.crashlytics
 
     @Provides
     @Singleton

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.pluginSerialization)
 }
 
 android {
@@ -33,6 +34,8 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.bundles.network.deps)
 
     //Inject
     implementation(libs.javax.inject)

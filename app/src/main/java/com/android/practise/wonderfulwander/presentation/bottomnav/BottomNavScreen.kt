@@ -32,6 +32,7 @@ import com.example.navigation.Screen
 fun BottomNavScreen(
     navController: NavHostController,
     startRoute: String = ScreenBottomNav.MapScreen.route,
+    isMapEnabled: Boolean
 ) {
 
     val bottomBarNavController = rememberNavController()
@@ -41,7 +42,8 @@ fun BottomNavScreen(
         bottomBar = {
             MyBottomNavigationBar(
                 navController = bottomBarNavController,
-                currentRoute = currentRoute
+                currentRoute = currentRoute,
+                isMapEnabled = isMapEnabled
             )
         }
     ) { innerPadding ->
@@ -50,7 +52,9 @@ fun BottomNavScreen(
             startDestination = startRoute,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(ScreenBottomNav.MapScreen.route) { MapScreenRoute() }
+            if(isMapEnabled){
+                composable(ScreenBottomNav.MapScreen.route) { MapScreenRoute() }
+            }
 
             composable(ScreenBottomNav.PhotosScreen.route) {
                 PhotosScreenRoute(
@@ -94,10 +98,15 @@ private fun navigateToCreatePostScreen(controller: NavController) {
 }
 
 @Composable
-fun MyBottomNavigationBar(navController: NavHostController, currentRoute: String?) {
+fun MyBottomNavigationBar(
+    navController: NavHostController,
+    currentRoute: String?,
+    isMapEnabled: Boolean
+) {
 
-    val items = listOf(
-        ScreenBottomNav.MapScreen,
+
+    val items = listOfNotNull(
+        if(isMapEnabled) ScreenBottomNav.MapScreen else null,
         ScreenBottomNav.PhotosScreen,
         ScreenBottomNav.ProfileScreen
     )
