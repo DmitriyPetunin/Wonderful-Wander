@@ -1,6 +1,5 @@
 package com.android.practise.wonderfulwander.presentation.bottomnav
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,33 +22,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.base.event.GeoUiEvent
+import com.example.base.action.geo.GeoAction
+import com.example.base.state.GeoState
 import com.example.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.CameraUpdateReason
-import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun MapScreen(
+fun MapScreenRoute(
     geoViewModel: GeoViewModel = hiltViewModel()
+) {
+    val mapScreenState by geoViewModel.geoState.collectAsState()
+
+    MapScreen(state = mapScreenState, geoViewModel::onAction)
+}
+
+@Composable
+fun MapScreen(
+    state: GeoState,
+    onAction: (GeoAction) -> Unit
 ) {
     val mapView = remember { MutableStateFlow<MapView?>(null) }
 
-    val context = LocalContext.current
-
-    var currentCenter by remember { mutableStateOf(Point(55.78874, 49.12214)) } // Тукая
-
-    val mapScreenState by geoViewModel.geoState.collectAsState()
+    val currentCenter = state.point
 
     var counterState by remember { mutableStateOf(0) }
 
@@ -68,32 +70,26 @@ fun MapScreen(
 
                 mapView.mapWindow.map.move(
                     CameraPosition(
-                        currentCenter, 17.0f, 150.0f, 00.0f
+                        Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
                     ), Animation(Animation.Type.SMOOTH, 1.5f), null
                 )
-                //Log.d("Test-Tag","совершили переход в точку ${location.value.latitude} ${location.value.longitude}")
 
-
-                mapView.mapWindow.map.addCameraListener(object : CameraListener {
-                    override fun onCameraPositionChanged(
-                        map: Map,
-                        cameraPosition: CameraPosition,
-                        cameraUpdateReason: CameraUpdateReason,
-                        isFinished: Boolean
-                    ) {
-                        if (isFinished) {
-                            currentCenter = cameraPosition.target
-                            Log.d(
-                                "TEST-TAG",
-                                " ${currentCenter.latitude}, ${currentCenter.longitude}"
-                            )
-                        }
-                    }
-                })
+//                mapView.mapWindow.map.addCameraListener { map, cameraPosition, cameraUpdateReason, isFinished ->
+//
+//                    if (isFinished) {
+//                        Log.d("TEST-TAG","зашли в метод")
+//                        onAction(
+//                            GeoAction.UpdateCurrentCenter(
+//                                longitude = cameraPosition.target.longitude,
+//                                latitude = cameraPosition.target.latitude
+//                            )
+//                        )
+//                    }
+//                }
             }
         )
         Text(
-            text = mapScreenState.text,
+            text = state.text,
             style = MaterialTheme.typography.displayMedium,
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -107,7 +103,14 @@ fun MapScreen(
             horizontalAlignment = Alignment.End,
         ) {
             Button(
-                onClick = { changeZoomByStep(mapView = mapView.value!!, value = ZOOM_STEP) },
+                onClick = {
+                    mapView.value?.let {
+                        changeZoomByStep(
+                            mapView = it,
+                            value = ZOOM_STEP
+                        )
+                    }
+                },
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -122,7 +125,14 @@ fun MapScreen(
             }
 
             Button(
-                onClick = { changeZoomByStep(mapView = mapView.value!!, value = -ZOOM_STEP) },
+                onClick = {
+                    mapView.value?.let {
+                        changeZoomByStep(
+                            mapView = it,
+                            value = -ZOOM_STEP
+                        )
+                    }
+                },
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -136,6 +146,17 @@ fun MapScreen(
                 )
             }
         }
+
+        Button(
+            onClick = {},
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 24.dp, end = 12.dp)
+        ) {
+            Text(
+                text = "Создать прогулку"
+            )
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -147,12 +168,18 @@ fun MapScreen(
 
     LaunchedEffect(counterState) {
 
-        val newCenter = currentCenter
+        if (counterState != 0){
+            val newCenter = (mapView.value?.mapWindow?.map?.cameraPosition?.target ?: currentCenter) as Point
 
-        Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
+            //Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
 
-        geoViewModel.onEvent(GeoUiEvent.InteractionTwo(input = "${newCenter.longitude},${newCenter.latitude}"))
-
+            onAction(
+                GeoAction.UpdateCurrentCenter(
+                    longitude = newCenter.longitude,
+                    latitude = newCenter.latitude)
+            )
+            onAction(GeoAction.UpdateText)
+        }
     }
 }
 
@@ -167,3 +194,9 @@ fun changeZoomByStep(mapView: MapView, value: Float) {
 }
 
 private const val ZOOM_STEP = 1f
+
+private const val ZOOM = 17.0f
+
+private const val AZIMUTH = 150.0f
+
+private const val TILT = 00.0f

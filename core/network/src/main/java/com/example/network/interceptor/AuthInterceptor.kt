@@ -1,8 +1,8 @@
 package com.example.network.interceptor
 
-import com.example.network.SessionManager
+import com.example.base.SessionManager
 import com.example.network.service.auth.AuthService
-import com.example.network.service.user.UserService
+import dagger.Lazy
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -24,7 +24,7 @@ class AuthInterceptor @Inject constructor(
             // Make the token refresh request
             val refreshedToken = runBlocking {
                 try {
-                    val response = authService.value.refreshAccessToken(requestToken = refreshToken)
+                    val response = authService.get().refreshAccessToken(requestToken = refreshToken)
 
                     if (response.isSuccessful){
                         response.body()?.let { sessionManager.saveAccessToken(it.accessToken) }

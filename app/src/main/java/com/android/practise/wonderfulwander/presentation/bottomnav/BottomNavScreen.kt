@@ -21,7 +21,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.android.practise.wonderfulwander.presentation.bottomnav.map.MapScreenRoute
 import com.android.practise.wonderfulwander.presentation.bottomnav.photos.PhotosScreenRoute
 import com.example.navigation.ScreenBottomNav
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreenRoute
