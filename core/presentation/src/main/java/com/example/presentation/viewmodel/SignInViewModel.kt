@@ -167,5 +167,8 @@ class SignInViewModel @Inject constructor(
                 signInError = result.errorMessage
             )
         }
+        viewModelScope.launch {
+            _event.emit(LoginEvent.SuccessLogin)
+        }
     }
 }

@@ -27,7 +27,7 @@ fun MainScreen() {
     val createPostViewModel: CreatePostViewModel = hiltViewModel()
 
     AppNavGraph(
-        startDestination = Screen.BottomNavScreen.route,
+        startDestination = Screen.AuthScreen.route,
         navHostController = navController,
         authScreen = {
             LoginScreenRoute(navigateToProfile = { navigateToProfileScreen(navController) })

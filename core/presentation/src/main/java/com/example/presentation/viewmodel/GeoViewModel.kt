@@ -5,11 +5,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.geo.GeoAction
+import com.example.base.event.GeoEvent
+import com.example.base.event.post.CreatePostEvent
 import com.example.base.state.GeoState
 import com.example.base.state.Point
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,6 +29,9 @@ class GeoViewModel @Inject constructor(
     private val _geoState = MutableStateFlow(GeoState())
     val geoState = _geoState.asStateFlow()
 
+    private val _event = MutableSharedFlow<GeoEvent>()
+    val event: SharedFlow<GeoEvent> = _event
+
     fun onAction(action: GeoAction) {
         when (action) {
             is GeoAction.UpdateCurrentCenter -> {
@@ -32,6 +39,12 @@ class GeoViewModel @Inject constructor(
             }
             is GeoAction.UpdateText ->{
                 updateText()
+            }
+
+            GeoAction.NavigateToCreateWalkPage -> {
+                viewModelScope.launch {
+                    _event.emit(GeoEvent.InteractionOne)
+                }
             }
         }
     }

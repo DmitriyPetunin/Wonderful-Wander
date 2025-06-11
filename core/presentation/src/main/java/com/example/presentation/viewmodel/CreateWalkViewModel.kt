@@ -29,6 +29,17 @@ class CreateWalkViewModel @Inject constructor(
             is CreateWalkAction.GetAllFriends -> {
                 getAllFriends()
             }
+
+            is CreateWalkAction.AddFriend -> {
+                updateListOfFriend(action.friend)
+            }
+        }
+    }
+    private fun updateListOfFriend(friend: People){
+        _state.update {
+            it.copy(
+                listOfFriends =it.listOfFriends.toMutableList().apply { add(friend) }
+            )
         }
     }
 
@@ -41,7 +52,7 @@ class CreateWalkViewModel @Inject constructor(
                     onSuccess = { list: List<People> ->
                         if (list.isEmpty()) {
                             currentState
-                        } else currentState.copy(listOfPeople = list)
+                        } else currentState.copy(listOfFriends = list)
                     },
                     onFailure = { exception ->
                         exception.printStackTrace()

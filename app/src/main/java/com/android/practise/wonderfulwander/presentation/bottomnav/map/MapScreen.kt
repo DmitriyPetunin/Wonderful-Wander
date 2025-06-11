@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.base.action.geo.GeoAction
+import com.example.base.event.GeoEvent
 import com.example.base.state.GeoState
 import com.example.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
@@ -34,12 +35,24 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun MapScreenRoute(
-    geoViewModel: GeoViewModel = hiltViewModel()
+    geoViewModel: GeoViewModel = hiltViewModel(),
+    navigateToCreateWalkPage: () -> Unit
 ) {
     val mapScreenState by geoViewModel.geoState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        geoViewModel.event.collect{event ->
+            when(event){
+                is GeoEvent.InteractionOne -> {
+                    navigateToCreateWalkPage()
+                }
+            }
+        }
+    }
 
     MapScreen(state = mapScreenState, geoViewModel::onAction)
 }
@@ -67,12 +80,13 @@ fun MapScreen(
             }, modifier = Modifier.fillMaxSize(),
 
             update = { mapView ->
-
-                mapView.mapWindow.map.move(
-                    CameraPosition(
-                        Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
-                    ), Animation(Animation.Type.SMOOTH, 1.5f), null
-                )
+                if(counterState == 0){
+                    mapView.mapWindow.map.move(
+                        CameraPosition(
+                            Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
+                        ), Animation(Animation.Type.SMOOTH, 1.5f), null
+                    )
+                }
 
 //                mapView.mapWindow.map.addCameraListener { map, cameraPosition, cameraUpdateReason, isFinished ->
 //
@@ -148,7 +162,7 @@ fun MapScreen(
         }
 
         Button(
-            onClick = {},
+            onClick = {onAction(GeoAction.NavigateToCreateWalkPage)},
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 24.dp, end = 12.dp)
@@ -197,6 +211,6 @@ private const val ZOOM_STEP = 1f
 
 private const val ZOOM = 17.0f
 
-private const val AZIMUTH = 150.0f
+private const val AZIMUTH = 0.0f
 
 private const val TILT = 00.0f

@@ -49,7 +49,11 @@ fun BottomNavScreen(
             startDestination = startRoute,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(ScreenBottomNav.MapScreen.route) { MapScreenRoute() }
+            composable(ScreenBottomNav.MapScreen.route) {
+                MapScreenRoute(
+                    navigateToCreateWalkPage = {navigateToCreateWalkScreen(controller = navController)}
+                )
+            }
 
             composable(ScreenBottomNav.PhotosScreen.route) {
                 PhotosScreenRoute(
@@ -90,6 +94,10 @@ private fun navigateToUpdateProfileInfoScreen(controller: NavController) {
 
 private fun navigateToCreatePostScreen(controller: NavController) {
     controller.navigate(Screen.CreatePostScreen.route)
+}
+
+private fun navigateToCreateWalkScreen(controller: NavController) {
+    controller.navigate(Screen.CreateWalkScreen.route)
 }
 
 @Composable
