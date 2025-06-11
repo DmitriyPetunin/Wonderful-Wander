@@ -5,6 +5,7 @@ import com.example.base.SessionManager
 import com.example.network.BuildConfig
 import com.example.network.interceptor.AuthInterceptor
 import com.example.network.interceptor.TokenInterceptor
+import com.example.network.service.FcmApi
 import com.example.network.service.auth.AuthService
 import com.example.network.service.geo.GeoService
 import com.example.network.service.post.PostService

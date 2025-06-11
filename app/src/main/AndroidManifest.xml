@@ -10,13 +10,14 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:node="remove"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 
 
     <application
         android:name=".app.App"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -38,8 +39,8 @@
 
 
         <service
-            android:name=".DemoAppMessagingService"
-            android:exported="true">
+            android:name=".AppMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
