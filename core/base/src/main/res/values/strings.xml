@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Wonderful Wander</string>
-    <string name="photosScreen">Photos</string>
     <string name="web_client_id">440843948660-g0oln4bpo40q78o7e4q6a6f8j7voja60.apps.googleusercontent.com</string>
 </resources>

@@ -1,15 +1,15 @@
 package com.example.network.interceptor
 
-import com.example.base.SessionManager
+import com.example.network.SessionManager
 import com.example.network.service.auth.AuthService
-import dagger.Lazy
+import com.example.network.service.user.UserService
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
-    private val authService: Lazy<AuthService>,
+    private val authService: AuthService,
     private val sessionManager: SessionManager
 ):Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -20,21 +20,13 @@ class AuthInterceptor @Inject constructor(
         if (accessToken != SessionManager.DEFAULT_NAME_ACCESS_TOKEN && sessionManager.isAccessTokenExpired()) {
             val refreshToken = sessionManager.getRefreshToken()
 
-
             // Make the token refresh request
             val refreshedToken = runBlocking {
-                try {
-                    val response = authService.get().refreshAccessToken(requestToken = refreshToken)
-
-                    if (response.isSuccessful){
-                        response.body()?.let { sessionManager.saveAccessToken(it.accessToken) }
-                        response.body()?.let { sessionManager.saveRefreshToken(it.refreshToken) }
-                    }
-                    sessionManager.getAccessToken()
-                }catch (e: Exception){
-                    e.printStackTrace()
-                    throw RuntimeException(e.message)
-                }
+                val response = authService.refreshAccessToken(requestToken = refreshToken)
+                // Update the refreshed access token and its expiration time in the session
+                sessionManager.saveAccessToken(response.accessToken)
+                sessionManager.saveRefreshToken(response.refreshToken)
+                response.accessToken
             }
 
             if (refreshToken != SessionManager.DEFAULT_NAME_REFRESH_TOKEN) {
