@@ -10,7 +10,7 @@ class FriendApiToFriendDomainMapper @Inject constructor(): (FriendApi?) -> Peopl
             People(
                 userId = friendApi.userId.orEmpty(),
                 avatarUrl = friendApi.avatarUrl.orEmpty(),
-                username = friendApi.username.orEmpty()
+                username = friendApi.userName.orEmpty()
             )
         }?: People.EMPTY
     }

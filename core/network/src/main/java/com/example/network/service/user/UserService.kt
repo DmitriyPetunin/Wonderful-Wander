@@ -21,6 +21,17 @@ interface UserService {
     @GET("/api/users/me")
     suspend fun getProfile(): Response<GetProfileResponse>
 
+
+
+    @PUT("/api/users/me")
+    suspend fun updateProfile(
+        input: UpdateProfileRequest
+    ): Response<UpdateProfileResponse>
+
+    @DELETE("/api/users/me")
+    suspend fun deleteProfile(): Response<DeleteProfileResponse?>
+
+
     @GET("/api/users/{userId}/friends")
     suspend fun getFriends(
         @Query("page") page: Int = 1,
@@ -41,16 +52,6 @@ interface UserService {
         @Query("size") size: Int = 10,
         @Path("userId") id: String
     ): Response<PeopleApiResponse>
-
-
-    @PUT("/api/users/me")
-    suspend fun updateProfile(
-        input: UpdateProfileRequest
-    ): Response<UpdateProfileResponse>
-
-    @DELETE("/api/users/me")
-    suspend fun deleteProfile(): Response<DeleteProfileResponse?>
-
 
     @POST("/api/users/me/follows/{targetUserId}")
     suspend fun followToUserById(

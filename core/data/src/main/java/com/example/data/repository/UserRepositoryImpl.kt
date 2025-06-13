@@ -130,8 +130,8 @@ class UserRepositoryImpl @Inject constructor(
 
 
     override suspend fun getAllFriends(): Result<List<People>> {
-//        val userId = sessionManager.getUserId()
-//
+        val userId = sessionManager.getUserId()
+
 //        return try {
 //            val response = userService.getFriends(id = userId)
 //

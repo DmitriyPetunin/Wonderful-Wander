@@ -1,5 +1,6 @@
 package com.example.network.model.user.friends
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,7 +14,8 @@ data class PeopleApiResponse(
 data class FriendApi(
 
     val userId: String?,
-    val username: String?,
+    @SerialName("username")
+    val userName: String?,
     val firstname: String?,
     val lastname: String?,
     val bio: String?,
