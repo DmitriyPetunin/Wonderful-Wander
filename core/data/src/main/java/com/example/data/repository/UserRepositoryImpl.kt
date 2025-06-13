@@ -162,12 +162,52 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getPersonProfileInfoById(id: String): Result<PersonProfileInfoResult> {
         val user = Test.listOfPeople.find { it.userId == id }
-        return user?.let { Result.success(
+        return user?.let {
+            Result.success(
                 PersonProfileInfoResult(
                     userName = user.username,
                     avatarUrl = user.avatarUrl
                 )
             )
-        }?: Result.failure(Exception("пу пу пу"))
+        } ?: Result.failure(Exception("пу пу пу"))
+    }
+
+    override suspend fun followToUserById(id: String): Result<Unit> {
+
+//        return try {
+//            val response = userService.followToUserById(id = id)
+//
+//            if (response.isSuccessful) {
+//                Result.success(Unit)
+//            } else {
+////                response.errorBody() as CustomErrorBody
+//                Result.failure(Exception("Failed to follow profile: ${response.code()}"))
+//            }
+//        } catch (e: Exception) {
+//            Log.d("TEST-TAG", "Error while deleting profile")
+//            Result.failure(e)
+//        }
+
+        return Result.success(Unit)
+
+    }
+
+    override suspend fun unFollowToUserById(id: String): Result<Unit> {
+
+//        return try {
+//            val response = userService.unFollowToUserById(id = id)
+//
+//            if (response.isSuccessful) {
+//                Result.success(Unit)
+//            } else {
+////                response.errorBody() as CustomErrorBody
+//                Result.failure(Exception("Failed to follow profile: ${response.code()}"))
+//            }
+//        } catch (e: Exception) {
+//            Log.d("TEST-TAG", "Error while deleting profile")
+//            Result.failure(e)
+//        }
+
+        return Result.success(Unit)
     }
 }

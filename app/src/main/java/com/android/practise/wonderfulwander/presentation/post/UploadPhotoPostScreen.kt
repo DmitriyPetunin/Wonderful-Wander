@@ -27,22 +27,12 @@ import com.example.base.state.PhotoState
 import com.example.presentation.viewmodel.CreatePostViewModel
 
 
-@Composable
-fun UploadPhotoPostScreenRoute(
-    createPostViewModel: CreatePostViewModel
-) {
-
-    val state by createPostViewModel.state.collectAsState()
-
-
-    UploadPhotoPostScreen(state, createPostViewModel::onAction)
-
-}
 
 @Composable
 fun UploadPhotoPostScreen(
     state: CreatePostState,
-    onAction: (CreatePostAction) -> Unit
+    onAction: (CreatePostAction) -> Unit,
+    modifier: Modifier
 ) {
 
     val pickImageLauncher = rememberLauncherForActivityResult(
@@ -56,7 +46,7 @@ fun UploadPhotoPostScreen(
         }
     }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

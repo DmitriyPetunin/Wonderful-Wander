@@ -99,7 +99,7 @@ class PeopleViewModel @Inject constructor(
             }
             is PeoplePageAction.SubmitPersonItem -> {
                 viewModelScope.launch {
-                    _event.emit(PeoplePageEvent.NavigateToPersonWithUserId(id = action.userId))
+                    _event.emit(PeoplePageEvent.NavigateToPersonProfileWithUserId(userInfo = action.userInfo))
                 }
             }
         }

@@ -69,9 +69,9 @@ fun LoginScreenRoute(
 
     val context = LocalContext.current
 
-//    LaunchedEffect(Unit) {
-//        navigateToProfile()
-//    }
+    LaunchedEffect(Unit) {
+        navigateToProfile()
+    }
 
     LaunchedEffect(Unit) {
         signInViewModel.event.collect{ event ->

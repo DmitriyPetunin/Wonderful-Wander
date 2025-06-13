@@ -53,7 +53,12 @@ interface UserService {
 
 
     @POST("/api/users/me/follows/{targetUserId}")
-    suspend fun followUser(
+    suspend fun followToUserById(
+        @Path("targetUserId") id:String
+    ): Response<SubscribeUserResponse>
+
+    @DELETE("/api/users/me/follows/{targetUserId}")
+    suspend fun unFollowToUserById(
         @Path("targetUserId") id:String
     ): Response<SubscribeUserResponse>
 
@@ -61,4 +66,5 @@ interface UserService {
     suspend fun getProfileByUserId(
         @Path("targetUserId") id:String
     ):Response<GetPersonProfileInfo>
+
 }

@@ -1,4 +1,4 @@
-package com.android.practise.wonderfulwander.presentation.bottomnav.profile
+package com.android.practise.wonderfulwander.presentation.bottomnav.profile.me
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -118,10 +118,10 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        TopBar(
+        MeTopBar(
             username = state.username,
             modifier = Modifier.fillMaxWidth(),
-            updateDropDawnVisible = {onAction(ProfileAction.UpdateDropDawnVisible(isVisible = !state.dropDownMenuVisible))},
+            updateDropDawnVisible = { onAction(ProfileAction.UpdateDropDawnVisible(isVisible = !state.dropDownMenuVisible))},
             visibleState = state.dropDownMenuVisible
         )
 
@@ -130,9 +130,9 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.Start),
             style = MaterialTheme.typography.displayLarge
         )
-        if (state?.avatarUrl != null) {
+        if (state.avatarUrl.isNotEmpty()) {
             AsyncImage(
-                model = state?.avatarUrl,
+                model = state.avatarUrl,
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(150.dp)
@@ -141,9 +141,9 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if (state?.username != null) {
+        if (state.username.isNotEmpty()) {
             Text(
-                text = state?.username!!,
+                text = state.username,
                 textAlign = TextAlign.Center,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.SemiBold
@@ -174,7 +174,7 @@ fun ProfileScreen(
 
 
 @Composable
-fun TopBar(
+fun MeTopBar(
     username: String,
     modifier: Modifier = Modifier,
     updateDropDawnVisible: () -> Unit,
@@ -192,12 +192,6 @@ fun TopBar(
             fontSize = 20.sp
         )
         Icon(
-            painter = painterResource(id = baseR.drawable.ic_bell),
-            contentDescription = "bell",
-            tint = Color.Black,
-            modifier = Modifier.size(24.dp)
-        )
-        Icon(
             painter = painterResource(id = baseR.drawable.ic_dotmenu),
             contentDescription = "menu",
             tint = Color.Black,
@@ -205,15 +199,14 @@ fun TopBar(
                 .clickable { updateDropDawnVisible() }
         )
         Box {
-            if (visibleState) {
-                CustomDropDawnMenu(
-                    expanded = visibleState,
-                    onDismissRequest = { updateDropDawnVisible() }
-                )
-            }
+            CustomDropDawnMenu(
+                expanded = visibleState,
+                onDismissRequest = { updateDropDawnVisible() }
+            )
         }
     }
 }
+
 
 
 @Composable

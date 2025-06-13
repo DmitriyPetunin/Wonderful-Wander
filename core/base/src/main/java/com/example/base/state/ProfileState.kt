@@ -8,7 +8,7 @@ data class ProfileState (
     val lastName:String = "",
     val email: String = "",
     val bio: String = "",
-    val dropDownMenuVisible:Boolean = false,
+    val dropDownMenuVisible: Boolean = false,
 
     val photoVisibility: String = "PUBLIC",
     val walkVisibility: String = "PUBLIC",
@@ -16,4 +16,6 @@ data class ProfileState (
     val followersCount: Int = 391,
     val followingCount: Int = 120,
     val friendsCount: Int = 71,
+
+    val isFollowing: Boolean = false
 )

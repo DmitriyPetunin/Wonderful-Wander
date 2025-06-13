@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.base.action.post.CreatePostAction
 import com.example.base.event.post.CreatePostEvent
@@ -33,9 +34,7 @@ import com.example.presentation.viewmodel.CreatePostViewModel
 
 @Composable
 fun CreatePostScreenRoute(
-    createPostViewModel:CreatePostViewModel,
-    navigateToUploadImageScreen: () -> Unit,
-//    createPostViewModel: CreatePostViewModel = hiltViewModel()
+    createPostViewModel: CreatePostViewModel = hiltViewModel()
 ) {
 
     val state by createPostViewModel.state.collectAsState()
@@ -44,7 +43,7 @@ fun CreatePostScreenRoute(
         createPostViewModel.event.collect{ event->
             when(event){
                 CreatePostEvent.NavigateToUploadImageScreen -> {
-                    navigateToUploadImageScreen()
+
                 }
             }
         }
@@ -84,48 +83,7 @@ fun CreatePostScreen(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            if (state.photoUri != Uri.EMPTY) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    AsyncImage(
-                        model = state.photoUri,
-                        contentDescription = "Выбранное изображение",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(200.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                    )
-
-                    Text(
-                        text = "Ваше фото",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Добавить фото",
-                        modifier = Modifier.size(80.dp)
-                            .clickable {
-                                onAction(CreatePostAction.SubmitToAddPhoto)
-                            },
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                    )
-                    Text(
-                        text = "Фото не выбрано",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
+            UploadPhotoPostScreen(state = state,onAction = onAction, modifier = Modifier.size(500.dp))
         }
     }
 

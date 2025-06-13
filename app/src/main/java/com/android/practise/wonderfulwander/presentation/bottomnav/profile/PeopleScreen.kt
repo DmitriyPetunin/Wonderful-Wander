@@ -1,5 +1,6 @@
 package com.android.practise.wonderfulwander.presentation.bottomnav.profile
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -20,15 +21,15 @@ import com.example.presentation.viewmodel.PeopleViewModel
 fun PeopleScreenRoute(
     listType: String,
     friendsViewModel: PeopleViewModel = hiltViewModel(),
-    navigateToPeoplePerson: (String) -> Unit
+    navigateToPersonProfile: (String) -> Unit
 ) {
     val state by friendsViewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
         friendsViewModel.event.collect { event ->
             when (event) {
-                is PeoplePageEvent.NavigateToPersonWithUserId -> {
-                    navigateToPeoplePerson(event.id)
+                is PeoplePageEvent.NavigateToPersonProfileWithUserId -> {
+                    navigateToPersonProfile(event.userInfo)
                 }
             }
         }
@@ -36,6 +37,7 @@ fun PeopleScreenRoute(
 
 
     LaunchedEffect(Unit) {
+        Log.d("TEST-TAG","ffkfosl,")
         when (listType) {
             "friends" -> friendsViewModel.loadFriends()
             "following" -> friendsViewModel.loadFollowing()
@@ -61,7 +63,10 @@ fun PeopleScreen(
         )
         ListScreen(
             state = state,
-            onItemClick = { id -> onAction(PeoplePageAction.SubmitPersonItem(userId = id)) }
+            onItemClick = { id ->
+                val userInfo = "$id ${state.people}"
+                onAction(PeoplePageAction.SubmitPersonItem(userInfo = userInfo))
+            }
         )
     }
 

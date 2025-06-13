@@ -13,7 +13,9 @@ import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.example.presentation.usecase.DeleteUserProfileUseCase
+import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
+import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,6 +28,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
+    private val unFollowToUserByIdUseCase: UnFollowToUserByIdUseCase,
+    private val followToUserByIdUseCase: FollowToUserByIdUseCase,
     private val getPersonProfileInfoByIdUseCase: GetPersonProfileInfoByIdUseCase,
     private val deleteUserProfileUseCase: DeleteUserProfileUseCase,
     private val updateUserUseCase: UpdateProfileInfoUseCase,
@@ -35,23 +39,12 @@ class ProfileViewModel @Inject constructor(
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
     val stateProfile = _stateProfile.asStateFlow()
 
-
-    private val _stateUpdateProfile: MutableStateFlow<UpdateProfileState> =
-        MutableStateFlow(UpdateProfileState())
+    private val _stateUpdateProfile: MutableStateFlow<UpdateProfileState> = MutableStateFlow(UpdateProfileState())
     val stateUpdateProfile = _stateUpdateProfile.asStateFlow()
 
-    private val _event = MutableSharedFlow<ProfileEvent>(
-//        replay = 1
-    )
+    private val _event = MutableSharedFlow<ProfileEvent>()
     val event: SharedFlow<ProfileEvent> = _event
 
-
-    private fun signOut() {
-        viewModelScope.launch {
-            googleAuthUiClient.signOut()
-            _event.emit(ProfileEvent.NavigateToAuthPage)
-        }
-    }
 
 
     fun onAction(action: ProfileAction) {
@@ -93,6 +86,10 @@ class ProfileViewModel @Inject constructor(
                 _stateProfile.update {
                     it.copy(dropDownMenuVisible = action.isVisible)
                 }
+            }
+
+            is ProfileAction.SubmitBellIcon -> {
+                submitToBellIcon(action.input)
             }
         }
     }
@@ -157,14 +154,16 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getPersonProfileInfoById(id: String) {
+    fun getPersonProfileInfoById(info: String) {
+        val (id,whoIsIt) = info.split(" ")
+
         viewModelScope.launch {
             val response = getPersonProfileInfoByIdUseCase.invoke(id)
 
             response.fold(
                 onSuccess = { model ->
                     _stateProfile.update {
-                        it.copy(username = model.userName, avatarUrl = model.avatarUrl)
+                        it.copy(username = model.userName, avatarUrl = model.avatarUrl, isFollowing = followingState(whoIsIt))
                     }
                 },
                 onFailure = { exception ->
@@ -192,6 +191,29 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
             )
+        }
+    }
+
+    private fun submitToBellIcon(id: String){
+        val isFollowing = stateProfile.value.isFollowing
+
+        viewModelScope.launch {
+            val result = if (isFollowing) unFollowToUserByIdUseCase.invoke(id = id) else followToUserByIdUseCase.invoke(id=id)
+            result.fold(
+                onSuccess = {
+                    _stateProfile.update { currentState ->
+                        currentState.copy(isFollowing = !currentState.isFollowing)
+                    }
+                },
+                onFailure = {}
+            )
+        }
+    }
+
+    private fun signOut() {
+        viewModelScope.launch {
+            googleAuthUiClient.signOut()
+            _event.emit(ProfileEvent.NavigateToAuthPage)
         }
     }
 
@@ -274,6 +296,18 @@ class ProfileViewModel @Inject constructor(
     private fun updateWalkVisibilityState(input: String) {
         _stateUpdateProfile.update {
             it.copy(walkVisibility = input)
+        }
+    }
+
+    private fun followingState(info:String):Boolean{
+        return when(info){
+            "Followers" -> {
+                false
+            }
+
+            else ->{
+                true
+            }
         }
     }
 }

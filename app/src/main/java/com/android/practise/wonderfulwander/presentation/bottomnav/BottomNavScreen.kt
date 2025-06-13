@@ -23,7 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android.practise.wonderfulwander.presentation.bottomnav.photos.PhotosScreenRoute
 import com.example.navigation.ScreenBottomNav
-import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ProfileScreenRoute
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.ProfileScreenRoute
 import com.example.navigation.Screen
 
 

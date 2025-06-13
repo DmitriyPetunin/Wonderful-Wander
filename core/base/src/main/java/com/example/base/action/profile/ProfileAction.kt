@@ -1,5 +1,6 @@
 package com.example.base.action.profile
 
+
 sealed class ProfileAction {
 
     data object SubmitGetAllFriends: ProfileAction()
@@ -10,4 +11,6 @@ sealed class ProfileAction {
     data object SubmitDeleteProfile: ProfileAction()
 
     data class UpdateDropDawnVisible(val isVisible:Boolean): ProfileAction()
+
+    data class SubmitBellIcon(val input: String):ProfileAction()
 }

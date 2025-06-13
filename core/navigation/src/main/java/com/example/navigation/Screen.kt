@@ -12,7 +12,6 @@ sealed class Screen(
     data object PeopleScreen: Screen(Routes.PEOPLE)
 
     data object CreatePostScreen: Screen(Routes.CREATE_POST)
-    data object UploadPhotoScreen: Screen(Routes.UPLOAD_PHOTO)
 
     data object BottomNavScreen : Screen(route = Routes.BOTTOM)
 
@@ -28,7 +27,6 @@ object Routes {
     const val UPDATE = "updateProfileInfoScreen"
     const val PEOPLE = "peopleScreen"
     const val CREATE_POST = "createPostScreen"
-    const val UPLOAD_PHOTO = "uploadPhotoScreen"
     const val BOTTOM = "bottomNavScreen"
     const val CREATE_WALK = "createWalkScreen"
     const val PERSON_PROFILE = "personProfileScreen"

@@ -4,6 +4,7 @@ import com.example.domain.repository.GeoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.DeleteUserProfileUseCaseImpl
+import com.example.domain.usecase.FollowToUserByIdUseCaseImpl
 import com.example.domain.usecase.GetActualGeoDataUseCaseImpl
 import com.example.domain.usecase.GetAllFollowersUseCaseImpl
 import com.example.domain.usecase.GetAllFollowingUseCaseImpl
@@ -11,9 +12,11 @@ import com.example.domain.usecase.GetAllFriendsUseCaseImpl
 import com.example.domain.usecase.GetPersonProfileInfoByIdUseCaseImpl
 import com.example.domain.usecase.LoginUseCaseImpl
 import com.example.domain.usecase.RegisterUseCaseImpl
+import com.example.domain.usecase.UnFollowToUserByIdUseCaseImpl
 import com.example.domain.usecase.UpdateProfileInfoUseCaseImpl
 import com.example.domain.usecase.UploadPhotoUseCaseImpl
 import com.example.presentation.usecase.DeleteUserProfileUseCase
+import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import com.example.presentation.usecase.GetAllFollowersUseCase
 import com.example.presentation.usecase.GetAllFollowingUseCase
@@ -21,6 +24,7 @@ import com.example.presentation.usecase.GetAllFriendsUseCase
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
 import com.example.presentation.usecase.LoginUseCase
 import com.example.presentation.usecase.RegisterUseCase
+import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import com.example.presentation.usecase.UploadPhotoUseCase
 import dagger.Module
@@ -103,5 +107,19 @@ object DomainModule {
     ): GetPersonProfileInfoByIdUseCase {
         return GetPersonProfileInfoByIdUseCaseImpl(userRepository = userRepository)
     }
+
+    @Provides
+    fun provideFollowToUserByIdUseCase(
+        userRepository: UserRepository
+    ): FollowToUserByIdUseCase{
+        return FollowToUserByIdUseCaseImpl(userRepository = userRepository)
+    }
+    @Provides
+    fun provideUnFollowToUserByIdUseCase(
+        userRepository: UserRepository
+    ): UnFollowToUserByIdUseCase {
+        return UnFollowToUserByIdUseCaseImpl(userRepository = userRepository)
+    }
+
 
 }

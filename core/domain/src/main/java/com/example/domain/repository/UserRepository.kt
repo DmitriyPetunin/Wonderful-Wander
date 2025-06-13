@@ -30,4 +30,8 @@ interface UserRepository {
 
     suspend fun getPersonProfileInfoById(id:String):Result<PersonProfileInfoResult>
 
+    suspend fun followToUserById(id:String):Result<Unit>
+
+    suspend fun unFollowToUserById(id:String):Result<Unit>
+
 }

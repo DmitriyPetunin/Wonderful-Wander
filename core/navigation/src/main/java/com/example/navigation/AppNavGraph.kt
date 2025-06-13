@@ -19,7 +19,6 @@ fun AppNavGraph(
     createWalkScreen: @Composable () -> Unit,
     createPostScreen: @Composable () -> Unit,
     peopleScreen: @Composable (String) -> Unit,
-    uploadPhotoScreen: @Composable () -> Unit,
     personProfile: @Composable (String) -> Unit
 ) {
     NavHost(
@@ -47,9 +46,6 @@ fun AppNavGraph(
         composable(route = Screen.CreateWalkScreen.route) {
             createWalkScreen()
         }
-        composable(route = Screen.UploadPhotoScreen.route){
-            uploadPhotoScreen()
-        }
         composable(
             route = "${Screen.PersonProfileScreen.route}/{userId}",
             arguments = listOf(navArgument("userId"){
@@ -57,7 +53,7 @@ fun AppNavGraph(
             })
         ){ backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
-            personProfile(userId?:"")
+            personProfile(userId ?: "")
         }
         composable(
             route = "${Screen.PeopleScreen.route}/{listType}",
