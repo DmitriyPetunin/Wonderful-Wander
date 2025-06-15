@@ -7,7 +7,7 @@ import com.example.presentation.usecase.GetAllFollowingUseCase
 class GetAllFollowingUseCaseImpl(
     private val userRepository: UserRepository
 ): GetAllFollowingUseCase {
-    override suspend fun invoke(): Result<List<People>> {
-        return userRepository.getAllFollowing()
+    override suspend fun invoke(page:Int,limit:Int): Result<List<People>> {
+        return userRepository.getAllFollowing(page,limit)
     }
 }

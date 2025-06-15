@@ -23,8 +23,8 @@ data class GetProfileResponse(
     val walkVisibility: String?, //enum
 
 
-    val timestamp: String?,
-    val error: String?,
-    val message: String?
+//    val timestamp: String?,
+//    val error: String?,
+//    val message: String?
 
 )

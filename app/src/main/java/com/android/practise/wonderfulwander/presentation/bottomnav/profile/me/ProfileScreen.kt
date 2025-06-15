@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import com.android.practise.wonderfulwander.presentation.post.CustomDropDawnMenu
 import com.example.base.action.profile.ProfileAction
 import com.example.base.event.profile.ProfileEvent
+import com.example.base.state.PeopleEnum
 import com.example.base.state.ProfileState
 import com.example.presentation.viewmodel.ProfileViewModel
 import com.example.base.R as baseR
@@ -46,7 +47,7 @@ import com.example.base.R as baseR
 fun ProfileScreenRoute(
     navigateToAuthScreen: () -> Unit,
     navigateToRegisterScreen: () -> Unit,
-    navigateToPeopleScreen: (String) -> Unit,
+    navigateToPeopleScreen: (PeopleEnum) -> Unit,
     navigateToUpdateScreen: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -56,14 +57,14 @@ fun ProfileScreenRoute(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        profileViewModel.getSignedInUser()
+        profileViewModel.onAction(ProfileAction.Init)
     }
 
     LaunchedEffect(Unit) {
         profileViewModel.event.collect { event ->
             when (event) {
                 is ProfileEvent.NavigateToFriendsPage -> {
-                    navigateToPeopleScreen("friends")
+                    navigateToPeopleScreen(PeopleEnum.FRIENDS)
                     Toast.makeText(context, "friends", Toast.LENGTH_SHORT).show()
                 }
 
@@ -73,12 +74,12 @@ fun ProfileScreenRoute(
                 }
 
                 is ProfileEvent.NavigateToFollowersPage -> {
-                    navigateToPeopleScreen("followers")
+                    navigateToPeopleScreen(PeopleEnum.FOLLOWERS)
                     Toast.makeText(context, "followers", Toast.LENGTH_SHORT).show()
                 }
 
                 is ProfileEvent.NavigateToFollowingPage -> {
-                    navigateToPeopleScreen("following")
+                    navigateToPeopleScreen(PeopleEnum.FOLLOWING)
                     Toast.makeText(context, "following", Toast.LENGTH_SHORT).show()
                 }
 

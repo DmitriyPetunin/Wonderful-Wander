@@ -1,10 +1,10 @@
 package com.example.base.state
 
 data class LoginState (
-    val email: String = "",
-    val password: String = "",
+    val userName: String = "john_doe",
+    val password: String = "3333F333333",
 
-    val supportingTextEmail: String? = "",
+    val supportingTextUserName: String? = "",
     val supportingTextPassword: String? = "",
 
     val inputFieldsIsValid: Boolean = false,

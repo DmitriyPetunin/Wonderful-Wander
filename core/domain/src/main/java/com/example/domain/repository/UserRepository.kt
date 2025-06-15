@@ -16,11 +16,11 @@ interface UserRepository {
 
     suspend fun register(inputParam: RegisterUserParam): Result<RegisterResult>
 
-    suspend fun getAllFriends(): Result<List<People>>
+    suspend fun getAllFriends(page:Int,limit:Int): Result<List<People>>
 
-    suspend fun getAllFollowing(): Result<List<People>>
+    suspend fun getAllFollowing(page:Int,limit:Int): Result<List<People>>
 
-    suspend fun getAllFollowers(): Result<List<People>>
+    suspend fun getAllFollowers(page:Int,limit:Int): Result<List<People>>
 
     suspend fun getProfileInfo(): Result<ProfileInfoResult>
 

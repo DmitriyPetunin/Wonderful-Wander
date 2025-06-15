@@ -16,9 +16,13 @@ interface AuthService {
         @Body requestToken: String
     ): Response<TokenResponse>
 
-    @GET("/api/auth/login")
-    suspend fun login(input: LoginRequest): Response<LoginResponse>
+    @POST("/api/auth/login")
+    suspend fun login(
+        @Body input: LoginRequest
+    ): Response<LoginResponse>
 
-    @GET("/api/auth/register")
-    suspend fun register(input: RegisterUserRequest): Response<LoginResponse>
+    @POST("/api/auth/register")
+    suspend fun register(
+        @Body input: RegisterUserRequest
+    ): Response<LoginResponse>
 }

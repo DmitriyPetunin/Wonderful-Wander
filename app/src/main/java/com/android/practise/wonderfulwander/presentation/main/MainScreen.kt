@@ -23,8 +23,6 @@ import com.example.presentation.viewmodel.CreatePostViewModel
 fun MainScreen() {
     val navController = rememberNavController()
 
-    val createPostViewModel: CreatePostViewModel = hiltViewModel()
-
     AppNavGraph(
         startDestination = Screen.AuthScreen.route,
         navHostController = navController,

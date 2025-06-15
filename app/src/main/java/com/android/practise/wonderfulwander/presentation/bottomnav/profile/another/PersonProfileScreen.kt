@@ -67,7 +67,7 @@ fun PersonProfileScreen(
 
         AnotherTopBar(
             username = state.username,
-            isFollowing = state.isFollowing,
+            isFollowing = state.isFollowers,
             onClickFollowButton = { onAction(ProfileAction.SubmitBellIcon(input = state.userId))},
         )
 

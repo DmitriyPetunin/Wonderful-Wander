@@ -64,9 +64,17 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch {
             val response = loginUseCase.invoke(
                 LoginUserParam(
-                    email = state.value.email,
+                    email = state.value.userName,
                     password = state.value.password
                 )
+            )
+            response.fold(
+                onSuccess = {
+                    _event.emit(LoginEvent.SuccessLogin)
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                },
             )
         }
         _state.update {
@@ -89,7 +97,7 @@ class SignInViewModel @Inject constructor(
                 login()
             }
 
-            is LoginAction.UpdateEmailField -> {
+            is LoginAction.UpdateUserNameField -> {
                 updateEmail(action.input)
             }
 
@@ -113,14 +121,14 @@ class SignInViewModel @Inject constructor(
         val validation = EmailValidation.validateEmail(input)
 
         if (validation != null) {
-            updateSupportingTextEmail(validation)
-        } else updateSupportingTextEmail(null)
+            updateSupportingTextUserName(validation)
+        } else updateSupportingTextUserName(null)
 
         _state.update { currentState ->
-            val isEmailValid = currentState.supportingTextEmail == null
+            val isEmailValid = currentState.supportingTextUserName == null
             val isPasswordValid = currentState.supportingTextPassword == null
             currentState.copy(
-                email = input,
+                userName = input,
                 inputFieldsIsValid = isEmailValid && isPasswordValid
             )
         }
@@ -135,7 +143,7 @@ class SignInViewModel @Inject constructor(
         } else updateSupportingTextPassword(null)
 
         _state.update { currentState ->
-            val isEmailValid = currentState.supportingTextEmail == null
+            val isEmailValid = currentState.supportingTextUserName == null
             val isPasswordValid = currentState.supportingTextPassword == null
             currentState.copy(
                 password = input,
@@ -144,9 +152,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun updateSupportingTextEmail(input: String?) {
+    private fun updateSupportingTextUserName(input: String?) {
         _state.update {
-            it.copy(supportingTextEmail = input)
+            it.copy(supportingTextUserName = input)
         }
     }
 

@@ -13,4 +13,6 @@ sealed class ProfileAction {
     data class UpdateDropDawnVisible(val isVisible:Boolean): ProfileAction()
 
     data class SubmitBellIcon(val input: String):ProfileAction()
+
+    data object Init:ProfileAction()
 }

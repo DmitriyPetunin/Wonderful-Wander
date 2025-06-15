@@ -43,12 +43,12 @@ interface PostService {
     ):Response<Unit>
 
 
-    @GET(" /api/posts/users/{userId}/saved")
+    @GET("/api/posts/users/{userId}/saved")
     suspend fun getSavedPostsByUserId(
         @Path("userId") userId:String,
     ):Response<List<PostResponse>>
 
-    @GET(" /api/posts/users/{userId}/posts")
+    @GET("/api/posts/users/{userId}/posts")
     suspend fun getPostsByUserId(
         @Path("userId") userId:String,
     ):Response<List<PostResponse>>

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -70,7 +71,7 @@ fun LoginScreenRoute(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        navigateToProfile()
+        signInViewModel.onAction(LoginAction.SubmitLoginButton)
     }
 
     LaunchedEffect(Unit) {
@@ -121,9 +122,9 @@ fun LoginScreen(
     onAction: (LoginAction) -> Unit
 ) {
 
-    val email = state.email
+    val userName = state.userName
     val password = state.password
-    val supportingTextEmail = state.supportingTextEmail
+    val supportingTextEmail = state.supportingTextUserName
     val supportingTextPassword = state.supportingTextPassword
 
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -182,7 +183,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Email",
+                            text = "UserName",
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier
                                 .align(Alignment.TopStart)
@@ -190,12 +191,12 @@ fun LoginScreen(
                         )
 
                         OutlinedTextField(
-                            value = email,
-                            onValueChange = { onAction(LoginAction.UpdateEmailField(it)) },
-                            placeholder = { Text(text = "Email") },
-                            leadingIcon = { Icon(Icons.Default.Email, contentDescription = "") },
+                            value = userName,
+                            onValueChange = { onAction(LoginAction.UpdateUserNameField(it)) },
+                            placeholder = { Text(text = "UserName") },
+                            leadingIcon = { Icon(Icons.Default.AccountCircle, contentDescription = "") },
                             keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Email
+                                keyboardType = KeyboardType.Text
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()

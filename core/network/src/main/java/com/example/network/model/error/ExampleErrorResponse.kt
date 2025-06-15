@@ -5,7 +5,8 @@ import java.sql.Timestamp
 
 @Serializable
 class ExampleErrorResponse (
-    val timestamp: String?,
-    val error: String?,
+    val timestamp: String,
+    val error: String,
+    val status:String,
     val message: String
 )

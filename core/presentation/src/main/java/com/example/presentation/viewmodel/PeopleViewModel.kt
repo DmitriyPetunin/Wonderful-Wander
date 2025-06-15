@@ -1,19 +1,23 @@
 package com.example.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.profile.PeoplePageAction
 import com.example.base.event.people.PeoplePageEvent
 import com.example.base.model.user.People
 import com.example.base.state.ListScreenState
+import com.example.base.state.PeopleEnum
 import com.example.presentation.usecase.GetAllFollowersUseCase
 import com.example.presentation.usecase.GetAllFollowingUseCase
 import com.example.presentation.usecase.GetAllFriendsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,76 +37,99 @@ class PeopleViewModel @Inject constructor(
     val event:SharedFlow<PeoplePageEvent> = _event
 
 
-    fun loadFriends() {
+    private fun loadPeople() {
+        if ((!state.value.isInitialLoading && state.value.isLoading) || state.value.endReached) return
+
+        _state.update { it.copy(isLoading = true) }
+
         viewModelScope.launch {
-            val response = getAllFriendsUseCase.invoke()
+            delay(3000L)
+            val response = when(state.value.people){
+                PeopleEnum.FRIENDS -> { getAllFriendsUseCase.invoke(page = state.value.currentPage, limit = state.value.size)}
+                PeopleEnum.FOLLOWING -> { getAllFollowingUseCase.invoke(page = state.value.currentPage, limit = state.value.size) }
+                PeopleEnum.FOLLOWERS -> { getAllFollowersUseCase.invoke(page = state.value.currentPage, limit = state.value.size) }
+            }
 
             _state.update { currentState ->
                 response.fold(
-                    onSuccess = { list: List<People> ->
-                        if (list.isEmpty()) {
-                            currentState
-                        } else currentState.copy(listOfPeople = list, people = "Friends")
+                    onSuccess = { newPeople: List<People> ->
+                        if(!state.value.isInitialLoading && newPeople.lastOrNull() == state.value.listOfPeople.lastOrNull()){
+                            currentState.copy(
+                                isLoading = false,
+                                endReached = true
+                            )
+                        } else {
+                            currentState.copy(
+                                listOfPeople = currentState.listOfPeople + newPeople,
+                                isLoading = false,
+                                currentPage = currentState.currentPage + 1,
+                                endReached = newPeople.size < currentState.size
+                            )
+                        }
                     },
                     onFailure = { exception ->
                         exception.printStackTrace()
-                        currentState
+                        currentState.copy(isLoading = false)
                     }
                 )
             }
+            Log.d("TEST-TAG","isLoading = ${state.value.isLoading}")
         }
     }
 
-    fun loadFollowers() {
-        viewModelScope.launch {
-            val response = getAllFollowersUseCase.invoke()
-
-            _state.update { currentState ->
-                response.fold(
-                    onSuccess = { list: List<People> ->
-                        if (list.isEmpty()) {
-                            currentState
-                        } else currentState.copy(listOfPeople = list,people = "Followers")
-                    },
-                    onFailure = { exception ->
-                        exception.printStackTrace()
-                        currentState
-                    }
-                )
-            }
-        }
-    }
-    fun loadFollowing() {
-        viewModelScope.launch {
-            val response = getAllFollowingUseCase.invoke()
-
-            _state.update { currentState ->
-                response.fold(
-                    onSuccess = { list: List<People> ->
-                        if (list.isEmpty()) {
-                            currentState
-                        } else currentState.copy(listOfPeople = list, people = "Following")
-                    },
-                    onFailure = { exception ->
-                        exception.printStackTrace()
-                        currentState
-                    }
-                )
-            }
-        }
-    }
-
-    fun onAction(action: PeoplePageAction){
+    fun onAction(action: PeoplePageAction) {
         when(action){
             is PeoplePageAction.SubmitBackButton -> {
 
             }
             is PeoplePageAction.SubmitPersonItem -> {
+                resetState()
                 viewModelScope.launch {
                     _event.emit(PeoplePageEvent.NavigateToPersonProfileWithUserId(userInfo = action.userInfo))
                 }
             }
+
+            PeoplePageAction.LoadMore -> {
+                Log.d("LoadMore","LoadMore")
+                updateEndReachedState()
+                loadPeople()
+            }
+
+            is PeoplePageAction.UpdatePeopleState -> {
+                Log.d("UpdateEndReache","listOfPeople.size = ${state.value.listOfPeople.size}")
+                updatePeopleState(action.input)
+                if(state.value.isInitialLoading) {
+                    loadPeople()
+                    updateInitLoadingState()
+                }
+            }
         }
 
+    }
+
+    private fun resetState(){
+        _state.update {
+            it.copy(listOfPeople = emptyList(),
+                currentPage = 1,
+                endReached = false,
+                isInitialLoading = true,
+            )
+        }
+    }
+    private fun updateInitLoadingState(){
+        _state.update {
+            it.copy(isInitialLoading = false)
+        }
+    }
+    private fun updatePeopleState(input:PeopleEnum){
+        _state.update {
+            it.copy(people = input)
+        }
+    }
+
+    private fun updateEndReachedState(){
+        _state.update {
+            it.copy(endReached = false)
+        }
     }
 }

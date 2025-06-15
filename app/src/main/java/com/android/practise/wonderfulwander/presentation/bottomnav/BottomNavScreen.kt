@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.practise.wonderfulwander.presentation.bottomnav.photos.PhotosScreenRoute
 import com.example.navigation.ScreenBottomNav
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.ProfileScreenRoute
+import com.example.base.state.PeopleEnum
 import com.example.navigation.Screen
 
 
@@ -63,7 +64,7 @@ fun BottomNavScreen(
             composable(ScreenBottomNav.ProfileScreen.route) {
                 ProfileScreenRoute(
                     navigateToAuthScreen = { navigateToAuthScreen(controller = navController) },
-                    navigateToPeopleScreen = { s: String ->  navigateToPeopleScreen(controller = navController, route = s)},
+                    navigateToPeopleScreen = { type: PeopleEnum ->  navigateToPeopleScreen(controller = navController, route = type.toString())},
                     navigateToUpdateScreen = { navigateToUpdateProfileInfoScreen(controller = navController) },
                     navigateToRegisterScreen = { navigateToRegisterScreen(controller = navController) },
                 )

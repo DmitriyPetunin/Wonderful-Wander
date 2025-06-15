@@ -5,10 +5,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PeopleApiResponse(
-    val listOfFriends: List<FriendApi>?,
-    val timestamp: String?,
-    val error: String?,
-    val message: String?
+    @SerialName("data")
+    val listOfFriends: List<PeopleApi>?,
+    val total:Int?,
+    val limit:Int?,
+    val offset:Int?,
+//    val timestamp: String?,
+//    val error: String?,
+//    val message: String?
+)
+@Serializable
+data class PeopleApi(
+    val userId:String,
+    @SerialName("username")
+    val userName:String,
+    val avatarUrl:String?
 )
 @Serializable
 data class FriendApi(

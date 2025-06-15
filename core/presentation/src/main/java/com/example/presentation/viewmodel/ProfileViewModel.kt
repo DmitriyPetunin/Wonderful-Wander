@@ -9,12 +9,15 @@ import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
 import com.example.base.event.profile.ProfileEvent
 import com.example.base.model.user.profile.UpdateProfileParam
+import com.example.base.state.PeopleEnum
+import com.example.base.state.PeopleEnum.Companion.fromString
 import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.example.presentation.usecase.DeleteUserProfileUseCase
 import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
+import com.example.presentation.usecase.GetProfileInfoUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,8 +35,9 @@ class ProfileViewModel @Inject constructor(
     private val followToUserByIdUseCase: FollowToUserByIdUseCase,
     private val getPersonProfileInfoByIdUseCase: GetPersonProfileInfoByIdUseCase,
     private val deleteUserProfileUseCase: DeleteUserProfileUseCase,
-    private val updateUserUseCase: UpdateProfileInfoUseCase,
+    private val updateUserProfileUseCase: UpdateProfileInfoUseCase,
     private val googleAuthUiClient: GoogleAuthUiClient,
+    private val getProfileInfoUseCase: GetProfileInfoUseCase
 ) : ViewModel() {
 
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
@@ -58,24 +62,28 @@ class ProfileViewModel @Inject constructor(
                 viewModelScope.launch {
                     _event.emit(ProfileEvent.NavigateToFriendsPage)
                 }
+                resetState()
             }
 
             ProfileAction.SubmitGetAllFollowers -> {
                 viewModelScope.launch {
                     _event.emit(ProfileEvent.NavigateToFollowersPage)
                 }
+                resetState()
             }
 
             ProfileAction.SubmitGetAllFollowing -> {
                 viewModelScope.launch {
                     _event.emit(ProfileEvent.NavigateToFollowingPage)
                 }
+                resetState()
             }
 
             ProfileAction.SubmitUpdateProfileInfo -> {
                 viewModelScope.launch {
                     _event.emit(ProfileEvent.NavigateToUpdateScreenPage)
                 }
+                resetState()
             }
 
             ProfileAction.SubmitDeleteProfile -> {
@@ -90,6 +98,10 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileAction.SubmitBellIcon -> {
                 submitToBellIcon(action.input)
+            }
+
+            ProfileAction.Init -> {
+                getProfileInfo()
             }
         }
     }
@@ -163,7 +175,7 @@ class ProfileViewModel @Inject constructor(
             response.fold(
                 onSuccess = { model ->
                     _stateProfile.update {
-                        it.copy(username = model.userName, avatarUrl = model.avatarUrl, isFollowing = followingState(whoIsIt))
+                        it.copy(userId = id, username = model.userName, avatarUrl = model.avatarUrl, isFollowers = followingState(whoIsIt))
                     }
                 },
                 onFailure = { exception ->
@@ -171,6 +183,33 @@ class ProfileViewModel @Inject constructor(
                     exception.printStackTrace()
                 }
             )
+        }
+    }
+
+    private fun getProfileInfo(){
+        viewModelScope.launch {
+            val result = getProfileInfoUseCase.invoke()
+            _stateProfile.update { currentState ->
+                result.fold(
+                    onSuccess = { model ->
+                        Log.d("PROFILE", model.username)
+                        currentState.copy(
+                            username = model.username,
+                            firstName = model.firstname,
+                            lastName = model.lastname,
+                            bio = model.bio,
+                            followersCount = model.followersCount,
+                            friendsCount = model.friendsCount,
+                            followingCount = model.followingCount,
+                            avatarUrl = model.avatarUrl
+
+                    )},
+                    onFailure = {exception ->
+                        exception.printStackTrace()
+                        currentState
+                    }
+                )
+            }
         }
     }
 
@@ -195,14 +234,14 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun submitToBellIcon(id: String){
-        val isFollowing = stateProfile.value.isFollowing
+        val isFollowing = stateProfile.value.isFollowers
 
         viewModelScope.launch {
             val result = if (isFollowing) unFollowToUserByIdUseCase.invoke(id = id) else followToUserByIdUseCase.invoke(id=id)
             result.fold(
                 onSuccess = {
                     _stateProfile.update { currentState ->
-                        currentState.copy(isFollowing = !currentState.isFollowing)
+                        currentState.copy(isFollowers = !currentState.isFollowers)
                     }
                 },
                 onFailure = {}
@@ -220,7 +259,7 @@ class ProfileViewModel @Inject constructor(
     private fun updateProfileInfo() {
         viewModelScope.launch {
 
-            val response = updateUserUseCase.invoke(
+            val response = updateUserProfileUseCase.invoke(
                 UpdateProfileParam(
                     email = stateUpdateProfile.value.email,
                     firstName = stateUpdateProfile.value.firstName,
@@ -300,14 +339,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun followingState(info:String):Boolean{
-        return when(info){
-            "Followers" -> {
-                false
-            }
-
-            else ->{
-                true
-            }
+        return when(fromString(info)){
+            PeopleEnum.FOLLOWERS -> { false }
+            else ->{ true }
         }
     }
 }

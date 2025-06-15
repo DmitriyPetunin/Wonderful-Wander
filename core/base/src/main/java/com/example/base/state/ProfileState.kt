@@ -17,5 +17,5 @@ data class ProfileState (
     val followingCount: Int = 120,
     val friendsCount: Int = 71,
 
-    val isFollowing: Boolean = false
+    val isFollowers: Boolean = false
 )
