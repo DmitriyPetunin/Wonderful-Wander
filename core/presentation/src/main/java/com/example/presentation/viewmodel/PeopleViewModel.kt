@@ -38,12 +38,13 @@ class PeopleViewModel @Inject constructor(
 
 
     private fun loadPeople() {
+        Log.d("STATE","currentPage = ${state.value.currentPage}")
         if ((!state.value.isInitialLoading && state.value.isLoading) || state.value.endReached) return
 
         _state.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            delay(3000L)
+            delay(1000L)
             val response = when(state.value.people){
                 PeopleEnum.FRIENDS -> { getAllFriendsUseCase.invoke(page = state.value.currentPage, limit = state.value.size)}
                 PeopleEnum.FOLLOWING -> { getAllFollowingUseCase.invoke(page = state.value.currentPage, limit = state.value.size) }
@@ -109,7 +110,8 @@ class PeopleViewModel @Inject constructor(
 
     private fun resetState(){
         _state.update {
-            it.copy(listOfPeople = emptyList(),
+            it.copy(
+                listOfPeople = emptyList(),
                 currentPage = 1,
                 endReached = false,
                 isInitialLoading = true,

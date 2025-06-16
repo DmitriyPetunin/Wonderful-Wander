@@ -1,5 +1,6 @@
 package com.example.network.interceptor
 
+import android.util.Log
 import com.example.base.SessionManager
 import com.example.network.service.auth.AuthService
 import dagger.Lazy
@@ -17,14 +18,14 @@ class AuthInterceptor @Inject constructor(
         val originalRequest = chain.request()
         val accessToken = sessionManager.getAccessToken()
 
-        if (accessToken != SessionManager.DEFAULT_NAME_ACCESS_TOKEN && sessionManager.isAccessTokenExpired()) {
+        if (accessToken == SessionManager.DEFAULT_NAME_ACCESS_TOKEN && sessionManager.isAccessTokenExpired()) {
+            Log.d("REFRESH","пора обновляться ")
             val refreshToken = sessionManager.getRefreshToken()
-
 
             // Make the token refresh request
             val refreshedToken = runBlocking {
                 try {
-                    val response = authService.get().refreshAccessToken(requestToken = refreshToken)
+                    val response = authService.get().refreshAccessToken(refreshToken = refreshToken)
 
                     if (response.isSuccessful){
                         response.body()?.let { sessionManager.saveAccessToken(it.accessToken) }

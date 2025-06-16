@@ -2,7 +2,7 @@ package com.example.network.service.user
 
 import com.example.network.model.user.people.SubscribeUserResponse
 import com.example.network.model.user.friends.PeopleApiResponse
-import com.example.network.model.user.people.GetPersonProfileInfoResponse
+import com.example.network.model.user.people.PersonProfileInfoResponse
 import com.example.network.model.user.profile.res.GetProfileResponse
 import com.example.network.model.user.profile.req.UpdateProfileRequest
 import com.example.network.model.user.profile.res.DeleteProfileResponse
@@ -67,6 +67,6 @@ interface UserService {
     @GET("/api/users/{targetUserId}")
     suspend fun getProfileByUserId(
         @Path("targetUserId") id:String
-    ):Response<GetPersonProfileInfoResponse>
+    ):Response<PersonProfileInfoResponse>
 
 }

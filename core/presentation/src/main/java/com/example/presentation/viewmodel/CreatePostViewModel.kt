@@ -52,18 +52,18 @@ class CreatePostViewModel @Inject constructor(
         }
         viewModelScope.launch {
             delay(3000L)
-//            val response = uploadPhotoUseCase.invoke(state.value.photoUri)
-//
-//            response.fold(
-//                onSuccess = { model ->
-//                    _state.update {
-//                        it.copy(photoId = model.photoId)
-//                    }
-//                },
-//                onFailure = { exception ->
-//                    //обработка
-//                }
-//            )
+            val response = uploadPhotoUseCase.invoke(state.value.photoUri)
+
+            response.fold(
+                onSuccess = { model ->
+                    _state.update {
+                        it.copy(fileName = model.fileName)
+                    }
+                },
+                onFailure = { exception ->
+                    //обработка
+                }
+            )
             _state.update {
                 it.copy(photoState = PhotoState.Success)
             }

@@ -13,7 +13,7 @@ interface AuthService {
 
     @POST("/api/auth/refresh-token")
     suspend fun refreshAccessToken(
-        @Body requestToken: String
+        @Body refreshToken: String
     ): Response<TokenResponse>
 
     @POST("/api/auth/login")

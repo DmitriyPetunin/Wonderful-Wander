@@ -1,5 +1,6 @@
 package com.example.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.walk.CreateWalkAction
@@ -7,7 +8,9 @@ import com.example.base.model.user.People
 import com.example.base.state.CreateWalkState
 import com.example.presentation.usecase.GetAllFriendsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,7 +22,7 @@ class CreateWalkViewModel @Inject constructor(
 ):ViewModel() {
 
     private val _state = MutableStateFlow(CreateWalkState())
-    val state = _state.asStateFlow()
+    val state:StateFlow<CreateWalkState> = _state.asStateFlow()
 
     fun onAction(action: CreateWalkAction){
         when(action) {
@@ -44,7 +47,11 @@ class CreateWalkViewModel @Inject constructor(
     }
 
     private fun getAllFriends(){
+        _state.update {
+            it.copy(isLoading = true)
+        }
         viewModelScope.launch {
+            delay(2000L)
             val response = getAllFriendsUseCase.invoke()
 
             _state.update { currentState ->
@@ -59,6 +66,9 @@ class CreateWalkViewModel @Inject constructor(
                         currentState
                     }
                 )
+            }
+            _state.update {
+                it.copy(isLoading = false)
             }
         }
     }

@@ -1,14 +1,20 @@
-package com.example.base.model.user.profile
+package com.example.network.model.user.people
 
-class PersonProfileInfoResult (
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PersonProfileInfoResponse(
     val userId: String,
-    val userName:String,
+
+    @SerialName("username")
+    val userName: String,
 
     val firstname: String,
     val lastname: String,
 
     val bio: String,
-    val avatarUrl: String,
+    val avatarUrl: String?,
 
     val followersCount: Int,
     val followingCount: Int,
@@ -17,4 +23,5 @@ class PersonProfileInfoResult (
     val isFollowedByUser:Boolean, //подписан ли я пользователя с userID
     val isFollowingByUser:Boolean, // подписан ли пользователь на меня
     val isFriends:Boolean, // му друзья
+
 )

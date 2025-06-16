@@ -6,7 +6,7 @@ import android.net.Uri.EMPTY
 data class CreatePostState (
     val photoState: PhotoState = PhotoState.Init,
     val photoUri: Uri = EMPTY,
-    val photoId: String = ""
+    val fileName: String = ""
 )
 
 sealed class PhotoState{

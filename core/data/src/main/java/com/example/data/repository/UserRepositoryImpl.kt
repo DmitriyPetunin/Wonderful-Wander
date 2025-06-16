@@ -15,6 +15,7 @@ import com.example.base.model.user.profile.ProfileInfoResult
 import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.base.model.user.profile.UpdateProfileResult
 import com.example.data.mapper.FriendApiToFriendDomainMapper
+import com.example.data.mapper.PersonProfileInfoResponseToPersonProfileInfoResultMapper
 import com.example.data.mapper.ProfileResponseToProfileInfoMapper
 import com.example.network.model.error.ExampleErrorResponse
 import com.example.network.model.user.login.req.LoginRequest
@@ -31,7 +32,8 @@ class UserRepositoryImpl @Inject constructor(
     private val userService: UserService,
     private val sessionManager: SessionManager,
     private val profileInfoMapper: ProfileResponseToProfileInfoMapper,
-    private val friendApiToFriendDomainMapper: FriendApiToFriendDomainMapper
+    private val friendApiToFriendDomainMapper: FriendApiToFriendDomainMapper,
+    private val personProfileInfoResponseToPersonProfileInfoResultMapper: PersonProfileInfoResponseToPersonProfileInfoResultMapper
 ) : UserRepository {
 
     override suspend fun login(inputParam: LoginUserParam): Result<LoginResult> {
@@ -208,10 +210,7 @@ class UserRepositoryImpl @Inject constructor(
                 response.isSuccessful -> {
                     response.body()?.let { successBody ->
                         Result.success(
-                            PersonProfileInfoResult(
-                                userName = successBody.userName,
-                                avatarUrl = successBody.avatarUrl ?: ""
-                            )
+                            personProfileInfoResponseToPersonProfileInfoResultMapper.invoke(successBody)
                         )
                     } ?: Result.failure(Exception("Empty response body"))
                 }
@@ -224,7 +223,7 @@ class UserRepositoryImpl @Inject constructor(
                         null
                     }
                     Result.failure(
-                        Exception(errorBody?.message ?: "Bad request: ${response.code()}")
+                        Exception(errorBody?.message ?: "Don`t Auth: ${response.code()}")
                     )
                 }
                 else -> {

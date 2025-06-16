@@ -67,7 +67,7 @@ fun PersonProfileScreen(
 
         AnotherTopBar(
             username = state.username,
-            isFollowing = state.isFollowers,
+            isFollowedByUser = state.isFollowedByUser,
             onClickFollowButton = { onAction(ProfileAction.SubmitBellIcon(input = state.userId))},
         )
 
@@ -94,7 +94,7 @@ fun PersonProfileScreen(
 @Composable
 fun AnotherTopBar(
     username: String,
-    isFollowing:Boolean,
+    isFollowedByUser:Boolean,
     modifier: Modifier = Modifier,
     onClickFollowButton: () -> Unit,
 ) {
@@ -111,7 +111,7 @@ fun AnotherTopBar(
         )
         Icon(
             painter = painterResource(
-                id = if (isFollowing) R.drawable.ic_bell_filled
+                id = if (isFollowedByUser) R.drawable.ic_bell_filled
                 else R.drawable.ic_bell
             ),
             contentDescription = "bell",

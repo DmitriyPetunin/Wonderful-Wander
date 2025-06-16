@@ -20,12 +20,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +62,6 @@ import java.io.File
 @Composable
 fun CreateWalkPageRoute(
     createWalkViewModel: CreateWalkViewModel = hiltViewModel()
-
 ) {
 
     LaunchedEffect(Unit) {
@@ -69,8 +70,16 @@ fun CreateWalkPageRoute(
 
     val state by createWalkViewModel.state.collectAsState()
 
-    CreateWalkPage(state = state, createWalkViewModel::onAction)
-
+    if (state.isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        )
+    } else {
+        CreateWalkPage(state = state, createWalkViewModel::onAction)
+    }
 }
 
 @Composable
@@ -131,7 +140,7 @@ fun FriendListItem(
             .animateContentSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Основное содержимое
+
         Row(
             modifier = Modifier
                 .weight(1f)

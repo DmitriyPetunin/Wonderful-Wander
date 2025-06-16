@@ -2,7 +2,9 @@ package com.android.practise.wonderfulwander.presentation.walk
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
@@ -32,6 +34,7 @@ fun SearchBarCustom(
     onQueryChange: (String) -> Unit,
     onResultClick: (People) -> Unit
 ) {
+    items.map { println(it) }
 
     var active by remember { mutableStateOf(false) }
 
@@ -40,6 +43,12 @@ fun SearchBarCustom(
     val filteredItems = listOfFriends.filter { friend ->
         friend.username.contains(query, ignoreCase = true)
     }
+
+//    val filteredItems = remember(items, query) {
+//        items.filter { friend ->
+//            friend.username.contains(query, ignoreCase = true)
+//        }
+//    }
 
     SearchBar(
         query = query,

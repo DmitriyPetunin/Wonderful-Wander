@@ -21,6 +21,7 @@ import com.example.presentation.usecase.GetProfileInfoUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -175,7 +176,16 @@ class ProfileViewModel @Inject constructor(
             response.fold(
                 onSuccess = { model ->
                     _stateProfile.update {
-                        it.copy(userId = id, username = model.userName, avatarUrl = model.avatarUrl, isFollowers = followingState(whoIsIt))
+                        it.copy(
+                            userId = id,
+                            username = model.userName,
+                            firstName = model.firstname,
+                            lastName = model.lastname,
+                            bio = model.bio,
+                            avatarUrl = model.avatarUrl,
+                            isFriends = model.isFriends,
+                            isFollowedByUser = model.isFollowedByUser
+                        )
                     }
                 },
                 onFailure = { exception ->
@@ -187,7 +197,11 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun getProfileInfo(){
+        _stateProfile.update {
+            it.copy(isLoading = true)
+        }
         viewModelScope.launch {
+            delay(1000L)
             val result = getProfileInfoUseCase.invoke()
             _stateProfile.update { currentState ->
                 result.fold(
@@ -209,6 +223,9 @@ class ProfileViewModel @Inject constructor(
                         currentState
                     }
                 )
+            }
+            _stateProfile.update {
+                it.copy(isLoading = false)
             }
         }
     }
@@ -234,14 +251,14 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun submitToBellIcon(id: String){
-        val isFollowing = stateProfile.value.isFollowers
+        val isFollowing = stateProfile.value.isFollowedByUser // я подписан?
 
         viewModelScope.launch {
             val result = if (isFollowing) unFollowToUserByIdUseCase.invoke(id = id) else followToUserByIdUseCase.invoke(id=id)
             result.fold(
                 onSuccess = {
                     _stateProfile.update { currentState ->
-                        currentState.copy(isFollowers = !currentState.isFollowers)
+                        currentState.copy(isFollowedByUser = !currentState.isFollowedByUser)
                     }
                 },
                 onFailure = {}

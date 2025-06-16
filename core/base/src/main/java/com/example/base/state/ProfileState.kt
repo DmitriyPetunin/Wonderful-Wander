@@ -13,9 +13,12 @@ data class ProfileState (
     val photoVisibility: String = "PUBLIC",
     val walkVisibility: String = "PUBLIC",
 
-    val followersCount: Int = 391,
-    val followingCount: Int = 120,
-    val friendsCount: Int = 71,
+    val followersCount: Int = 0,
+    val followingCount: Int = 0,
+    val friendsCount: Int = 0,
 
-    val isFollowers: Boolean = false
+    val isFriends: Boolean = false,
+    val isFollowedByUser:Boolean = false,
+
+    val isLoading:Boolean = false
 )

@@ -17,9 +17,9 @@ import retrofit2.http.Path
 interface PostService {
 
     @Multipart
-    @POST("upload")
+    @POST("/api/photos/post")
     suspend fun uploadImage(
-        @Part image: MultipartBody.Part?
+        @Part photo: MultipartBody.Part?
     ): Response<UploadImageResponse>
 
 
