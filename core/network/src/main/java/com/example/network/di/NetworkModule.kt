@@ -7,6 +7,7 @@ import com.example.network.interceptor.AuthInterceptor
 import com.example.network.interceptor.TokenInterceptor
 import com.example.network.service.auth.AuthService
 import com.example.network.service.geo.GeoService
+import com.example.network.service.photo.PhotoService
 import com.example.network.service.post.PostService
 import com.example.network.service.user.UserService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -38,6 +39,14 @@ class NetworkModule {
         return retrofit.create(GeoService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun providePhotoService(
+        @Named(ApiRetrofit)
+        retrofit: Retrofit
+    ): PhotoService {
+        return retrofit.create(PhotoService::class.java)
+    }
     @Provides
     @Singleton
     fun provideUserService(

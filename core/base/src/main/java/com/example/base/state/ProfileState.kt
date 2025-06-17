@@ -1,5 +1,7 @@
 package com.example.base.state
 
+import android.net.Uri
+
 data class ProfileState (
     val userId: String = "",
     val username: String = "",
@@ -20,5 +22,8 @@ data class ProfileState (
     val isFriends: Boolean = false,
     val isFollowedByUser:Boolean = false,
 
-    val isLoading:Boolean = false
+    val isLoading:Boolean = false,
+
+    val photoUri:Uri = Uri.EMPTY,
+    val status:Boolean = true
 )

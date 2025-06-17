@@ -3,6 +3,7 @@ package com.example.presentation.viewmodel
 
 import android.content.Intent
 import android.content.IntentSender
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.login.LoginAction
@@ -62,6 +63,7 @@ class SignInViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
+            Log.d("LOGIN", "login: ${state.value.userName}")
             val response = loginUseCase.invoke(
                 LoginUserParam(
                     email = state.value.userName,
@@ -165,7 +167,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun resetState() {
-        _state.update { LoginState() }
+        _state.update { LoginState(userName = "") }
     }
 
     private fun updateSignInResult(result: SignInResult) {

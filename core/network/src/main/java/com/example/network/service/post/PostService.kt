@@ -16,12 +16,6 @@ import retrofit2.http.Path
 
 interface PostService {
 
-    @Multipart
-    @POST("/api/photos/post")
-    suspend fun uploadImage(
-        @Part photo: MultipartBody.Part?
-    ): Response<UploadImageResponse>
-
 
     @GET("/api/posts")
     suspend fun getRecommendedPosts(
@@ -70,7 +64,7 @@ interface PostService {
     @PUT("/api/posts/{postId}")
     suspend fun updatePostById(
         @Path("postId") postId:String,
-        @Body() body: UpdatePostRequest
+        @Body body: UpdatePostRequest
     ):Response<PostResponse>
 
     @DELETE("/api/posts/{postId}")

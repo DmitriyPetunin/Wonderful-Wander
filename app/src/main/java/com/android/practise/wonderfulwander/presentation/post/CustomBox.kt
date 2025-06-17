@@ -14,23 +14,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomBox(
-    content: @Composable () -> Unit
+    modifier: Modifier,
+    content: @Composable () -> Unit,
 ) {
-
     Box(
-        modifier = Modifier
-            .padding(24.dp)
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .background(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = MaterialTheme.shapes.medium
-            )
-            .border(
-                width =  1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = MaterialTheme.shapes.medium
-            ),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ){
         content()

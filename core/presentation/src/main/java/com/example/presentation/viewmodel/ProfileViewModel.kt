@@ -1,5 +1,6 @@
 package com.example.presentation.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,6 +21,7 @@ import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
+import com.example.presentation.usecase.UploadAvatarPhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,7 +40,8 @@ class ProfileViewModel @Inject constructor(
     private val deleteUserProfileUseCase: DeleteUserProfileUseCase,
     private val updateUserProfileUseCase: UpdateProfileInfoUseCase,
     private val googleAuthUiClient: GoogleAuthUiClient,
-    private val getProfileInfoUseCase: GetProfileInfoUseCase
+    private val getProfileInfoUseCase: GetProfileInfoUseCase,
+    private val uploadAvatarPhotoUseCase: UploadAvatarPhotoUseCase
 ) : ViewModel() {
 
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
@@ -102,6 +105,12 @@ class ProfileViewModel @Inject constructor(
             }
 
             ProfileAction.Init -> {
+                getProfileInfo()
+            }
+
+            is ProfileAction.SubmitUploadAvatar -> {
+                updatePhotoUri(action.input)
+                sendPhotoToServer()
                 getProfileInfo()
             }
         }
@@ -196,6 +205,38 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun updatePhotoUri(uri: Uri){
+        _stateProfile.update {
+            it.copy(photoUri = uri)
+        }
+    }
+    private fun sendPhotoToServer(){
+        _stateProfile.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            delay(1000L)
+            val response = uploadAvatarPhotoUseCase.invoke(stateProfile.value.photoUri)
+
+            response.fold(
+                onSuccess = { model ->
+                    _stateProfile.update {
+                        it.copy(status = true)
+                    }
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                    _stateProfile.update {
+                        it.copy(status = false)
+                    }
+                }
+            )
+            _stateProfile.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
     private fun getProfileInfo(){
         _stateProfile.update {
             it.copy(isLoading = true)
@@ -206,16 +247,16 @@ class ProfileViewModel @Inject constructor(
             _stateProfile.update { currentState ->
                 result.fold(
                     onSuccess = { model ->
-                        Log.d("PROFILE", model.username)
+                        Log.d("PROFILE", model.avatarUrl)
                         currentState.copy(
                             username = model.username,
                             firstName = model.firstname,
+                            avatarUrl = model.avatarUrl,
                             lastName = model.lastname,
                             bio = model.bio,
                             followersCount = model.followersCount,
                             friendsCount = model.friendsCount,
                             followingCount = model.followingCount,
-                            avatarUrl = model.avatarUrl
 
                     )},
                     onFailure = {exception ->
@@ -268,7 +309,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun signOut() {
         viewModelScope.launch {
-            googleAuthUiClient.signOut()
+//            googleAuthUiClient.signOut()
             _event.emit(ProfileEvent.NavigateToAuthPage)
         }
     }

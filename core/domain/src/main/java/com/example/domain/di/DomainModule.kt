@@ -1,6 +1,7 @@
 package com.example.domain.di
 
 import com.example.domain.repository.GeoRepository
+import com.example.domain.repository.PhotoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.DeleteUserProfileUseCaseImpl
@@ -15,7 +16,9 @@ import com.example.domain.usecase.LoginUseCaseImpl
 import com.example.domain.usecase.RegisterUseCaseImpl
 import com.example.domain.usecase.UnFollowToUserByIdUseCaseImpl
 import com.example.domain.usecase.UpdateProfileInfoUseCaseImpl
-import com.example.domain.usecase.UploadPhotoUseCaseImpl
+import com.example.domain.usecase.UploadAvatarPhotoUseCaseImpl
+import com.example.domain.usecase.UploadPostPhotoUseCaseImpl
+import com.example.domain.usecase.UploadWalkPhotoUseCaseImpl
 import com.example.presentation.usecase.DeleteUserProfileUseCase
 import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetActualGeoDataUseCase
@@ -28,7 +31,9 @@ import com.example.presentation.usecase.LoginUseCase
 import com.example.presentation.usecase.RegisterUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
-import com.example.presentation.usecase.UploadPhotoUseCase
+import com.example.presentation.usecase.UploadAvatarPhotoUseCase
+import com.example.presentation.usecase.UploadPostPhotoUseCase
+import com.example.presentation.usecase.UploadWalkPhotoUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -83,11 +88,26 @@ object DomainModule {
     }
 
     @Provides
-    fun provideUpdateUploadPhotoUseCase(
-        postRepository: PostRepository
-    ): UploadPhotoUseCase {
-        return UploadPhotoUseCaseImpl(postRepository = postRepository)
+    fun provideUploadAvatarPhotoUseCase(
+        photoRepository: PhotoRepository
+    ): UploadAvatarPhotoUseCase {
+        return UploadAvatarPhotoUseCaseImpl(photoRepository = photoRepository)
     }
+
+    @Provides
+    fun provideUploadPostPhotoUseCase(
+        photoRepository: PhotoRepository
+    ): UploadPostPhotoUseCase {
+        return UploadPostPhotoUseCaseImpl(photoRepository = photoRepository)
+    }
+
+    @Provides
+    fun provideUploadWalkPhotoUseCase(
+        photoRepository: PhotoRepository
+    ): UploadWalkPhotoUseCase {
+        return UploadWalkPhotoUseCaseImpl(photoRepository = photoRepository)
+    }
+
 
     @Provides
     fun provideGetAllFollowingUseCase(

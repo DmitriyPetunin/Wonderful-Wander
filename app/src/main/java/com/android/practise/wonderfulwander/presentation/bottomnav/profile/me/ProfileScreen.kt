@@ -1,6 +1,11 @@
 package com.android.practise.wonderfulwander.presentation.bottomnav.profile.me
 
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -24,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.android.practise.wonderfulwander.presentation.post.CustomBox
 import com.android.practise.wonderfulwander.presentation.post.CustomDropDawnMenu
+import com.example.base.R
+import com.example.base.action.post.CreatePostAction
 import com.example.base.action.profile.ProfileAction
 import com.example.base.event.profile.ProfileEvent
 import com.example.base.state.PeopleEnum
@@ -135,7 +147,8 @@ fun ProfileScreen(
             username = state.username,
             modifier = Modifier.fillMaxWidth(),
             updateDropDawnVisible = { onAction(ProfileAction.UpdateDropDawnVisible(isVisible = !state.dropDownMenuVisible))},
-            visibleState = state.dropDownMenuVisible
+            visibleState = state.dropDownMenuVisible,
+            onAction = onAction
         )
 
         Text(
@@ -143,17 +156,10 @@ fun ProfileScreen(
             modifier = Modifier.align(Alignment.Start),
             style = MaterialTheme.typography.displayLarge
         )
-        if (state.avatarUrl.isNotEmpty()) {
-            AsyncImage(
-                model = state.avatarUrl,
-                contentDescription = "Profile picture",
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+        CustomAvatar(
+            avatarUrl = state.avatarUrl,
+            onAction = onAction
+        )
         if (state.username.isNotEmpty()) {
             Text(
                 text = state.username,
@@ -163,25 +169,8 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        Button(onClick = {
-            onAction(ProfileAction.SignOut)
-        }) {
-            Text(text = "Sign out")
-        }
 
         StatSection(state = state,onAction = onAction,modifier = Modifier.weight(7f))
-
-
-        Button(onClick = {
-            onAction(ProfileAction.SubmitUpdateProfileInfo)
-        }) {
-            Text(text = "Изменить данные профиля")
-        }
-        Button(onClick = {
-            onAction(ProfileAction.SubmitDeleteProfile)
-        }) {
-            Text(text = "удалить аккаунт")
-        }
     }
 }
 
@@ -191,7 +180,8 @@ fun MeTopBar(
     username: String,
     modifier: Modifier = Modifier,
     updateDropDawnVisible: () -> Unit,
-    visibleState:Boolean
+    visibleState:Boolean,
+    onAction: (ProfileAction) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -214,7 +204,8 @@ fun MeTopBar(
         Box {
             CustomDropDawnMenu(
                 expanded = visibleState,
-                onDismissRequest = { updateDropDawnVisible() }
+                onDismissRequest = { updateDropDawnVisible() },
+                onAction = onAction
             )
         }
     }
@@ -279,4 +270,48 @@ fun ProfileStat(
 
     }
 
+}
+@Composable
+fun CustomAvatar(
+    avatarUrl: String,
+    onAction: (ProfileAction) -> Unit
+){
+    val context = LocalContext.current
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri == null) {
+            //закрыли галлерию
+            Log.d("PickImage", "No image selected")
+        } else {
+            onAction(ProfileAction.SubmitUploadAvatar(uri))
+        }
+    }
+
+    if (avatarUrl.isNotEmpty()) {
+        AsyncImage(
+            model = avatarUrl,
+            contentDescription = "Profile picture",
+            modifier = Modifier
+                .size(150.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.ic_visibility_off_foreground),
+        )
+    } else {
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "Default profile icon",
+            modifier = Modifier
+                .size(150.dp)
+                .clip(CircleShape)
+                .clickable { pickImageLauncher.launch("image/*") }
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = CircleShape
+                ),
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
 }

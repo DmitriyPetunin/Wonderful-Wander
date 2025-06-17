@@ -7,7 +7,7 @@ import com.example.base.action.post.CreatePostAction
 import com.example.base.event.post.CreatePostEvent
 import com.example.base.state.CreatePostState
 import com.example.base.state.PhotoState
-import com.example.presentation.usecase.UploadPhotoUseCase
+import com.example.presentation.usecase.UploadPostPhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
-    private val uploadPhotoUseCase: UploadPhotoUseCase
+    private val uploadPostPhotoUseCase: UploadPostPhotoUseCase
 ):ViewModel() {
 
     private val _state = MutableStateFlow(CreatePostState())
@@ -51,13 +51,13 @@ class CreatePostViewModel @Inject constructor(
             it.copy(photoState = PhotoState.Loading)
         }
         viewModelScope.launch {
-            delay(3000L)
-            val response = uploadPhotoUseCase.invoke(state.value.photoUri)
+            delay(1000L)
+            val response = uploadPostPhotoUseCase.invoke(state.value.photoUri)
 
             response.fold(
                 onSuccess = { model ->
                     _state.update {
-                        it.copy(fileName = model.fileName)
+                        it.copy(status = "success")
                     }
                 },
                 onFailure = { exception ->

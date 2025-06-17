@@ -1,5 +1,7 @@
 package com.example.base.action.profile
 
+import android.net.Uri
+
 
 sealed class ProfileAction {
 
@@ -9,6 +11,7 @@ sealed class ProfileAction {
     data object SignOut: ProfileAction()
     data object SubmitUpdateProfileInfo: ProfileAction()
     data object SubmitDeleteProfile: ProfileAction()
+    data class SubmitUploadAvatar(val input:Uri):ProfileAction()
 
     data class UpdateDropDawnVisible(val isVisible:Boolean): ProfileAction()
 

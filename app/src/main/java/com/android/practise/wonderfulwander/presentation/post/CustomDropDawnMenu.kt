@@ -14,13 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.example.base.action.profile.ProfileAction
 
 
 @Composable
 fun CustomDropDawnMenu(
     expanded:Boolean,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAction:(ProfileAction) -> Unit,
 ) {
 
     DropdownMenu(
@@ -32,7 +34,7 @@ fun CustomDropDawnMenu(
         containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) {
         DropdownMenuItem(
-            text = { Text("Выйти") },
+            text = { Text("выйти") },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.ExitToApp,
@@ -41,7 +43,7 @@ fun CustomDropDawnMenu(
                 )
             },
             onClick = {
-
+                onAction(ProfileAction.SignOut)
             },
         )
         DropdownMenuItem(
@@ -54,7 +56,7 @@ fun CustomDropDawnMenu(
                 )
             },
             onClick = {
-
+                onAction(ProfileAction.SubmitUpdateProfileInfo)
             }
         )
         DropdownMenuItem(
@@ -67,7 +69,7 @@ fun CustomDropDawnMenu(
                 )
             },
             onClick = {
-
+                onAction(ProfileAction.SubmitDeleteProfile)
             }
         )
     }

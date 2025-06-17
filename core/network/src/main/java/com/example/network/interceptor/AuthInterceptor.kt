@@ -53,6 +53,7 @@ class AuthInterceptor @Inject constructor(
         val authorizedRequest = originalRequest.newBuilder()
             .header("Authorization", "Bearer $accessToken")
             .build()
+        Log.d("INTERCEPT", "intercept: Bearer $accessToken")
 
         return chain.proceed(authorizedRequest)
 
