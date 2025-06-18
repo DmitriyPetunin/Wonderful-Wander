@@ -13,6 +13,7 @@ import com.android.practise.wonderfulwander.presentation.bottomnav.profile.Peopl
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.another.PersonProfileScreenRoute
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.UpdateProfileScreenRoute
 import com.android.practise.wonderfulwander.presentation.login.LoginScreenRoute
+import com.android.practise.wonderfulwander.presentation.post.PostDetailInfoScreenRoute
 import com.android.practise.wonderfulwander.presentation.registration.RegistrationScreenRoute
 import com.example.navigation.Screen
 import com.example.navigation.ScreenBottomNav
@@ -49,19 +50,20 @@ fun MainScreen() {
         peopleScreen = { listType ->
             PeopleScreenRoute(
                 listType = listType,
-                navigateToPersonProfile = { userInfo: String ->
+                navigateToPersonProfile = { userId: String ->
                     navigateToPersonProfile(
                         controller = navController,
-                        info = userInfo
+                        userId = userId
                     )
                 })
         },
-        personProfile = { info -> PersonProfileScreenRoute(userInfo = info) }
+        personProfile = { id -> PersonProfileScreenRoute(userId = id) },
+        postDetailScreen = { id -> PostDetailInfoScreenRoute(postId = id) }
     )
 }
 
-private fun navigateToPersonProfile(controller: NavController, info: String) {
-    controller.navigate("${Screen.PersonProfileScreen.route}/$info")
+private fun navigateToPersonProfile(controller: NavController, userId: String) {
+    controller.navigate("${Screen.PersonProfileScreen.route}/$userId")
 }
 
 private fun navigateToProfileScreen(controller: NavController) {

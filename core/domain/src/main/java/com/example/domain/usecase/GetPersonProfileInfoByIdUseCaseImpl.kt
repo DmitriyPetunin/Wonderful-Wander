@@ -5,7 +5,7 @@ import com.example.domain.repository.UserRepository
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
 import javax.inject.Inject
 
-class GetPersonProfileInfoByIdUseCaseImpl @Inject constructor(
+class GetPersonProfileInfoByIdUseCaseImpl(
     private val userRepository: UserRepository
 ): GetPersonProfileInfoByIdUseCase {
     override suspend fun invoke(id: String): Result<PersonProfileInfoResult> {

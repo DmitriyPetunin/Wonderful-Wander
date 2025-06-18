@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardOptions
@@ -73,6 +75,9 @@ fun LoginScreenRoute(
     LaunchedEffect(Unit) {
         signInViewModel.onAction(LoginAction.SubmitLoginButton)
     }
+    LaunchedEffect(Unit) {
+        navigateToProfile()
+    }
 
     LaunchedEffect(Unit) {
         signInViewModel.event.collect{ event ->
@@ -113,7 +118,17 @@ fun LoginScreenRoute(
         }
     }
 
-    LoginScreen(state = loginState,signInViewModel::onAction)
+    if(loginState.isLoading){
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+        )
+    }else{
+        LoginScreen(state = loginState,signInViewModel::onAction)
+    }
+
 }
 
 @Composable
@@ -132,10 +147,6 @@ fun LoginScreen(
     val icon = if (passwordVisibility) {
         painterResource(baseR.drawable.ic_visibility_foreground)
     } else painterResource(baseR.drawable.ic_visibility_off_foreground)
-
-    if(state.isLoading){
-        CircularProgressIndicator()
-    }
 
     Column(
         modifier = Modifier

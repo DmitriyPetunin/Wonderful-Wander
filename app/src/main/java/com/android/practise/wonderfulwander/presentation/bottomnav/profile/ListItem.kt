@@ -29,14 +29,14 @@ import com.example.base.model.user.People
 @Composable
 fun ListItem(
     man: People,
-    onItemClick: () -> Unit
+    onItemClick: (String) -> Unit
 ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 6.dp)
-            .clickable(onClick = { onItemClick() }),
+            .clickable(onClick = { onItemClick(man.userId) }),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
     ) {

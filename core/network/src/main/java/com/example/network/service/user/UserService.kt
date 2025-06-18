@@ -43,15 +43,15 @@ interface UserService {
     @GET("/api/users/{userId}/following")
     suspend fun getFollowing(
         @Path("userId") id: String,
-        @Query("page") page: Int = 1,
-        @Query("size") size: Int = 10,
+        @Query("page") page: Int,
+        @Query("size") size: Int,
     ): Response<PeopleApiResponse>
 
     @GET("/api/users/{userId}/followers")
     suspend fun getFollowers(
         @Path("userId") id: String,
-        @Query("page") page: Int = 1,
-        @Query("size") size: Int = 10,
+        @Query("page") page: Int,
+        @Query("size") size: Int,
     ): Response<PeopleApiResponse>
 
     @POST("/api/users/me/follows/{targetUserId}")

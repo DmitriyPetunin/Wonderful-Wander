@@ -44,7 +44,7 @@ fun PeopleScreenRoute(
         friendsViewModel.event.collect { event ->
             when (event) {
                 is PeoplePageEvent.NavigateToPersonProfileWithUserId -> {
-                    navigateToPersonProfile(event.userInfo)
+                    navigateToPersonProfile(event.userId)
                 }
             }
         }
@@ -72,25 +72,40 @@ fun PeopleScreen(
             style = MaterialTheme.typography.displayMedium
         )
         ListScreen(
-            state = state,
-            onItemClick = { info ->
-                onAction(PeoplePageAction.SubmitPersonItem(userInfo = info))
-            },
-            loadMore = { onAction(PeoplePageAction.LoadMore) }
+            items = state.listOfPeople,
+            isLoading = state.isLoading,
+            endReached = state.endReached,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .wrapContentWidth(Alignment.CenterHorizontally),
+
+            loadMore = { onAction(PeoplePageAction.LoadMore) },
+            itemContent = { person ->
+                ListItem(
+                    man = person,
+                    onItemClick = { id ->
+                        onAction(PeoplePageAction.SubmitPersonItem(userId = id))
+                    }
+                )
+            }
         )
     }
 }
 
 @Composable
-fun ListScreen(
-    state: ListScreenState,
-    onItemClick: (String) -> Unit,
+fun <T> ListScreen(
+    items: List<T>,
+    isLoading: Boolean,
+    endReached: Boolean,
     loadMore: () -> Unit,
+    itemContent: @Composable (T) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val lazyListState = rememberLazyListState()
 
-    // Логирование при достижении конца списка
+
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.layoutInfo }
             .map { layoutInfo ->
@@ -102,8 +117,8 @@ fun ListScreen(
                         "totalItems=${layoutInfo.totalItemsCount}, " +
                         "reachedEnd=$reachedEnd  " +
 
-                        "isLoading = ${state.isLoading}  " +
-                        "endReached = ${state.endReached}\""
+                        "isLoading = ${isLoading}  " +
+                        "endReached = ${endReached}\""
                 )
 
                 reachedEnd
@@ -118,29 +133,18 @@ fun ListScreen(
     }
 
     LazyColumn(state  = lazyListState) {
-        items(state.listOfPeople) { item ->
-            ListItem(man = item, onItemClick = {
-                val userInfo = "${item.userId} ${state.people}"
-                onItemClick(userInfo)}
-            )
+        items(items) { item ->
+            itemContent(item)
         }
         item {
             when {
-                state.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
+                isLoading -> {
+                    CircularProgressIndicator(modifier = modifier)
                 }
-                state.endReached && state.listOfPeople.isNotEmpty() -> {
+                endReached && items.isNotEmpty() -> {
                     Text(
                         text = "Конец списка",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
+                        modifier = modifier
                     )
                 }
             }

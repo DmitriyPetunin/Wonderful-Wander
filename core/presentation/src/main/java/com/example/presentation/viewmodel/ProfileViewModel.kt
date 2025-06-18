@@ -10,8 +10,6 @@ import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
 import com.example.base.event.profile.ProfileEvent
 import com.example.base.model.user.profile.UpdateProfileParam
-import com.example.base.state.PeopleEnum
-import com.example.base.state.PeopleEnum.Companion.fromString
 import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
 import com.example.presentation.googleclient.GoogleAuthUiClient
@@ -19,6 +17,7 @@ import com.example.presentation.usecase.DeleteUserProfileUseCase
 import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
+import com.example.presentation.usecase.GetSavedPostsUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import com.example.presentation.usecase.UploadAvatarPhotoUseCase
@@ -41,7 +40,8 @@ class ProfileViewModel @Inject constructor(
     private val updateUserProfileUseCase: UpdateProfileInfoUseCase,
     private val googleAuthUiClient: GoogleAuthUiClient,
     private val getProfileInfoUseCase: GetProfileInfoUseCase,
-    private val uploadAvatarPhotoUseCase: UploadAvatarPhotoUseCase
+    private val uploadAvatarPhotoUseCase: UploadAvatarPhotoUseCase,
+    private val getSavedPostsUseCase: GetSavedPostsUseCase
 ) : ViewModel() {
 
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
@@ -57,6 +57,12 @@ class ProfileViewModel @Inject constructor(
 
     fun onAction(action: ProfileAction) {
         when (action) {
+
+            ProfileAction.Init -> {
+                getProfileInfo()
+                loadDataForTab()
+            }
+
             ProfileAction.SignOut -> {
                 signOut()
                 resetState()
@@ -93,6 +99,10 @@ class ProfileViewModel @Inject constructor(
             ProfileAction.SubmitDeleteProfile -> {
                 deleteProfile()
             }
+            ProfileAction.LoadMore -> {
+                updateEndReachedState()
+                loadDataForTab()
+            }
 
             is ProfileAction.UpdateDropDawnVisible -> {
                 _stateProfile.update {
@@ -104,14 +114,21 @@ class ProfileViewModel @Inject constructor(
                 submitToBellIcon(action.input)
             }
 
-            ProfileAction.Init -> {
-                getProfileInfo()
-            }
-
             is ProfileAction.SubmitUploadAvatar -> {
                 updatePhotoUri(action.input)
                 sendPhotoToServer()
                 getProfileInfo()
+            }
+
+            is ProfileAction.UpdateSelectedTab -> {
+                updateSelectedTabState(action.index)
+                loadDataForTab()
+            }
+
+            is ProfileAction.SubmitPostItem -> {
+                viewModelScope.launch {
+                    _event.emit(ProfileEvent.NavigateToPostDetail(action.postId))
+                }
             }
         }
     }
@@ -176,8 +193,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getPersonProfileInfoById(info: String) {
-        val (id,whoIsIt) = info.split(" ")
+    fun getPersonProfileInfoById(id: String) {
 
         viewModelScope.launch {
             val response = getPersonProfileInfoByIdUseCase.invoke(id)
@@ -236,6 +252,53 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+    private fun updateSelectedTabState(index:Int){
+        _stateProfile.update {
+            it.copy(selectedTabIndex = index)
+        }
+    }
+
+
+    private fun loadDataForTab(){
+        val index = stateProfile.value.selectedTabIndex
+        when(index){
+            0 -> {
+                loadSavedPosts()
+            }
+            1 -> {
+
+            }
+            2 -> {
+
+            }
+        }
+    }
+
+
+    private fun loadSavedPosts(){
+        _stateProfile.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val result = getSavedPostsUseCase.invoke(stateProfile.value.currentPage,stateProfile.value.limit)
+
+            result.fold(
+                onSuccess = { list ->
+                    _stateProfile.update {
+                        it.copy(listOfSavedPostResults = it.listOfSavedPostResults + list)
+                    }
+                },
+                onFailure = {
+
+                }
+            )
+
+            _stateProfile.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
 
     private fun getProfileInfo(){
         _stateProfile.update {
@@ -359,6 +422,11 @@ class ProfileViewModel @Inject constructor(
     private fun resetState() {
         _stateProfile.update { ProfileState() }
     }
+    private fun updateEndReachedState(){
+        _stateProfile.update {
+            it.copy(endReached = false)
+        }
+    }
 
     private fun updateEmailState(input: String) {
         _stateUpdateProfile.update {
@@ -396,10 +464,4 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun followingState(info:String):Boolean{
-        return when(fromString(info)){
-            PeopleEnum.FOLLOWERS -> { false }
-            else ->{ true }
-        }
-    }
 }

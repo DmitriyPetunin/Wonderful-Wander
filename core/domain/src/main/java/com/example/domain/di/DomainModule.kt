@@ -11,7 +11,9 @@ import com.example.domain.usecase.GetAllFollowersUseCaseImpl
 import com.example.domain.usecase.GetAllFollowingUseCaseImpl
 import com.example.domain.usecase.GetAllFriendsUseCaseImpl
 import com.example.domain.usecase.GetPersonProfileInfoByIdUseCaseImpl
+import com.example.domain.usecase.GetPostDetailByIdUseCaseImpl
 import com.example.domain.usecase.GetProfileInfoUseCaseImpl
+import com.example.domain.usecase.GetSavedPostsUseCaseImpl
 import com.example.domain.usecase.LoginUseCaseImpl
 import com.example.domain.usecase.RegisterUseCaseImpl
 import com.example.domain.usecase.UnFollowToUserByIdUseCaseImpl
@@ -26,7 +28,9 @@ import com.example.presentation.usecase.GetAllFollowersUseCase
 import com.example.presentation.usecase.GetAllFollowingUseCase
 import com.example.presentation.usecase.GetAllFriendsUseCase
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
+import com.example.presentation.usecase.GetPostDetailByIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
+import com.example.presentation.usecase.GetSavedPostsUseCase
 import com.example.presentation.usecase.LoginUseCase
 import com.example.presentation.usecase.RegisterUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
@@ -150,6 +154,20 @@ object DomainModule {
         return GetProfileInfoUseCaseImpl(userRepository = userRepository)
     }
 
+
+    @Provides
+    fun provideGetPostDetailByIdUseCase(
+        postRepository: PostRepository
+    ): GetPostDetailByIdUseCase {
+        return GetPostDetailByIdUseCaseImpl(postRepository = postRepository)
+    }
+
+    @Provides
+    fun provideGetSavedPostsUseCase(
+        postRepository: PostRepository
+    ): GetSavedPostsUseCase {
+        return GetSavedPostsUseCaseImpl(postRepository = postRepository)
+    }
 
 
 }

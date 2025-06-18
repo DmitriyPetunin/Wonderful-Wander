@@ -1,23 +1,69 @@
 package com.example.data.repository
 
-import android.content.Context
-import android.net.Uri
-import android.util.Log
-import com.example.base.model.SavePhotoResult
+import com.example.base.model.post.PostResult
+import com.example.data.mapper.PostResponseToPostDomainMapper
 import com.example.domain.repository.PostRepository
-import com.example.network.model.error.ExampleErrorResponse
 import com.example.network.service.post.PostService
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val postService: PostService
-):PostRepository,BaseRepo() {
+    private val postService: PostService,
+    private val postDomainMapper: PostResponseToPostDomainMapper
+) : PostRepository, BaseRepo() {
 
+
+    override suspend fun savePost(postId: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getPostById(postId: String): Result<PostResult> {
+        return try {
+            val response = postService.getPostById(postId = postId)
+            when {
+                response.isSuccessful -> {
+                    response.body()?.let {
+                        Result.success(postDomainMapper.invoke(it))
+                    }?: Result.failure(Exception(""))
+                }
+
+                response.code() == 400 -> {
+                    Result.failure(Exception(""))
+                }
+
+                response.code() == 401 -> {
+                    Result.failure(Exception(""))
+                }
+
+                else -> {
+                    Result.failure(Exception(""))
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(Exception("ms"))
+        }
+    }
+
+    override suspend fun getSavedPosts(page: Int, limit: Int): Result<List<PostResult>> {
+//        return try {
+//            val response = postService.getSavedPosts(page,limit)
+//
+//            when {
+//                response.isSuccessful -> {
+//                    Result.success(
+//                        response.body()?.listOfPosts?.map {
+//                            postDomainMapper.invoke(it)
+//                        }?: emptyList()
+//                    )
+//                }
+//                response.code() == 400 -> { Result.failure(Exception("ms")) }
+//                response.code() == 401 -> { Result.failure(Exception("ms")) }
+//                else -> { Result.failure(Exception("ms")) }
+//            }
+//        } catch (e:Exception){
+//            e.printStackTrace()
+//            Result.failure(Exception("ms"))
+//        }
+        return Result.success(emptyList<PostResult>())
+    }
 }

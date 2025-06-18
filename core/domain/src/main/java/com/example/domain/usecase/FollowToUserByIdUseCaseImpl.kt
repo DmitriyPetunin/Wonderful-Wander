@@ -4,7 +4,7 @@ import com.example.domain.repository.UserRepository
 import com.example.presentation.usecase.FollowToUserByIdUseCase
 import javax.inject.Inject
 
-class FollowToUserByIdUseCaseImpl @Inject constructor(
+class FollowToUserByIdUseCaseImpl(
     private val userRepository: UserRepository
 ): FollowToUserByIdUseCase {
     override suspend fun invoke(id: String): Result<Unit> {

@@ -67,6 +67,7 @@ fun BottomNavScreen(
                     navigateToPeopleScreen = { type: PeopleEnum ->  navigateToPeopleScreen(controller = navController, route = type.toString())},
                     navigateToUpdateScreen = { navigateToUpdateProfileInfoScreen(controller = navController) },
                     navigateToRegisterScreen = { navigateToRegisterScreen(controller = navController) },
+                    navigateToPostDetailInfoScreen = { id -> navigateToPostDetailInfoScreen(controller = navController, postId = id)}
                 )
             }
         }
@@ -90,6 +91,10 @@ private fun navigateToPeopleScreen(controller: NavController,route:String) {
 
 private fun navigateToUpdateProfileInfoScreen(controller: NavController) {
     controller.navigate(Screen.UpdateProfileInfoScreen.route)
+}
+
+private fun navigateToPostDetailInfoScreen(controller: NavController,postId: String){
+    controller.navigate(route = "${Screen.PostDetailScreen.route}/$postId")
 }
 
 

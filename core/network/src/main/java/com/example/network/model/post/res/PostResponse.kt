@@ -1,14 +1,21 @@
 package com.example.network.model.post.res
 
+import com.example.network.model.error.ExampleErrorResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
+data class PostsResponse(
+    val listOfPosts:List<PostResponse>?,
+    val errorResponse: ExampleErrorResponse?
+)
 
 @Serializable
 data class PostResponse(
     val postId:String,
     val title:String,
-    val imageUrl:String,
+    @SerialName("imageUrl")
+    val photoUrl:String,
 
     val category: CategoryResponse,
     val user: UserResponse,

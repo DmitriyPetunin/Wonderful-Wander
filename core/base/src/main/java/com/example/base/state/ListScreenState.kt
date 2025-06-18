@@ -6,7 +6,7 @@ data class ListScreenState (
     val people: PeopleEnum = PeopleEnum.FRIENDS,
     val listOfPeople: List<People> = emptyList(),
     val currentPage: Int = 1,
-    val size:Int = 10,
+    val limit:Int = 10,
 
     val isLoading:Boolean = true,
     val endReached:Boolean = false,

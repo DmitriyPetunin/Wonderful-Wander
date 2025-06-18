@@ -3,6 +3,7 @@ package com.example.network.service.post
 import com.example.network.model.photo.UploadImageResponse
 import com.example.network.model.post.req.UpdatePostRequest
 import com.example.network.model.post.res.PostResponse
+import com.example.network.model.post.res.PostsResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -13,6 +14,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PostService {
 
@@ -43,14 +45,16 @@ interface PostService {
     ):Response<List<PostResponse>>
 
     @GET("/api/posts/users/{userId}/posts")
-    suspend fun getPostsByUserId(
+    suspend fun getPostByUserId(
         @Path("userId") userId:String,
     ):Response<List<PostResponse>>
 
 
     @GET("/api/posts/saved")
     suspend fun getSavedPosts(
-    ):Response<List<PostResponse>>
+       @Query("page") page: Int,
+       @Query("size") limit: Int
+    ):Response<PostsResponse>
 
     @GET("/api/posts/me")
     suspend fun getPosts(

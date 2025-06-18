@@ -37,14 +37,14 @@ import com.example.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun PersonProfileScreenRoute(
-    userInfo: String,
+    userId: String,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
 
     val state by profileViewModel.stateProfile.collectAsState()
 
     LaunchedEffect(Unit) {
-        profileViewModel.getPersonProfileInfoById(info = userInfo)
+        profileViewModel.getPersonProfileInfoById(id = userId)
     }
 
 

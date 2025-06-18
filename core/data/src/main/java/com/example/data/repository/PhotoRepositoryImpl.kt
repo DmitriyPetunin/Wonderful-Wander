@@ -3,7 +3,6 @@ package com.example.data.repository
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import com.example.base.model.SavePhotoResult
 import com.example.domain.repository.PhotoRepository
 import com.example.network.model.error.ExampleErrorResponse
 import com.example.network.service.photo.PhotoService

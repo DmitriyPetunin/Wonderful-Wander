@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ class CreatePostViewModel @Inject constructor(
     val state:StateFlow<CreatePostState> = _state.asStateFlow()
 
     private val _event = MutableSharedFlow<CreatePostEvent>()
-    val event:SharedFlow<CreatePostEvent> = _event
+    val event:SharedFlow<CreatePostEvent> = _event.asSharedFlow()
 
 
     fun onAction(action: CreatePostAction){

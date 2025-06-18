@@ -46,9 +46,9 @@ class PeopleViewModel @Inject constructor(
         viewModelScope.launch {
             delay(1000L)
             val response = when(state.value.people){
-                PeopleEnum.FRIENDS -> { getAllFriendsUseCase.invoke(page = state.value.currentPage, limit = state.value.size)}
-                PeopleEnum.FOLLOWING -> { getAllFollowingUseCase.invoke(page = state.value.currentPage, limit = state.value.size) }
-                PeopleEnum.FOLLOWERS -> { getAllFollowersUseCase.invoke(page = state.value.currentPage, limit = state.value.size) }
+                PeopleEnum.FRIENDS -> { getAllFriendsUseCase.invoke(page = state.value.currentPage, limit = state.value.limit)}
+                PeopleEnum.FOLLOWING -> { getAllFollowingUseCase.invoke(page = state.value.currentPage, limit = state.value.limit) }
+                PeopleEnum.FOLLOWERS -> { getAllFollowersUseCase.invoke(page = state.value.currentPage, limit = state.value.limit) }
             }
 
             _state.update { currentState ->
@@ -64,7 +64,7 @@ class PeopleViewModel @Inject constructor(
                                 listOfPeople = currentState.listOfPeople + newPeople,
                                 isLoading = false,
                                 currentPage = currentState.currentPage + 1,
-                                endReached = newPeople.size < currentState.size
+                                endReached = newPeople.size < currentState.limit
                             )
                         }
                     },
@@ -86,7 +86,7 @@ class PeopleViewModel @Inject constructor(
             is PeoplePageAction.SubmitPersonItem -> {
                 resetState()
                 viewModelScope.launch {
-                    _event.emit(PeoplePageEvent.NavigateToPersonProfileWithUserId(userInfo = action.userInfo))
+                    _event.emit(PeoplePageEvent.NavigateToPersonProfileWithUserId(userId = action.userId))
                 }
             }
 

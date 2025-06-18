@@ -18,6 +18,8 @@ sealed class Screen(
     data object CreateWalkScreen: Screen(route = Routes.CREATE_WALK)
 
     data object PersonProfileScreen: Screen(route = Routes.PERSON_PROFILE)
+
+    data object PostDetailScreen: Screen(route = Routes.POST_DETAIL)
 }
 
 object Routes {
@@ -30,4 +32,5 @@ object Routes {
     const val BOTTOM = "bottomNavScreen"
     const val CREATE_WALK = "createWalkScreen"
     const val PERSON_PROFILE = "personProfileScreen"
+    const val POST_DETAIL = "postDetailScreen"
 }

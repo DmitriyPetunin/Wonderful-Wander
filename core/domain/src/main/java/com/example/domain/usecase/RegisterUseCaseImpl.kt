@@ -6,7 +6,7 @@ import com.example.domain.repository.UserRepository
 import com.example.presentation.usecase.RegisterUseCase
 import javax.inject.Inject
 
-class RegisterUseCaseImpl @Inject constructor(
+class RegisterUseCaseImpl(
     private val userRepository: UserRepository
 ):RegisterUseCase {
     override suspend fun invoke(inputParam: RegisterUserParam): Result<RegisterResult> {

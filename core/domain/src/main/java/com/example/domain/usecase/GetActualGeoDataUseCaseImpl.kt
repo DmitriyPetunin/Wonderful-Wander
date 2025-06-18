@@ -5,7 +5,7 @@ import com.example.domain.repository.GeoRepository
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import javax.inject.Inject
 
-class GetActualGeoDataUseCaseImpl @Inject constructor(
+class GetActualGeoDataUseCaseImpl(
     private val geoRepository: GeoRepository
 ): GetActualGeoDataUseCase {
     override suspend fun invoke(geocodeString:String): Result<ActualGeoLocationResult> {

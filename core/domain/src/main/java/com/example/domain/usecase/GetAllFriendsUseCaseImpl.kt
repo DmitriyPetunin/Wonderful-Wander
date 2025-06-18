@@ -7,7 +7,7 @@ import com.example.presentation.usecase.GetAllFriendsUseCase
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class GetAllFriendsUseCaseImpl @Inject constructor(
+class GetAllFriendsUseCaseImpl(
     private val userRepository: UserRepository
 ): GetAllFriendsUseCase {
     override suspend fun invoke(page:Int,limit:Int): Result<List<People>> {

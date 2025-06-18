@@ -8,7 +8,9 @@ sealed interface ProfileEvent {
     data object NavigateToFollowingPage: ProfileEvent
     data object NavigateToUpdateScreenPage: ProfileEvent
 
+
     data object UpdateProfileInfo: ProfileEvent
 
     data class ShowError(val message: String) : ProfileEvent
+    data class NavigateToPostDetail(val postId:String):ProfileEvent
 }

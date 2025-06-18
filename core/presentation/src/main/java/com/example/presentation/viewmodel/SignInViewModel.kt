@@ -167,7 +167,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun resetState() {
-        _state.update { LoginState(userName = "") }
+        _state.update { LoginState() }
     }
 
     private fun updateSignInResult(result: SignInResult) {

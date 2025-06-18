@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,7 +52,7 @@ fun UploadPhotoPostScreen(
         }
     }
     Column(
-        modifier = modifier,
+        modifier = Modifier.size(500.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -61,41 +62,13 @@ fun UploadPhotoPostScreen(
         )
         when (state.photoState) {
             is PhotoState.Init -> {
-                CustomBox(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .border(
-                            width =  1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.medium
-                        ),
-                ) {
+                CustomBox{
                     Text(text = "здесь будет ваше фото")
                 }
             }
 
             is PhotoState.Loading -> {
-                CustomBox(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .border(
-                            width =  1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.medium
-                        ),
-                ) {
+                CustomBox {
                     CircularProgressIndicator(
                         modifier = Modifier.size(48.dp),
                         strokeWidth = 4.dp,
@@ -105,21 +78,7 @@ fun UploadPhotoPostScreen(
             }
 
             is PhotoState.Success -> {
-                CustomBox(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .border(
-                            width =  1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                ) {
+                CustomBox {
                     AsyncImage(
                         model = state.photoUri,
                         contentDescription = "photo",
@@ -137,4 +96,29 @@ fun UploadPhotoPostScreen(
             Text(text = "загрузить фото")
         }
     }
+}
+
+@Composable
+fun CustomBox(
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .padding(24.dp)
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .background(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = MaterialTheme.shapes.medium
+            )
+            .border(
+                width =  1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.medium
+            ),
+        contentAlignment = Alignment.Center
+    ){
+        content()
+    }
+
 }
