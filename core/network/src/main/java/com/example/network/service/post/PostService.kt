@@ -34,7 +34,7 @@ interface PostService {
     ):Response<PostResponse>
 
     @DELETE("/api/posts/saved/{postId}")
-    suspend fun deleteSavedPost(
+    suspend fun deletePostFromMySavedPosts(
         @Path("postId") postId:String,
     ):Response<Unit>
 
@@ -58,7 +58,9 @@ interface PostService {
 
     @GET("/api/posts/me")
     suspend fun getPosts(
-    ):Response<List<PostResponse>>
+        @Query("page") page: Int,
+        @Query("size") limit: Int
+    ):Response<PostsResponse>
 
     @GET("/api/posts/{postId}")
     suspend fun getPostById(

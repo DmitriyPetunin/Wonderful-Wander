@@ -130,6 +130,10 @@ fun ProfileScreenRoute(
                     navigateToPostDetailInfoScreen(event.postId)
                     Toast.makeText(context, "NavigateToPostDetail", Toast.LENGTH_SHORT).show()
                 }
+
+                is ProfileEvent.DeletePost -> {
+                    Toast.makeText(context, "пост с id ${event.postId} был удалён", Toast.LENGTH_SHORT).show()
+                }
                 else -> {}
             }
         }
@@ -349,7 +353,7 @@ fun TabScreen(
     onTabSelected: (Int) -> Unit,
     onAction: (ProfileAction) -> Unit
 ) {
-    val tabs = listOf("сохранёнки", "мои", "Tab 3")
+    val tabs = listOf("сохранёнки", "мои")
 
     Column(
         modifier = modifier
@@ -363,12 +367,9 @@ fun TabScreen(
                 )
             }
         }
-
-        // Content for each tab
         when (selectedTabIndex) {
             0 -> Tab1Content(state = state, onAction = onAction)
             1 -> Tab2Content(state = state, onAction = onAction)
-            2 -> Tab3Content()
         }
     }
 }
@@ -379,25 +380,20 @@ fun Tab1Content(
     onAction: (ProfileAction) -> Unit
 ) {
     ListScreen(
-        items = state.listOfSavedPostResults,
+        items = state.listOfSavedPosts,
         isLoading = state.isLoading,
-        endReached = state.endReached,
+        endReached = state.endReachedSavedPosts,
         loadMore = {
-            onAction(ProfileAction.LoadMore)
+            onAction(ProfileAction.LoadMoreSavedPosts)
         },
         itemContent = { postResult: PostResult ->
             ListItemPost(
                 postResult = postResult,
                 modifier = Modifier.fillMaxWidth(),
-                onPostClick = {
-                    onAction(ProfileAction.SubmitPostItem(postResult.postId))
-                },
-                onLikeClick = {
-
-                },
-                onCommentClick = {
-
-                },
+                onPostClick = { onAction(ProfileAction.SubmitPostItem(postResult.postId)) },
+                onLikeClick = {},
+                onCommentClick = {},
+                onDeleteClick = { onAction(ProfileAction.SubmitDeleteSavedPost(postResult.postId))}
             )
         },
         modifier = Modifier
@@ -413,11 +409,11 @@ fun Tab2Content(
     onAction: (ProfileAction) -> Unit
 ) {
     ListScreen(
-        items = state.listOfSavedPostResults,
+        items = state.listOfMyPosts,
         isLoading = state.isLoading,
-        endReached = state.endReached,
+        endReached = state.endReachedMyPosts,
         loadMore = {
-            onAction(ProfileAction.LoadMore)
+            onAction(ProfileAction.LoadMoreMyPosts)
         },
         itemContent = { postResult: PostResult ->
             ListItemPost(
@@ -426,12 +422,9 @@ fun Tab2Content(
                 onPostClick = {
                     onAction(ProfileAction.SubmitPostItem(postResult.postId))
                 },
-                onLikeClick = {
-
-                },
-                onCommentClick = {
-
-                },
+                onLikeClick = {},
+                onCommentClick = {},
+                onDeleteClick = { onAction(ProfileAction.SubmitDeleteMyPost(postResult.postId)) }
             )
         },
         modifier = Modifier
@@ -439,11 +432,6 @@ fun Tab2Content(
             .padding(16.dp)
             .wrapContentWidth(Alignment.CenterHorizontally),
     )
-}
-
-@Composable
-fun Tab3Content() {
-    // Your content for tab 3
 }
 
 @Composable
@@ -508,15 +496,17 @@ fun CustomDropDawnMenu(
 fun ListItemPost(
     postResult: PostResult,
     modifier: Modifier = Modifier,
-    onPostClick: (String) -> Unit,
-    onLikeClick: (String) -> Unit,
-    onCommentClick: (String) -> Unit
+    onDeleteClick: () -> Unit,
+    onPostClick: () -> Unit,
+    onLikeClick: () -> Unit,
+    onCommentClick: () -> Unit,
+    showDeleteButton: Boolean = true
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp)
-            .clickable { onPostClick(postResult.postId) },
+            .clickable { onPostClick() },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp,
             pressedElevation = 8.dp,
@@ -533,6 +523,18 @@ fun ListItemPost(
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.padding(16.dp)
             )
+            if (showDeleteButton) {
+                IconButton(
+                    onClick = { onDeleteClick() },
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Удалить",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
             AsyncImage(
                 model = postResult.photoUrl,
                 contentDescription = null,
@@ -551,7 +553,7 @@ fun ListItemPost(
             ) {
                 // Кнопка лайка
                 IconButton(
-                    onClick = { onLikeClick(postResult.postId) },
+                    onClick = { onLikeClick() },
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
@@ -567,11 +569,11 @@ fun ListItemPost(
                 )
 
                 IconButton(
-                    onClick = { onCommentClick(postResult.postId) },
+                    onClick = { onCommentClick() },
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.DateRange,
+                        painter = painterResource(R.drawable.ic_comment),
                         contentDescription = "Комментарии",
                         tint = Color.Gray
                     )

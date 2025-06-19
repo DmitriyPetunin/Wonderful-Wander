@@ -45,25 +45,84 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSavedPosts(page: Int, limit: Int): Result<List<PostResult>> {
-//        return try {
-//            val response = postService.getSavedPosts(page,limit)
-//
-//            when {
-//                response.isSuccessful -> {
-//                    Result.success(
-//                        response.body()?.listOfPosts?.map {
-//                            postDomainMapper.invoke(it)
-//                        }?: emptyList()
-//                    )
-//                }
-//                response.code() == 400 -> { Result.failure(Exception("ms")) }
-//                response.code() == 401 -> { Result.failure(Exception("ms")) }
-//                else -> { Result.failure(Exception("ms")) }
-//            }
-//        } catch (e:Exception){
-//            e.printStackTrace()
-//            Result.failure(Exception("ms"))
-//        }
-        return Result.success(emptyList<PostResult>())
+        return try {
+            val response = postService.getSavedPosts(page,limit)
+
+            when {
+                response.isSuccessful -> {
+                    Result.success(
+                        response.body()?.listOfPosts?.map {
+                            postDomainMapper.invoke(it)
+                        }?: emptyList()
+                    )
+                }
+                response.code() == 400 -> { Result.failure(Exception("ms")) }
+                response.code() == 401 -> { Result.failure(Exception("ms")) }
+                else -> { Result.failure(Exception("ms")) }
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+            Result.failure(Exception("ms"))
+        }
+    }
+
+    override suspend fun getMyPosts(page: Int, limit: Int): Result<List<PostResult>> {
+        return try {
+            val response = postService.getPosts(page,limit)
+
+            when {
+                response.isSuccessful -> {
+                    Result.success(
+                        response.body()?.listOfPosts?.map {
+                            postDomainMapper.invoke(it)
+                        }?: emptyList()
+                    )
+                }
+                response.code() == 400 -> { Result.failure(Exception("ms")) }
+                response.code() == 401 -> { Result.failure(Exception("ms")) }
+                else -> { Result.failure(Exception("ms")) }
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+            Result.failure(Exception("ms"))
+        }
+    }
+
+    override suspend fun deletePostFromMySavedPosts(postId: String): Result<Unit> {
+        return try {
+            val response = postService.deletePostFromMySavedPosts(postId = postId)
+            when{
+                response.isSuccessful -> {
+                    Result.success(Unit)
+                }
+                response.code() == 400 -> {Result.failure(Exception("ms"))}
+                response.code() == 401 -> {Result.failure(Exception("ms"))}
+                response.code() == 403 -> {Result.failure(Exception("ms"))}
+                response.code() == 404 -> {Result.failure(Exception("ms"))}
+                else -> { Result.failure(Exception("ms")) }
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+            Result.failure(Exception("ms"))
+        }
+    }
+
+    override suspend fun deletePostFromMyPosts(postId: String): Result<Unit> {
+        return try {
+            val response = postService.deletePostById(postId = postId)
+            when{
+                response.isSuccessful -> {
+                    Result.success(Unit)
+                }
+                response.code() == 400 -> {Result.failure(Exception("ms"))}
+                response.code() == 401 -> {Result.failure(Exception("ms"))}
+                response.code() == 403 -> {Result.failure(Exception("ms"))}
+                response.code() == 404 -> {Result.failure(Exception("ms"))}
+                else -> { Result.failure(Exception("ms")) }
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+            Result.failure(Exception("ms"))
+        }
     }
 }

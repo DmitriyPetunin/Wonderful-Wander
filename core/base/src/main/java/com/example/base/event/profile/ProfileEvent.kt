@@ -13,4 +13,7 @@ sealed interface ProfileEvent {
 
     data class ShowError(val message: String) : ProfileEvent
     data class NavigateToPostDetail(val postId:String):ProfileEvent
+
+
+    data class DeletePost(val postId: String):ProfileEvent
 }

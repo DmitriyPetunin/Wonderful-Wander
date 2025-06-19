@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.StatSection
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.TabScreen
 import com.example.base.R
 import com.example.base.action.profile.ProfileAction
 import com.example.base.state.ProfileState
@@ -87,6 +89,17 @@ fun PersonProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
+
+        StatSection(state = state, onAction = onAction, modifier = Modifier.weight(0.5f))
+
+
+        TabScreen(
+            state = state,
+            modifier = Modifier.weight(1.5f),
+            selectedTabIndex = state.selectedTabIndex,
+            onTabSelected = { index -> onAction(ProfileAction.UpdateSelectedTab(index)) },
+            onAction = onAction
+        )
 
     }
 }

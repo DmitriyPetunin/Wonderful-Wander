@@ -45,14 +45,14 @@ class PeopleViewModel @Inject constructor(
 
         viewModelScope.launch {
             delay(1000L)
-            val response = when(state.value.people){
+            val result = when(state.value.people){
                 PeopleEnum.FRIENDS -> { getAllFriendsUseCase.invoke(page = state.value.currentPage, limit = state.value.limit)}
                 PeopleEnum.FOLLOWING -> { getAllFollowingUseCase.invoke(page = state.value.currentPage, limit = state.value.limit) }
                 PeopleEnum.FOLLOWERS -> { getAllFollowersUseCase.invoke(page = state.value.currentPage, limit = state.value.limit) }
             }
 
             _state.update { currentState ->
-                response.fold(
+                result.fold(
                     onSuccess = { newPeople: List<People> ->
                         if(!state.value.isInitialLoading && newPeople.lastOrNull() == state.value.listOfPeople.lastOrNull()){
                             currentState.copy(

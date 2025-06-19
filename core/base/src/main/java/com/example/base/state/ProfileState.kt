@@ -24,17 +24,25 @@ data class ProfileState (
     val isFollowedByUser:Boolean = false,
 
     val isLoading:Boolean = true,
-    val endReached:Boolean = false,
 
     val photoUri:Uri = Uri.EMPTY,
     val status:Boolean = true,
     val selectedTabIndex: Int = 0,
 
-    val listOfSavedPostResults: List<PostResult> = emptyList(),
+    val listOfSavedPosts: List<PostResult> = emptyList(),
+    val currentPageSavedPosts: Int = 1,
+    val isInitialLoadingSavedPosts:Boolean = true,
+    val endReachedSavedPosts:Boolean = false,
+
+
     val listOfMyPosts: List<PostResult> = emptyList(),
-    val currentPage: Int = 1,
+    val currentPageMyPosts: Int = 1,
+    val isInitialLoadingMyPosts:Boolean = true,
+    val endReachedMyPosts:Boolean = false,
+
+
     val limit:Int = 10,
 
-
+    val isItMyProfile:Boolean = true
 
     )

@@ -9,14 +9,21 @@ import com.example.base.action.profile.ProfileAction
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
 import com.example.base.event.profile.ProfileEvent
+import com.example.base.model.post.PostResult
+import com.example.base.model.user.People
 import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
 import com.example.presentation.googleclient.GoogleAuthUiClient
+import com.example.presentation.usecase.DeletePostFromMyPostsUseCase
+import com.example.presentation.usecase.DeletePostFromMySavedPostsUseCase
 import com.example.presentation.usecase.DeleteUserProfileUseCase
 import com.example.presentation.usecase.FollowToUserByIdUseCase
+import com.example.presentation.usecase.GetMyPostsUseCase
 import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
+import com.example.presentation.usecase.GetPostsByUserIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
+import com.example.presentation.usecase.GetSavedPostsByUserIdUseCase
 import com.example.presentation.usecase.GetSavedPostsUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
@@ -41,7 +48,12 @@ class ProfileViewModel @Inject constructor(
     private val googleAuthUiClient: GoogleAuthUiClient,
     private val getProfileInfoUseCase: GetProfileInfoUseCase,
     private val uploadAvatarPhotoUseCase: UploadAvatarPhotoUseCase,
-    private val getSavedPostsUseCase: GetSavedPostsUseCase
+    private val getSavedPostsUseCase: GetSavedPostsUseCase,
+    private val getMyPostsUseCase: GetMyPostsUseCase,
+    private val deletePostFromMySavedPostsUseCase: DeletePostFromMySavedPostsUseCase,
+    private val deletePostFromMyPostsUseCase: DeletePostFromMyPostsUseCase,
+    private val getSavedPostsByUserIdUseCase: GetSavedPostsByUserIdUseCase,
+    private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase
 ) : ViewModel() {
 
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
@@ -99,9 +111,13 @@ class ProfileViewModel @Inject constructor(
             ProfileAction.SubmitDeleteProfile -> {
                 deleteProfile()
             }
-            ProfileAction.LoadMore -> {
-                updateEndReachedState()
-                loadDataForTab()
+            ProfileAction.LoadMoreSavedPosts -> {
+                updateEndReachedSavedPostsState()
+                loadSavedPosts()
+            }
+            ProfileAction.LoadMoreMyPosts -> {
+                updateEndReachedMyPostsState()
+                loadMyPosts()
             }
 
             is ProfileAction.UpdateDropDawnVisible -> {
@@ -129,6 +145,12 @@ class ProfileViewModel @Inject constructor(
                 viewModelScope.launch {
                     _event.emit(ProfileEvent.NavigateToPostDetail(action.postId))
                 }
+            }
+            is ProfileAction.SubmitDeleteSavedPost -> {
+                deleteMySavedPost(action.postId)
+            }
+            is ProfileAction.SubmitDeleteMyPost -> {
+                deleteMyPost(action.postId)
             }
         }
     }
@@ -261,12 +283,12 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadDataForTab(){
         val index = stateProfile.value.selectedTabIndex
-        when(index){
+        when(index) {
             0 -> {
                 loadSavedPosts()
             }
             1 -> {
-
+                loadMyPosts()
             }
             2 -> {
 
@@ -280,22 +302,93 @@ class ProfileViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
-            val result = getSavedPostsUseCase.invoke(stateProfile.value.currentPage,stateProfile.value.limit)
+            val result = if (stateProfile.value.isItMyProfile) {
+                getSavedPostsUseCase.invoke(stateProfile.value.currentPageSavedPosts,stateProfile.value.limit)
+            } else getSavedPostsByUserIdUseCase.invoke(userId = stateProfile.value.userId,stateProfile.value.currentPageSavedPosts,stateProfile.value.limit)
 
-            result.fold(
-                onSuccess = { list ->
-                    _stateProfile.update {
-                        it.copy(listOfSavedPostResults = it.listOfSavedPostResults + list)
+            _stateProfile.update { currentState ->
+                result.fold(
+                    onSuccess = { newPosts:List<PostResult> ->
+                        if(!stateProfile.value.isInitialLoadingSavedPosts && newPosts.lastOrNull() == stateProfile.value.listOfSavedPosts.lastOrNull()){
+                            currentState.copy(
+                                isLoading = false,
+                                endReachedSavedPosts = true
+                            )
+                        } else {
+                            currentState.copy(
+                                listOfSavedPosts = currentState.listOfSavedPosts + newPosts,
+                                isLoading = false,
+                                currentPageSavedPosts = currentState.currentPageSavedPosts + 1,
+                                endReachedSavedPosts = newPosts.size < currentState.limit
+                            )
+                        }
+                    },
+                    onFailure = { exception ->
+                        exception.printStackTrace()
+                        currentState.copy(isLoading = false)
                     }
-                },
-                onFailure = {
+                )
+            }
+        }
+    }
+    private fun loadMyPosts(){
+        _stateProfile.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val result = if (stateProfile.value.isItMyProfile) {
+                getMyPostsUseCase.invoke(stateProfile.value.currentPageMyPosts, stateProfile.value.limit)
+            } else getPostsByUserIdUseCase.invoke(stateProfile.value.userId,stateProfile.value.currentPageMyPosts, stateProfile.value.limit)
 
+            _stateProfile.update { currentState ->
+                result.fold(
+                    onSuccess = { newPosts:List<PostResult> ->
+                        if(!_stateProfile.value.isInitialLoadingMyPosts && newPosts.lastOrNull() == stateProfile.value.listOfMyPosts.lastOrNull()){
+                            currentState.copy(
+                                isLoading = false,
+                                endReachedMyPosts = true
+                            )
+                        } else {
+                            currentState.copy(
+                                listOfMyPosts = currentState.listOfMyPosts + newPosts,
+                                isLoading = false,
+                                currentPageMyPosts = currentState.currentPageMyPosts + 1,
+                                endReachedMyPosts = newPosts.size < currentState.limit
+                            )
+                        }
+                    },
+                    onFailure = { exception ->
+                        exception.printStackTrace()
+                        currentState.copy(isLoading = false)
+                    }
+                )
+            }
+        }
+    }
+    private fun deleteMyPost(postId:String){
+        viewModelScope.launch {
+            val result = deletePostFromMyPostsUseCase.invoke(postId = postId)
+            result.fold(
+                onSuccess = {
+                    _event.emit(ProfileEvent.DeletePost(postId = postId))
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
                 }
             )
-
-            _stateProfile.update {
-                it.copy(isLoading = false)
-            }
+        }
+    }
+    private fun deleteMySavedPost(postId:String){
+        viewModelScope.launch {
+            val result = deletePostFromMySavedPostsUseCase.invoke(postId = postId)
+            result.fold(
+                onSuccess = {
+                    _event.emit(ProfileEvent.DeletePost(postId = postId))
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                }
+            )
         }
     }
 
@@ -422,9 +515,14 @@ class ProfileViewModel @Inject constructor(
     private fun resetState() {
         _stateProfile.update { ProfileState() }
     }
-    private fun updateEndReachedState(){
+    private fun updateEndReachedSavedPostsState(){
         _stateProfile.update {
-            it.copy(endReached = false)
+            it.copy(endReachedSavedPosts = false)
+        }
+    }
+    private fun updateEndReachedMyPostsState(){
+        _stateProfile.update {
+            it.copy(endReachedMyPosts = false)
         }
     }
 

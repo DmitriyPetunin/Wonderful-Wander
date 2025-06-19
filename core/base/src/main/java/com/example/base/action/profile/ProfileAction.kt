@@ -11,10 +11,13 @@ sealed class ProfileAction {
     data object SignOut: ProfileAction()
     data object SubmitUpdateProfileInfo: ProfileAction()
     data object SubmitDeleteProfile: ProfileAction()
-    data object LoadMore:ProfileAction()
+    data object LoadMoreSavedPosts:ProfileAction()
+    data object LoadMoreMyPosts:ProfileAction()
 
 
     data class SubmitPostItem(val postId:String):ProfileAction()
+    data class SubmitDeleteSavedPost(val postId:String):ProfileAction()
+    data class SubmitDeleteMyPost(val postId:String):ProfileAction()
     data class SubmitUploadAvatar(val input:Uri):ProfileAction()
     data class UpdateSelectedTab(val index:Int) :ProfileAction()
     data class UpdateDropDawnVisible(val isVisible:Boolean): ProfileAction()
