@@ -28,21 +28,20 @@ import com.example.base.model.user.People
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarCustom(
+fun <T> SearchBarCustom(
     query: String,
-    items: List<People>,
+    items: List<T>,
+    active:Boolean,
+    onActiveChange: (Boolean) -> Unit,
     onQueryChange: (String) -> Unit,
-    onResultClick: (People) -> Unit
+    searchStringProvider: (T) -> String,
+    itemContent: @Composable (T) -> Unit,
 ) {
-    items.map { println(it) }
+    val listOfItems = remember { items.toMutableStateList() }
 
-    var active by remember { mutableStateOf(false) }
-
-    val listOfFriends = remember { items.toMutableStateList() }
-
-    val filteredItems = listOfFriends.filter { friend ->
-        friend.username.contains(query, ignoreCase = true)
-    }
+//    val filteredItems = listOfItems.filter { item ->
+//        item.username.contains(query, ignoreCase = true)
+//    }
 
 //    val filteredItems = remember(items, query) {
 //        items.filter { friend ->
@@ -50,12 +49,18 @@ fun SearchBarCustom(
 //        }
 //    }
 
+    val filteredItems = remember(items, query) {
+        items.filter { item ->
+            searchStringProvider(item).contains(query, ignoreCase = true)
+        }
+    }
+
     SearchBar(
         query = query,
         onQueryChange = { text -> onQueryChange(text) },
-        onSearch = { active = false },
+        onSearch = { onActiveChange(false) },
         active = active,
-        onActiveChange = { active = it },
+        onActiveChange = { onActiveChange(it) },
         placeholder = { Text("Поиск") },
         leadingIcon = {
             Icon(
@@ -68,7 +73,7 @@ fun SearchBarCustom(
             if (active)
                 IconButton(
                     onClick = {
-                        active = !active
+                        onActiveChange(false)
                         onQueryChange("")
                     }) {
                     Icon(
@@ -89,14 +94,7 @@ fun SearchBarCustom(
         ) {
             items(count = filteredItems.size) { index ->
                 val friend = filteredItems[index]
-
-                FriendListItemCustom(
-                    people = friend,
-                    onResultClick = { item ->
-                        listOfFriends.remove(item)
-                        onResultClick(item)
-                    }
-                )
+                itemContent(friend)
             }
         }
     }

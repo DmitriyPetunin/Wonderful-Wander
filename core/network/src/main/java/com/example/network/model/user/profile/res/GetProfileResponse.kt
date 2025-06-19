@@ -19,7 +19,8 @@ data class GetProfileResponse(
     val followingCount: Int?,
     val friendsCount: Int?,
 
-    val photoVisibility: String?, //enum
+    val myPhotoVisibility: String?, //enum
+    val savedPhotoVisibility:String,
     val walkVisibility: String?, //enum
 
 

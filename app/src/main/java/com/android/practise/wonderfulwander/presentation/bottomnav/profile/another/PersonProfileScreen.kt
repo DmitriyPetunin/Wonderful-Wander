@@ -46,7 +46,7 @@ fun PersonProfileScreenRoute(
     val state by profileViewModel.stateProfile.collectAsState()
 
     LaunchedEffect(Unit) {
-        profileViewModel.getPersonProfileInfoById(id = userId)
+        profileViewModel.onAction(ProfileAction.UpdateUserId(userId = userId))
     }
 
 
@@ -83,6 +83,17 @@ fun PersonProfileScreen(
                 model = state.avatarUrl,
                 contentDescription = "Profile picture",
                 modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.ic_visibility_off_foreground),
+            )
+        }
+        if (state.avatarUrl.isNotEmpty()) {
+            AsyncImage(
+                model = state.avatarUrl,
+                contentDescription = "Profile picture",
+                modifier = Modifier
                     .size(150.dp)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
@@ -90,7 +101,11 @@ fun PersonProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        StatSection(state = state, onAction = onAction, modifier = Modifier.weight(0.5f))
+        StatSection(
+            state = state,
+            onAction = onAction,
+            modifier = Modifier.weight(0.5f)
+        )
 
 
         TabScreen(

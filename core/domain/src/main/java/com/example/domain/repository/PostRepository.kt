@@ -1,6 +1,7 @@
 package com.example.domain.repository
 
 import com.example.base.model.post.PostResult
+import com.example.base.model.post.category.Category
 
 interface PostRepository {
     suspend fun deletePostFromMyPosts(postId:String):Result<Unit>
@@ -12,4 +13,6 @@ interface PostRepository {
 
     suspend fun getPostsByUserId(userId:String,page: Int, limit: Int):Result<List<PostResult>>
     suspend fun getSavedPostsByUserId(userId:String,page: Int, limit: Int):Result<List<PostResult>>
+
+    suspend fun getAllCategories():Result<List<Category>>
 }

@@ -45,7 +45,6 @@ class ProfileViewModel @Inject constructor(
     private val getPersonProfileInfoByIdUseCase: GetPersonProfileInfoByIdUseCase,
     private val deleteUserProfileUseCase: DeleteUserProfileUseCase,
     private val updateUserProfileUseCase: UpdateProfileInfoUseCase,
-    private val googleAuthUiClient: GoogleAuthUiClient,
     private val getProfileInfoUseCase: GetProfileInfoUseCase,
     private val uploadAvatarPhotoUseCase: UploadAvatarPhotoUseCase,
     private val getSavedPostsUseCase: GetSavedPostsUseCase,
@@ -71,6 +70,7 @@ class ProfileViewModel @Inject constructor(
         when (action) {
 
             ProfileAction.Init -> {
+                Log.d("Init", "loadDataForTab")
                 getProfileInfo()
                 loadDataForTab()
             }
@@ -116,6 +116,7 @@ class ProfileViewModel @Inject constructor(
                 loadSavedPosts()
             }
             ProfileAction.LoadMoreMyPosts -> {
+                Log.d("LoadMoreMyPosts", "loadMyPosts")
                 updateEndReachedMyPostsState()
                 loadMyPosts()
             }
@@ -137,6 +138,7 @@ class ProfileViewModel @Inject constructor(
             }
 
             is ProfileAction.UpdateSelectedTab -> {
+                Log.d("UpdateSelectedTab", "loadDataForTab")
                 updateSelectedTabState(action.index)
                 loadDataForTab()
             }
@@ -151,6 +153,12 @@ class ProfileViewModel @Inject constructor(
             }
             is ProfileAction.SubmitDeleteMyPost -> {
                 deleteMyPost(action.postId)
+            }
+
+            is ProfileAction.UpdateUserId -> {
+                Log.d("UpdateUserId", "loadDataForTab")
+                getPersonProfileInfoById(action.userId)
+                loadDataForTab()
             }
         }
     }
@@ -176,6 +184,9 @@ class ProfileViewModel @Inject constructor(
             is UpdateProfileAction.UpdatePhotoVisibilityField -> {
                 updatePhotoVisibilityState(action.input)
             }
+            is UpdateProfileAction.UpdateSavedPhotoVisibilityField -> {
+                updateSavedPhotoVisibilityState(action.input)
+            }
 
             is UpdateProfileAction.UpdateWalkVisibilityField -> {
                 updateWalkVisibilityState(action.input)
@@ -195,27 +206,19 @@ class ProfileViewModel @Inject constructor(
                     firstName = firstName,
                     lastName = lastName,
                     bio = bio,
-                    photoVisibility = photoVisibility,
+                    myPhotoVisibility = myPhotoVisibility,
+                    savedPhotoVisibility = savedPhotoVisibility,
                     walkVisibility = walkVisibility
                 )
             }
         }
     }
 
-    fun getSignedInUser() {
-        val userData = googleAuthUiClient.getSignedInUser()
-        userData?.let {
-            _stateProfile.update {
-                it.copy(
-                    userId = userData.userId,
-                    username = userData.username,
-                    avatarUrl = userData.profilePictureUrl
-                )
-            }
-        }
-    }
-
     fun getPersonProfileInfoById(id: String) {
+        Log.d("USERID", "getPersonProfileInfoById: $id")
+        _stateProfile.update {
+            it.copy(userId = id, isItMyProfile = false, isLoading = true)
+        }
 
         viewModelScope.launch {
             val response = getPersonProfileInfoByIdUseCase.invoke(id)
@@ -240,6 +243,9 @@ class ProfileViewModel @Inject constructor(
                     exception.printStackTrace()
                 }
             )
+            _stateProfile.update {
+                it.copy(isLoading = false)
+            }
         }
     }
 
@@ -275,8 +281,18 @@ class ProfileViewModel @Inject constructor(
         }
     }
     private fun updateSelectedTabState(index:Int){
-        _stateProfile.update {
-            it.copy(selectedTabIndex = index)
+        _stateProfile.update { currentState ->
+            currentState.copy(
+                selectedTabIndex = index,
+                listOfSavedPosts = emptyList(),
+                currentPageSavedPosts = 1,
+                isInitialLoadingSavedPosts = true,
+                endReachedSavedPosts = false,
+                listOfMyPosts = emptyList(),
+                currentPageMyPosts = 1,
+                isInitialLoadingMyPosts = true,
+                endReachedMyPosts = false
+            )
         }
     }
 
@@ -285,30 +301,37 @@ class ProfileViewModel @Inject constructor(
         val index = stateProfile.value.selectedTabIndex
         when(index) {
             0 -> {
-                loadSavedPosts()
+                if(stateProfile.value.isInitialLoadingSavedPosts){
+                    loadSavedPosts()
+                    updateIsInitialLoadingSavedPostsState()
+                }
             }
             1 -> {
-                loadMyPosts()
-            }
-            2 -> {
-
+                if(stateProfile.value.isInitialLoadingMyPosts){
+                    loadMyPosts()
+                    updateIsInitialLoadingMyPosts()
+                }
             }
         }
     }
 
 
     private fun loadSavedPosts(){
-        _stateProfile.update {
-            it.copy(isLoading = true)
-        }
+        Log.d("LoadSavedPosts", "state: ${stateProfile.value}")
+        if ((!stateProfile.value.isInitialLoadingSavedPosts && stateProfile.value.isLoading) || stateProfile.value.endReachedSavedPosts) return
+
+        _stateProfile.update { it.copy(isLoading = true) }
+
         viewModelScope.launch {
+            delay(1000L)
             val result = if (stateProfile.value.isItMyProfile) {
                 getSavedPostsUseCase.invoke(stateProfile.value.currentPageSavedPosts,stateProfile.value.limit)
-            } else getSavedPostsByUserIdUseCase.invoke(userId = stateProfile.value.userId,stateProfile.value.currentPageSavedPosts,stateProfile.value.limit)
+            } else getSavedPostsByUserIdUseCase.invoke(userId = stateProfile.value.userId, page = stateProfile.value.currentPageSavedPosts, limit = stateProfile.value.limit)
 
             _stateProfile.update { currentState ->
                 result.fold(
                     onSuccess = { newPosts:List<PostResult> ->
+                        //Log.d("LoadSavedPosts", "loadSavedPosts:${newPosts.map { it.toString() }} ")
                         if(!stateProfile.value.isInitialLoadingSavedPosts && newPosts.lastOrNull() == stateProfile.value.listOfSavedPosts.lastOrNull()){
                             currentState.copy(
                                 isLoading = false,
@@ -332,10 +355,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
     private fun loadMyPosts(){
+        if ((!stateProfile.value.isInitialLoadingMyPosts && stateProfile.value.isLoading) || stateProfile.value.endReachedMyPosts) return
         _stateProfile.update {
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
+            delay(1000L)
             val result = if (stateProfile.value.isItMyProfile) {
                 getMyPostsUseCase.invoke(stateProfile.value.currentPageMyPosts, stateProfile.value.limit)
             } else getPostsByUserIdUseCase.invoke(stateProfile.value.userId,stateProfile.value.currentPageMyPosts, stateProfile.value.limit)
@@ -343,7 +368,7 @@ class ProfileViewModel @Inject constructor(
             _stateProfile.update { currentState ->
                 result.fold(
                     onSuccess = { newPosts:List<PostResult> ->
-                        if(!_stateProfile.value.isInitialLoadingMyPosts && newPosts.lastOrNull() == stateProfile.value.listOfMyPosts.lastOrNull()){
+                        if(!stateProfile.value.isInitialLoadingMyPosts && newPosts.lastOrNull() == stateProfile.value.listOfMyPosts.lastOrNull()){
                             currentState.copy(
                                 isLoading = false,
                                 endReachedMyPosts = true
@@ -398,13 +423,13 @@ class ProfileViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
-            delay(1000L)
             val result = getProfileInfoUseCase.invoke()
             _stateProfile.update { currentState ->
                 result.fold(
                     onSuccess = { model ->
                         Log.d("PROFILE", model.avatarUrl)
                         currentState.copy(
+                            userId = model.userId,
                             username = model.username,
                             firstName = model.firstname,
                             avatarUrl = model.avatarUrl,
@@ -479,7 +504,8 @@ class ProfileViewModel @Inject constructor(
                     firstName = stateUpdateProfile.value.firstName,
                     lastName = stateUpdateProfile.value.lastName,
                     bio = stateUpdateProfile.value.bio,
-                    photoVisibility = PhotosVisibility.fromString(stateUpdateProfile.value.photoVisibility),
+                    myPhotoVisibility = PhotosVisibility.fromString(stateUpdateProfile.value.myPhotoVisibility),
+                    savedPhotoVisibility = PhotosVisibility.fromString(stateUpdateProfile.value.savedPhotoVisibility),
                     walkVisibility = WalkVisibility.fromString(stateUpdateProfile.value.walkVisibility),
                 )
             )
@@ -497,7 +523,8 @@ class ProfileViewModel @Inject constructor(
                             followingCount = result.followingCount,
                             friendsCount = result.friendsCount,
                             avatarUrl = result.avatarUrl,
-                            photoVisibility = PhotosVisibility.toStringValue(result.photoVisibility),
+                            myPhotoVisibility = PhotosVisibility.toStringValue(result.myPhotoVisibility),
+                            savedPhotoVisibility = PhotosVisibility.toStringValue(result.savedPhotoVisibility),
                             walkVisibility = WalkVisibility.toStringValue(result.walkVisibility)
                         )
                     },
@@ -508,6 +535,18 @@ class ProfileViewModel @Inject constructor(
                 )
             }
             _event.emit(ProfileEvent.UpdateProfileInfo)
+        }
+    }
+
+    private fun updateIsInitialLoadingSavedPostsState(){
+        _stateProfile.update {
+            it.copy(isInitialLoadingSavedPosts = false)
+        }
+    }
+
+    private fun updateIsInitialLoadingMyPosts(){
+        _stateProfile.update {
+            it.copy(isInitialLoadingMyPosts = false)
         }
     }
 
@@ -552,7 +591,12 @@ class ProfileViewModel @Inject constructor(
 
     private fun updatePhotoVisibilityState(input: String) {
         _stateUpdateProfile.update {
-            it.copy(photoVisibility = input)
+            it.copy(myPhotoVisibility = input)
+        }
+    }
+    private fun updateSavedPhotoVisibilityState(input: String) {
+        _stateUpdateProfile.update {
+            it.copy(savedPhotoVisibility = input)
         }
     }
 

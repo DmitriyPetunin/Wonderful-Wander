@@ -13,7 +13,8 @@ data class ProfileState (
     val bio: String = "",
     val dropDownMenuVisible: Boolean = false,
 
-    val photoVisibility: String = "PUBLIC",
+    val myPhotoVisibility: String = "PUBLIC",
+    val savedPhotoVisibility:String = "PUBLIC",
     val walkVisibility: String = "PUBLIC",
 
     val followersCount: Int = 0,
@@ -39,7 +40,6 @@ data class ProfileState (
     val currentPageMyPosts: Int = 1,
     val isInitialLoadingMyPosts:Boolean = true,
     val endReachedMyPosts:Boolean = false,
-
 
     val limit:Int = 10,
 

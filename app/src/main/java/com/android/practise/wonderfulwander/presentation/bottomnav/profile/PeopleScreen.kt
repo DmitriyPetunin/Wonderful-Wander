@@ -120,7 +120,6 @@ fun <T> ListScreen(
                         "isLoading = ${isLoading}  " +
                         "endReached = ${endReached}\""
                 )
-
                 reachedEnd
             }
             .distinctUntilChanged()

@@ -84,7 +84,7 @@ class UserRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful) {
                 response.body()?.userId?.let {
-                    Log.d("USERID",it)
+                    //Log.d("USERID",it)
                     sessionManager.saveUserId(it)
                 }
                 Result.success(profileInfoMapper.invoke(response.body()))
@@ -105,7 +105,8 @@ class UserRepositoryImpl @Inject constructor(
                     firstname = inputParam.firstName,
                     lastname = inputParam.lastName,
                     bio = inputParam.bio,
-                    photoVisibility = PhotosVisibility.toStringValue(inputParam.photoVisibility),
+                    myPhotoVisibility = PhotosVisibility.toStringValue(inputParam.myPhotoVisibility),
+                    savedPhotoVisibility = PhotosVisibility.toStringValue(inputParam.savedPhotoVisibility),
                     walkVisibility = WalkVisibility.toStringValue(inputParam.walkVisibility)
                 )
             )

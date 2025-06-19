@@ -9,6 +9,7 @@ data class UpdateProfileRequest(
     val firstname:String,
     val lastname:String,
     val bio:String,
-    val photoVisibility: String,
+    val myPhotoVisibility: String,
+    val savedPhotoVisibility:String,
     val walkVisibility: String
 )

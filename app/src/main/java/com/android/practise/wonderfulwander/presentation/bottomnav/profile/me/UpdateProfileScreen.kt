@@ -91,8 +91,13 @@ fun UpdateProfileScreen(
         )
 
         OutlinedTextField(
-            value = state.photoVisibility,
+            value = state.myPhotoVisibility,
             onValueChange = {onAction(UpdateProfileAction.UpdatePhotoVisibilityField(it))}
+        )
+
+        OutlinedTextField(
+            value = state.savedPhotoVisibility,
+            onValueChange = {onAction(UpdateProfileAction.UpdateSavedPhotoVisibilityField(it))}
         )
 
 

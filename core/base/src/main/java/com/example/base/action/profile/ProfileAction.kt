@@ -14,7 +14,7 @@ sealed class ProfileAction {
     data object LoadMoreSavedPosts:ProfileAction()
     data object LoadMoreMyPosts:ProfileAction()
 
-
+    data class UpdateUserId(val userId:String):ProfileAction()
     data class SubmitPostItem(val postId:String):ProfileAction()
     data class SubmitDeleteSavedPost(val postId:String):ProfileAction()
     data class SubmitDeleteMyPost(val postId:String):ProfileAction()

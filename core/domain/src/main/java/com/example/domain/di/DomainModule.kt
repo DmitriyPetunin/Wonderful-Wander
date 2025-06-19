@@ -9,6 +9,7 @@ import com.example.domain.usecase.DeletePostFromMySavedPostsUseCaseImpl
 import com.example.domain.usecase.DeleteUserProfileUseCaseImpl
 import com.example.domain.usecase.FollowToUserByIdUseCaseImpl
 import com.example.domain.usecase.GetActualGeoDataUseCaseImpl
+import com.example.domain.usecase.GetAllCategoriesUseCaseImpl
 import com.example.domain.usecase.GetAllFollowersUseCaseImpl
 import com.example.domain.usecase.GetAllFollowingUseCaseImpl
 import com.example.domain.usecase.GetAllFriendsUseCaseImpl
@@ -31,6 +32,7 @@ import com.example.presentation.usecase.DeletePostFromMySavedPostsUseCase
 import com.example.presentation.usecase.DeleteUserProfileUseCase
 import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetActualGeoDataUseCase
+import com.example.presentation.usecase.GetAllCategoriesUseCase
 import com.example.presentation.usecase.GetAllFollowersUseCase
 import com.example.presentation.usecase.GetAllFollowingUseCase
 import com.example.presentation.usecase.GetAllFriendsUseCase
@@ -215,4 +217,10 @@ object DomainModule {
     }
 
 
+    @Provides
+    fun provideGetAllCategoriesUseCase(
+        postRepository: PostRepository
+    ): GetAllCategoriesUseCase {
+        return GetAllCategoriesUseCaseImpl(postRepository = postRepository)
+    }
 }

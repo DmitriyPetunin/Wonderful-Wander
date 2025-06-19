@@ -8,6 +8,7 @@ data class UpdateProfileState(
     val firstName: String = "",
     val lastName: String = "",
     val bio: String = "",
-    val photoVisibility: String = "PUBLIC",
+    val myPhotoVisibility: String = "PUBLIC",
+    val savedPhotoVisibility:String = "PUBLIC",
     val walkVisibility: String = "PUBLIC",
 )

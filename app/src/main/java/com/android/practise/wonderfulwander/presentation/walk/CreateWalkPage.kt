@@ -10,6 +10,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,8 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -88,9 +91,11 @@ fun CreateWalkPage(
     onAction: (CreateWalkAction) -> Unit
 ) {
 
-    val listOfFriends: List<People> = state.listOfFriends
+    val listOfFriends = remember { mutableStateListOf<People>().apply { addAll(state.listOfFriends) } }
+
 
     val listOfResult = remember { mutableStateListOf<People>()}
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -106,11 +111,19 @@ fun CreateWalkPage(
             SearchBarCustom(
                 query = state.queryParam,
                 items = listOfFriends,
+                active = true,
+                onActiveChange = {},//TODO
                 onQueryChange = { onAction(CreateWalkAction.UpdateQueryParam(it)) },
-                onResultClick = { friend ->
-                    Log.d("TEST-TAG", "${friend.username}")
-                    listOfResult.add(friend)
-                    Log.d("TEST-TAG", "${listOfResult.size}")
+                searchStringProvider = {it.username},
+                itemContent = { person ->
+                    FriendListItemCustom(
+                        people = person,
+                        onResultClick = {
+                            if (!listOfResult.any { it.userId == person.userId }) {
+                                listOfResult.add(person)
+                            }
+                        }
+                    )
                 }
             )
         }
@@ -192,4 +205,26 @@ fun FriendListItem(
             )
         }
     }
+}
+
+
+
+@Composable
+private fun FriendListItemCustom(
+    people: People,
+    onResultClick: () -> Unit
+) {
+
+    ListItem(
+        headlineContent = { Text(people.username) },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        modifier = Modifier
+            .clickable {
+                onResultClick()
+            }
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
+    )
+
 }

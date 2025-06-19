@@ -52,7 +52,7 @@ fun UploadPhotoPostScreen(
         }
     }
     Column(
-        modifier = Modifier.size(500.dp),
+        modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -99,7 +99,7 @@ fun UploadPhotoPostScreen(
 }
 
 @Composable
-fun CustomBox(
+private fun CustomBox(
     content: @Composable () -> Unit,
 ) {
     Box(

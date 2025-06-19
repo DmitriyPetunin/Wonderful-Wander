@@ -8,6 +8,7 @@ class UpdateProfileParam (
     val firstName: String,
     val lastName: String,
     val bio: String,
-    val photoVisibility: PhotosVisibility,
+    val myPhotoVisibility: PhotosVisibility,
+    val savedPhotoVisibility:PhotosVisibility,
     val walkVisibility: WalkVisibility
 )

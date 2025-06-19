@@ -138,16 +138,9 @@ fun ProfileScreenRoute(
             }
         }
     }
-    if(state.isLoading){
-        CircularProgressIndicator(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentHeight(Alignment.CenterVertically)
-                .wrapContentWidth(Alignment.CenterHorizontally)
-        )
-    } else{
-        ProfileScreen(state = state, profileViewModel::onAction)
-    }
+
+    ProfileScreen(state = state, profileViewModel::onAction)
+
 
 }
 
@@ -257,17 +250,29 @@ fun StatSection(
         ProfileStat(
             numberText = state.followersCount.toString(),
             text = "followers",
-            onClick = { onAction(ProfileAction.SubmitGetAllFollowers) },
+            onClick = {
+                if (state.isItMyProfile){
+                    onAction(ProfileAction.SubmitGetAllFollowers)
+                }
+            }
         )
         ProfileStat(
             numberText = state.friendsCount.toString(),
             text = "friends",
-            onClick = { onAction(ProfileAction.SubmitGetAllFriends) }
+            onClick = {
+                if (state.isItMyProfile){
+                    onAction(ProfileAction.SubmitGetAllFriends)
+                }
+            }
         )
         ProfileStat(
             numberText = state.followingCount.toString(),
             text = "followed",
-            onClick = { onAction(ProfileAction.SubmitGetAllFollowing) }
+            onClick = {
+                if (state.isItMyProfile){
+                    onAction(ProfileAction.SubmitGetAllFollowing)
+                }
+            }
         )
 
     }
@@ -322,7 +327,7 @@ fun CustomAvatar(
             model = avatarUrl,
             contentDescription = "Profile picture",
             modifier = Modifier
-                .size(2000.dp)
+                .size(200.dp)
                 .clip(CircleShape),
             contentScale = ContentScale.Crop,
             error = painterResource(R.drawable.ic_visibility_off_foreground),
@@ -519,8 +524,8 @@ fun ListItemPost(
 
         Column {
             Text(
-                text = postResult.title,
-                style = MaterialTheme.typography.displayMedium,
+                text = postResult.postId,
+                style = MaterialTheme.typography.displayLarge,
                 modifier = Modifier.padding(16.dp)
             )
             if (showDeleteButton) {

@@ -2,6 +2,7 @@ package com.example.network.service.post
 
 import com.example.network.model.photo.UploadImageResponse
 import com.example.network.model.post.req.UpdatePostRequest
+import com.example.network.model.post.res.CategoryResponse
 import com.example.network.model.post.res.PostResponse
 import com.example.network.model.post.res.PostsResponse
 import okhttp3.MultipartBody
@@ -42,12 +43,16 @@ interface PostService {
     @GET("/api/posts/users/{userId}/saved")
     suspend fun getSavedPostsByUserId(
         @Path("userId") userId:String,
-    ):Response<List<PostResponse>>
+        @Query("page") page: Int,
+        @Query("size") limit: Int
+    ):Response<PostsResponse>
 
     @GET("/api/posts/users/{userId}/posts")
-    suspend fun getPostByUserId(
+    suspend fun getPostsByUserId(
         @Path("userId") userId:String,
-    ):Response<List<PostResponse>>
+        @Query("page") page: Int,
+        @Query("size") limit: Int
+    ):Response<PostsResponse>
 
 
     @GET("/api/posts/saved")
@@ -77,6 +82,10 @@ interface PostService {
     suspend fun deletePostById(
         @Path("postId") postId:String,
     ):Response<Unit>
+
+    @GET("/api/posts/category")
+    suspend fun getAllCategories(
+    ):Response<List<CategoryResponse>>
 
 
 }

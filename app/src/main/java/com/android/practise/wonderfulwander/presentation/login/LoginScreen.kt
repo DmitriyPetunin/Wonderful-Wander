@@ -75,9 +75,9 @@ fun LoginScreenRoute(
     LaunchedEffect(Unit) {
         signInViewModel.onAction(LoginAction.SubmitLoginButton)
     }
-    LaunchedEffect(Unit) {
-        navigateToProfile()
-    }
+//    LaunchedEffect(Unit) {
+//        navigateToProfile()
+//    }
 
     LaunchedEffect(Unit) {
         signInViewModel.event.collect{ event ->

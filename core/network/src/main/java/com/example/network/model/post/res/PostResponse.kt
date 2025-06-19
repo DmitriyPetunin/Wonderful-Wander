@@ -6,8 +6,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PostsResponse(
+    @SerialName("data")
     val listOfPosts:List<PostResponse>?,
-    val errorResponse: ExampleErrorResponse?
+    val total:Int?,
+    val limit:Int?,
+    val offset:Int?,
+    //val errorResponse: ExampleErrorResponse?
 )
 
 @Serializable

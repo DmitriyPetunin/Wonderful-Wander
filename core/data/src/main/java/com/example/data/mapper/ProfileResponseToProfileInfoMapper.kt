@@ -22,7 +22,8 @@ class ProfileResponseToProfileInfoMapper @Inject constructor() : (GetProfileResp
                 followersCount = it.followersCount ?: 0,
                 followingCount = it.followingCount ?: 0,
                 friendsCount = it.friendsCount ?: 0,
-                photoVisibility = PhotosVisibility.fromString(it.photoVisibility),
+                myPhotoVisibility = PhotosVisibility.fromString(it.myPhotoVisibility),
+                savedPhotoVisibility = PhotosVisibility.fromString(it.savedPhotoVisibility),
                 walkVisibility = WalkVisibility.fromString(it.walkVisibility)
             )
         } ?: ProfileInfoResult.EMPTY

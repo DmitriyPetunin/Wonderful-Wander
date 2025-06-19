@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.post.CreatePostAction
 import com.example.base.event.post.CreatePostEvent
+import com.example.base.model.post.category.Category
 import com.example.base.state.CreatePostState
 import com.example.base.state.PhotoState
+import com.example.presentation.usecase.GetAllCategoriesUseCase
 import com.example.presentation.usecase.UploadPostPhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -22,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
-    private val uploadPostPhotoUseCase: UploadPostPhotoUseCase
+    private val uploadPostPhotoUseCase: UploadPostPhotoUseCase,
+    private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
 ):ViewModel() {
 
     private val _state = MutableStateFlow(CreatePostState())
@@ -34,15 +37,26 @@ class CreatePostViewModel @Inject constructor(
 
     fun onAction(action: CreatePostAction){
         when(action){
+            CreatePostAction.Init -> {
+                getAllCategories()
+            }
             is CreatePostAction.UpdatePhotoUri -> {
                 updatePhotoUri(action.input)
                 sendPhotoToServer()
             }
 
-            CreatePostAction.SubmitToAddPhoto -> {
-                viewModelScope.launch {
-                    _event.emit(CreatePostEvent.NavigateToUploadImageScreen)
-                }
+            is CreatePostAction.UpdateQueryParam -> {
+                updateQueryParam(action.input)
+            }
+            is CreatePostAction.UpdateTitle -> {
+                updateTitle(action.input)
+            }
+            is CreatePostAction.UpdateSelectedCategory -> {
+                updateSelectedCategory(action.category)
+            }
+
+            is CreatePostAction.UpdateActiveParam -> {
+                updateActiveSearchBar(action.active)
             }
         }
     }
@@ -70,12 +84,54 @@ class CreatePostViewModel @Inject constructor(
             }
         }
     }
+    private fun getAllCategories(){
+        _state.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val result = getAllCategoriesUseCase.invoke()
 
+            result.fold(
+                onSuccess = {value: List<Category> ->
+                    _state.update {
+                        it.copy(listOfCategories = value, isLoading = false)
+                    }
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
+                }
+            )
+        }
+    }
 
     private fun updatePhotoUri(uri: Uri){
         _state.update {
             it.copy(photoUri = uri)
         }
     }
+    private fun updateQueryParam(input: String){
+        _state.update {
+            it.copy(queryParam = input)
+        }
+    }
 
+    private fun updateTitle(input: String){
+        _state.update {
+            it.copy(title = input)
+        }
+    }
+
+    private fun updateSelectedCategory(category: Category?){
+        _state.update {
+            it.copy(selectedCategory = category)
+        }
+    }
+    private fun updateActiveSearchBar(active:Boolean){
+        _state.update {
+            it.copy(searchBarIsActive = active)
+        }
+    }
 }

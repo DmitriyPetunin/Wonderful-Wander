@@ -20,8 +20,10 @@ class ProfileInfoResult(
     val followingCount: Int,
     val friendsCount: Int,
 
-    val photoVisibility: PhotosVisibility, //enum
+    val myPhotoVisibility: PhotosVisibility, //enum
+    val savedPhotoVisibility:PhotosVisibility,
     val walkVisibility: WalkVisibility, //enum
+
 ) {
     companion object {
         val EMPTY = ProfileInfoResult(
@@ -36,7 +38,8 @@ class ProfileInfoResult(
             followersCount = 0,
             followingCount = 0,
             friendsCount = 0,
-            photoVisibility = PhotosVisibility.PUBLIC,
+            myPhotoVisibility = PhotosVisibility.PUBLIC,
+            savedPhotoVisibility = PhotosVisibility.PUBLIC,
             walkVisibility = WalkVisibility.PUBLIC,
         )
     }
