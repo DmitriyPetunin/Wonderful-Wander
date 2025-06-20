@@ -49,7 +49,7 @@ class PhotoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadPostImage(uri: Uri): Result<Unit> {
+    override suspend fun uploadPostImage(uri: Uri): Result<String> {
         return try {
             val photo = createMultipartBody(uri,context,name = "photo")
 
@@ -57,7 +57,7 @@ class PhotoRepositoryImpl @Inject constructor(
             when{
                 response.isSuccessful -> {
                     response.body()?.let {
-                        Result.success(Unit)
+                        Result.success(it.fileName)
                     } ?: Result.failure(Exception("Empty response body"))
                 }
                 response.code() == 401 -> {

@@ -15,12 +15,14 @@ data class CreatePostState (
     val isLoading:Boolean = true,
     val searchBarIsActive:Boolean = false,
 
+    val fileName:String = "",
+
 
     val listOfCategories:List<Category> = emptyList()
 )
 
 sealed class PhotoState{
-
+    data object Error:PhotoState()
     data object Loading: PhotoState()
     data object Init:PhotoState()
     data object Success:PhotoState()

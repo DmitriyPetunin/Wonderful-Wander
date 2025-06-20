@@ -1,13 +1,16 @@
 package com.example.presentation.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.post.CreatePostAction
 import com.example.base.event.post.CreatePostEvent
+import com.example.base.model.post.PostCreateParam
 import com.example.base.model.post.category.Category
 import com.example.base.state.CreatePostState
 import com.example.base.state.PhotoState
+import com.example.presentation.usecase.CreatePostUseCase
 import com.example.presentation.usecase.GetAllCategoriesUseCase
 import com.example.presentation.usecase.UploadPostPhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,20 +29,22 @@ import javax.inject.Inject
 class CreatePostViewModel @Inject constructor(
     private val uploadPostPhotoUseCase: UploadPostPhotoUseCase,
     private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
-):ViewModel() {
+    private val createPostUseCase: CreatePostUseCase
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CreatePostState())
-    val state:StateFlow<CreatePostState> = _state.asStateFlow()
+    val state: StateFlow<CreatePostState> = _state.asStateFlow()
 
     private val _event = MutableSharedFlow<CreatePostEvent>()
-    val event:SharedFlow<CreatePostEvent> = _event.asSharedFlow()
+    val event: SharedFlow<CreatePostEvent> = _event.asSharedFlow()
 
 
-    fun onAction(action: CreatePostAction){
-        when(action){
+    fun onAction(action: CreatePostAction) {
+        when (action) {
             CreatePostAction.Init -> {
                 getAllCategories()
             }
+
             is CreatePostAction.UpdatePhotoUri -> {
                 updatePhotoUri(action.input)
                 sendPhotoToServer()
@@ -48,9 +53,11 @@ class CreatePostViewModel @Inject constructor(
             is CreatePostAction.UpdateQueryParam -> {
                 updateQueryParam(action.input)
             }
+
             is CreatePostAction.UpdateTitle -> {
                 updateTitle(action.input)
             }
+
             is CreatePostAction.UpdateSelectedCategory -> {
                 updateSelectedCategory(action.category)
             }
@@ -58,10 +65,14 @@ class CreatePostViewModel @Inject constructor(
             is CreatePostAction.UpdateActiveParam -> {
                 updateActiveSearchBar(action.active)
             }
+
+            CreatePostAction.SubmitCreatePost -> {
+                createPost()
+            }
         }
     }
 
-    private fun sendPhotoToServer(){
+    private fun sendPhotoToServer() {
         _state.update {
             it.copy(photoState = PhotoState.Loading)
         }
@@ -71,20 +82,45 @@ class CreatePostViewModel @Inject constructor(
 
             response.fold(
                 onSuccess = { model ->
+                    Log.d("PHOTO", "sendPhotoToServer: $model")
                     _state.update {
-                        it.copy(status = "success")
+                        it.copy(fileName = model, photoState = PhotoState.Success)
                     }
                 },
                 onFailure = { exception ->
-                    //обработка
+                    _state.update {
+                        it.copy(photoState = PhotoState.Error)
+                    }
                 }
             )
-            _state.update {
-                it.copy(photoState = PhotoState.Success)
-            }
         }
     }
-    private fun getAllCategories(){
+
+    private fun createPost() {
+        _state.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val result = createPostUseCase.invoke(
+                PostCreateParam(
+                    title = state.value.title,
+                    categoryId = state.value.selectedCategory?.categoryId ?: 0,
+                    imageFilename = state.value.fileName
+                )
+            )
+
+            result.fold(
+                onSuccess = {
+                    _event.emit(CreatePostEvent.SuccessCreatePost)
+                },
+                onFailure = { exception ->
+                    _event.emit(CreatePostEvent.ErrorCreatePost(message = exception.message ?: ""))
+                }
+            )
+        }
+    }
+
+    private fun getAllCategories() {
         _state.update {
             it.copy(isLoading = true)
         }
@@ -92,7 +128,8 @@ class CreatePostViewModel @Inject constructor(
             val result = getAllCategoriesUseCase.invoke()
 
             result.fold(
-                onSuccess = {value: List<Category> ->
+                onSuccess = { value: List<Category> ->
+                    Log.d("Category", "getAllCategories: ${value.size}")
                     _state.update {
                         it.copy(listOfCategories = value, isLoading = false)
                     }
@@ -107,29 +144,31 @@ class CreatePostViewModel @Inject constructor(
         }
     }
 
-    private fun updatePhotoUri(uri: Uri){
+    private fun updatePhotoUri(uri: Uri) {
         _state.update {
             it.copy(photoUri = uri)
         }
     }
-    private fun updateQueryParam(input: String){
+
+    private fun updateQueryParam(input: String) {
         _state.update {
             it.copy(queryParam = input)
         }
     }
 
-    private fun updateTitle(input: String){
+    private fun updateTitle(input: String) {
         _state.update {
             it.copy(title = input)
         }
     }
 
-    private fun updateSelectedCategory(category: Category?){
+    private fun updateSelectedCategory(category: Category?) {
         _state.update {
             it.copy(selectedCategory = category)
         }
     }
-    private fun updateActiveSearchBar(active:Boolean){
+
+    private fun updateActiveSearchBar(active: Boolean) {
         _state.update {
             it.copy(searchBarIsActive = active)
         }

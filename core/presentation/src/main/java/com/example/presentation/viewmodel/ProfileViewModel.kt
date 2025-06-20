@@ -25,6 +25,7 @@ import com.example.presentation.usecase.GetPostsByUserIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
 import com.example.presentation.usecase.GetSavedPostsByUserIdUseCase
 import com.example.presentation.usecase.GetSavedPostsUseCase
+import com.example.presentation.usecase.SavePostByPostIdUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import com.example.presentation.usecase.UploadAvatarPhotoUseCase
@@ -52,7 +53,8 @@ class ProfileViewModel @Inject constructor(
     private val deletePostFromMySavedPostsUseCase: DeletePostFromMySavedPostsUseCase,
     private val deletePostFromMyPostsUseCase: DeletePostFromMyPostsUseCase,
     private val getSavedPostsByUserIdUseCase: GetSavedPostsByUserIdUseCase,
-    private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase
+    private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase,
+    private val savePostByPostIdUseCase: SavePostByPostIdUseCase
 ) : ViewModel() {
 
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
@@ -159,6 +161,10 @@ class ProfileViewModel @Inject constructor(
                 Log.d("UpdateUserId", "loadDataForTab")
                 getPersonProfileInfoById(action.userId)
                 loadDataForTab()
+            }
+
+            is ProfileAction.SubmitSavePost -> {
+                savePost(action.postId)
             }
         }
     }
@@ -390,6 +396,19 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+    private fun savePost(postId:String){
+        viewModelScope.launch {
+            val result = savePostByPostIdUseCase.invoke(postId = postId)
+            result.fold(
+                onSuccess = {
+                    _event.emit(ProfileEvent.SavePost(postId = postId))
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                }
+            )
+        }
+    }
     private fun deleteMyPost(postId:String){
         viewModelScope.launch {
             val result = deletePostFromMyPostsUseCase.invoke(postId = postId)
@@ -605,5 +624,4 @@ class ProfileViewModel @Inject constructor(
             it.copy(walkVisibility = input)
         }
     }
-
 }

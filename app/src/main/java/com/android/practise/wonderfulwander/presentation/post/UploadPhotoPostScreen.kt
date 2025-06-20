@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -31,7 +32,7 @@ import com.example.base.action.post.CreatePostAction
 import com.example.base.state.CreatePostState
 import com.example.base.state.PhotoState
 import com.example.presentation.viewmodel.CreatePostViewModel
-
+import kotlin.math.cbrt
 
 
 @Composable
@@ -56,19 +57,19 @@ fun UploadPhotoPostScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "загрузить фото",
-            style = MaterialTheme.typography.headlineMedium
-        )
         when (state.photoState) {
             is PhotoState.Init -> {
-                CustomBox{
+                CustomBox(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+                ) {
                     Text(text = "здесь будет ваше фото")
                 }
             }
 
             is PhotoState.Loading -> {
-                CustomBox {
+                CustomBox(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+                ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(48.dp),
                         strokeWidth = 4.dp,
@@ -78,7 +79,9 @@ fun UploadPhotoPostScreen(
             }
 
             is PhotoState.Success -> {
-                CustomBox {
+                CustomBox(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+                ) {
                     AsyncImage(
                         model = state.photoUri,
                         contentDescription = "photo",
@@ -89,9 +92,18 @@ fun UploadPhotoPostScreen(
                     )
                 }
             }
+
+            PhotoState.Error -> {
+                CustomBox(
+                    backgroundColor = MaterialTheme.colorScheme.onError
+                ) {
+                    Text(text = "ошибка при загрузке попробуйте снова")
+                }
+            }
         }
         Button(
-            onClick = { pickImageLauncher.launch("image/*") }
+            onClick = { pickImageLauncher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth(0.8f)
         ) {
             Text(text = "загрузить фото")
         }
@@ -100,6 +112,7 @@ fun UploadPhotoPostScreen(
 
 @Composable
 private fun CustomBox(
+    backgroundColor:Color,
     content: @Composable () -> Unit,
 ) {
     Box(
@@ -108,17 +121,16 @@ private fun CustomBox(
             .fillMaxWidth()
             .aspectRatio(1f)
             .background(
-                color = MaterialTheme.colorScheme.secondaryContainer,
+                color = backgroundColor,
                 shape = MaterialTheme.shapes.medium
             )
             .border(
-                width =  1.dp,
+                width = 1.dp,
                 color = MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.medium
             ),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         content()
     }
-
 }

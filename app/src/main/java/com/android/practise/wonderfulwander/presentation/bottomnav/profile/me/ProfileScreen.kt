@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -134,6 +135,10 @@ fun ProfileScreenRoute(
                 is ProfileEvent.DeletePost -> {
                     Toast.makeText(context, "пост с id ${event.postId} был удалён", Toast.LENGTH_SHORT).show()
                 }
+
+                is ProfileEvent.SavePost -> {
+                    Toast.makeText(context, "пост с id ${event.postId} был сохранён", Toast.LENGTH_SHORT).show()
+                }
                 else -> {}
             }
         }
@@ -205,25 +210,34 @@ fun MeTopBar(
     visibleState:Boolean,
     onAction: (ProfileAction) -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Box(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = username,
             overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.8f)
+                .padding(horizontal = 48.dp)
         )
         Icon(
             painter = painterResource(id = baseR.drawable.ic_dotmenu),
             contentDescription = "menu",
             tint = Color.Black,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier
+                .size(24.dp)
+                .align(Alignment.CenterEnd)
+                .padding(end = 16.dp)
                 .clickable { updateDropDawnVisible() }
         )
-        Box {
+        // Выпадающее меню
+        Box(
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
             CustomDropDawnMenu(
                 expanded = visibleState,
                 onDismissRequest = { updateDropDawnVisible() },
@@ -394,11 +408,13 @@ fun Tab1Content(
         itemContent = { postResult: PostResult ->
             ListItemPost(
                 postResult = postResult,
-                modifier = Modifier.fillMaxWidth(),
                 onPostClick = { onAction(ProfileAction.SubmitPostItem(postResult.postId)) },
+                onSaveClick = { onAction(ProfileAction.SubmitSavePost(postResult.postId)) },
                 onLikeClick = {},
                 onCommentClick = {},
-                onDeleteClick = { onAction(ProfileAction.SubmitDeleteSavedPost(postResult.postId))}
+                onDeleteClick = { onAction(ProfileAction.SubmitDeleteSavedPost(postResult.postId))},
+                showDeleteButton = state.isItMyProfile,
+                showSaveButton = !state.isItMyProfile
             )
         },
         modifier = Modifier
@@ -423,13 +439,13 @@ fun Tab2Content(
         itemContent = { postResult: PostResult ->
             ListItemPost(
                 postResult = postResult,
-                modifier = Modifier.fillMaxWidth(),
-                onPostClick = {
-                    onAction(ProfileAction.SubmitPostItem(postResult.postId))
-                },
+                onPostClick = { onAction(ProfileAction.SubmitPostItem(postResult.postId)) },
+                onSaveClick = { onAction(ProfileAction.SubmitSavePost(postResult.postId)) },
                 onLikeClick = {},
                 onCommentClick = {},
-                onDeleteClick = { onAction(ProfileAction.SubmitDeleteMyPost(postResult.postId)) }
+                onDeleteClick = { onAction(ProfileAction.SubmitDeleteMyPost(postResult.postId)) },
+                showDeleteButton = state.isItMyProfile,
+                showSaveButton = !state.isItMyProfile
             )
         },
         modifier = Modifier
@@ -500,46 +516,38 @@ fun CustomDropDawnMenu(
 @Composable
 fun ListItemPost(
     postResult: PostResult,
-    modifier: Modifier = Modifier,
     onDeleteClick: () -> Unit,
+    onSaveClick: () -> Unit,
     onPostClick: () -> Unit,
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit,
-    showDeleteButton: Boolean = true
+    showDeleteButton: Boolean,
+    showSaveButton:Boolean,
 ) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .clickable { onPostClick() },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
+            defaultElevation = 4.dp,
             pressedElevation = 8.dp,
-            hoveredElevation = 4.dp,
-            focusedElevation = 4.dp,
-            disabledElevation = 0.dp
         ),
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     ) {
 
         Column {
             Text(
                 text = postResult.postId,
-                style = MaterialTheme.typography.displayLarge,
-                modifier = Modifier.padding(16.dp)
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                color = MaterialTheme.colorScheme.onSurface
             )
-            if (showDeleteButton) {
-                IconButton(
-                    onClick = { onDeleteClick() },
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Удалить",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
+
             AsyncImage(
                 model = postResult.photoUrl,
                 contentDescription = null,
@@ -552,47 +560,87 @@ fun ListItemPost(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Кнопка лайка
-                IconButton(
-                    onClick = { onLikeClick() },
-                    modifier = Modifier.size(24.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Лайк",
-                        tint = if (postResult.likesCount > 0) Color.Red else Color.Gray
+                    IconButton(
+                        onClick = { onLikeClick() },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Лайк",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                    Text(
+                        text = postResult.likesCount.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 4.dp)
                     )
                 }
-                Text(
-                    text = postResult.likesCount.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
 
-                IconButton(
-                    onClick = { onCommentClick() },
-                    modifier = Modifier.size(24.dp)
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_comment),
-                        contentDescription = "Комментарии",
-                        tint = Color.Gray
+                    IconButton(
+                        onClick = { onCommentClick() },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_comment),
+                            contentDescription = "Комментарии",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                    Text(
+                        text = postResult.commentsCount.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 4.dp)
                     )
                 }
-                Text(
-                    text = postResult.commentsCount.toString(),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
+                if (showDeleteButton) {
+                    IconButton(
+                        onClick = { onDeleteClick() },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Удалить",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+                if (showSaveButton) {
+                    IconButton(
+                        onClick = { onSaveClick() },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Сохранить",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
                 Text(
                     text = postResult.createdAt,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
         }

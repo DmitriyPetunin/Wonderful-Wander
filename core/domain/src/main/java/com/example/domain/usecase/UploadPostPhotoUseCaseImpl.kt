@@ -7,7 +7,7 @@ import com.example.presentation.usecase.UploadPostPhotoUseCase
 class UploadPostPhotoUseCaseImpl(
     private val photoRepository: PhotoRepository
 ): UploadPostPhotoUseCase {
-    override suspend fun invoke(uri: Uri): Result<Unit> {
+    override suspend fun invoke(uri: Uri): Result<String> {
         return photoRepository.uploadPostImage(uri)
     }
 }

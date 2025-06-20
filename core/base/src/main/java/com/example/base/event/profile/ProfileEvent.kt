@@ -16,4 +16,5 @@ sealed interface ProfileEvent {
 
 
     data class DeletePost(val postId: String):ProfileEvent
+    data class SavePost(val postId: String):ProfileEvent
 }

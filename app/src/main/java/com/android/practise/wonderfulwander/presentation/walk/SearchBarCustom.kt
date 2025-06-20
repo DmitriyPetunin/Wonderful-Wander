@@ -1,8 +1,12 @@
 package com.android.practise.wonderfulwander.presentation.walk
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -36,18 +40,8 @@ fun <T> SearchBarCustom(
     onQueryChange: (String) -> Unit,
     searchStringProvider: (T) -> String,
     itemContent: @Composable (T) -> Unit,
+    modifier:Modifier = Modifier
 ) {
-    val listOfItems = remember { items.toMutableStateList() }
-
-//    val filteredItems = listOfItems.filter { item ->
-//        item.username.contains(query, ignoreCase = true)
-//    }
-
-//    val filteredItems = remember(items, query) {
-//        items.filter { friend ->
-//            friend.username.contains(query, ignoreCase = true)
-//        }
-//    }
 
     val filteredItems = remember(items, query) {
         items.filter { item ->
@@ -55,46 +49,53 @@ fun <T> SearchBarCustom(
         }
     }
 
-    SearchBar(
-        query = query,
-        onQueryChange = { text -> onQueryChange(text) },
-        onSearch = { onActiveChange(false) },
-        active = active,
-        onActiveChange = { onActiveChange(it) },
-        placeholder = { Text("Поиск") },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = "Search",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        },
-        trailingIcon = {
-            if (active)
-                IconButton(
-                    onClick = {
-                        onActiveChange(false)
-                        onQueryChange("")
-                    }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Close,
-                        contentDescription = "Clear search"
-                    )
-                }
-        },
-        colors = SearchBarDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
-        tonalElevation = 0.dp,
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 200.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(168.dp)
+        SearchBar(
+            query = query,
+            onQueryChange = { text -> onQueryChange(text) },
+            onSearch = { onActiveChange(false) },
+            active = active,
+            onActiveChange = { onActiveChange(it) },
+            placeholder = { Text("Поиск") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            },
+            trailingIcon = {
+                if (active)
+                    IconButton(
+                        onClick = {
+                            onActiveChange(false)
+                            onQueryChange("")
+                        }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = "Clear search"
+                        )
+                    }
+            },
+            colors = SearchBarDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ),
+            tonalElevation = 0.dp,
         ) {
-            items(count = filteredItems.size) { index ->
-                val friend = filteredItems[index]
-                itemContent(friend)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 168.dp)
+            ) {
+                items(count = filteredItems.size) { index ->
+                    val item = filteredItems[index]
+                    itemContent(item)
+                }
             }
         }
     }

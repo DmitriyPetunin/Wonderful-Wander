@@ -4,6 +4,7 @@ import com.example.domain.repository.GeoRepository
 import com.example.domain.repository.PhotoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
+import com.example.domain.usecase.CreatePostUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMyPostsUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMySavedPostsUseCaseImpl
 import com.example.domain.usecase.DeleteUserProfileUseCaseImpl
@@ -18,15 +19,18 @@ import com.example.domain.usecase.GetPersonProfileInfoByIdUseCaseImpl
 import com.example.domain.usecase.GetPostDetailByIdUseCaseImpl
 import com.example.domain.usecase.GetPostsByUserIdUseCaseImpl
 import com.example.domain.usecase.GetProfileInfoUseCaseImpl
+import com.example.domain.usecase.GetRecommendedPostsUseCaseImpl
 import com.example.domain.usecase.GetSavedPostsByUserIdUseCaseImpl
 import com.example.domain.usecase.GetSavedPostsUseCaseImpl
 import com.example.domain.usecase.LoginUseCaseImpl
 import com.example.domain.usecase.RegisterUseCaseImpl
+import com.example.domain.usecase.SavePostByPostIdUseCaseImpl
 import com.example.domain.usecase.UnFollowToUserByIdUseCaseImpl
 import com.example.domain.usecase.UpdateProfileInfoUseCaseImpl
 import com.example.domain.usecase.UploadAvatarPhotoUseCaseImpl
 import com.example.domain.usecase.UploadPostPhotoUseCaseImpl
 import com.example.domain.usecase.UploadWalkPhotoUseCaseImpl
+import com.example.presentation.usecase.CreatePostUseCase
 import com.example.presentation.usecase.DeletePostFromMyPostsUseCase
 import com.example.presentation.usecase.DeletePostFromMySavedPostsUseCase
 import com.example.presentation.usecase.DeleteUserProfileUseCase
@@ -41,10 +45,12 @@ import com.example.presentation.usecase.GetPersonProfileInfoByIdUseCase
 import com.example.presentation.usecase.GetPostDetailByIdUseCase
 import com.example.presentation.usecase.GetPostsByUserIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
+import com.example.presentation.usecase.GetRecommendedPostsUseCase
 import com.example.presentation.usecase.GetSavedPostsByUserIdUseCase
 import com.example.presentation.usecase.GetSavedPostsUseCase
 import com.example.presentation.usecase.LoginUseCase
 import com.example.presentation.usecase.RegisterUseCase
+import com.example.presentation.usecase.SavePostByPostIdUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
 import com.example.presentation.usecase.UploadAvatarPhotoUseCase
@@ -216,11 +222,33 @@ object DomainModule {
         return GetSavedPostsByUserIdUseCaseImpl(postRepository = postRepository)
     }
 
-
     @Provides
     fun provideGetAllCategoriesUseCase(
         postRepository: PostRepository
     ): GetAllCategoriesUseCase {
         return GetAllCategoriesUseCaseImpl(postRepository = postRepository)
+    }
+
+
+    @Provides
+    fun provideSavePostByPostIdUseCase(
+        postRepository: PostRepository
+    ): SavePostByPostIdUseCase {
+        return SavePostByPostIdUseCaseImpl(postRepository = postRepository)
+    }
+
+
+    @Provides
+    fun provideCreatePostUseCase(
+        postRepository: PostRepository
+    ): CreatePostUseCase {
+        return CreatePostUseCaseImpl(postRepository = postRepository)
+    }
+
+    @Provides
+    fun provideGetRecommendedPostsUseCase(
+        postRepository: PostRepository
+    ): GetRecommendedPostsUseCase {
+        return GetRecommendedPostsUseCaseImpl(postRepository = postRepository)
     }
 }

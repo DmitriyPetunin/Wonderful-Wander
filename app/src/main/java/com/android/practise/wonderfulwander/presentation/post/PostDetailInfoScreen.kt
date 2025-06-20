@@ -198,7 +198,6 @@ fun PostDetailInfoScreen(
             }
         }
 
-        // Кнопка комментариев (закреплена внизу)
         if (state.commentsCount > 0) {
             Button(
                 onClick = { onAction(PostDetailAction.ShowAllComments) },

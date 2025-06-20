@@ -46,7 +46,7 @@ fun MainScreen() {
             })
         },
         createWalkScreen = { CreateWalkPageRoute() },
-        createPostScreen = { CreatePostScreenRoute() },
+        createPostScreen = { CreatePostScreenRoute(navigateToPhotosScreen = {navigateToPhotosScreen(controller = navController)}) },
         peopleScreen = { listType ->
             PeopleScreenRoute(
                 listType = listType,
@@ -72,4 +72,8 @@ private fun navigateToProfileScreen(controller: NavController) {
 
 private fun navigateToMapScreen(controller: NavController) {
     controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.MapScreen.route}")
+}
+
+private fun navigateToPhotosScreen(controller: NavController) {
+    controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.PhotosScreen.route}")
 }

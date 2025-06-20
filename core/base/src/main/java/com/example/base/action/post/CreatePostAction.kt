@@ -6,6 +6,7 @@ import com.example.base.model.post.category.Category
 sealed class CreatePostAction {
 
     data object Init:CreatePostAction()
+    data object SubmitCreatePost:CreatePostAction()
 
     data class UpdatePhotoUri(val input:Uri): CreatePostAction()
 
