@@ -3,6 +3,8 @@ package com.example.network.service.post
 import com.example.network.model.photo.UploadImageResponse
 import com.example.network.model.post.req.UpdatePostRequest
 import com.example.network.model.post.res.CategoryResponse
+import com.example.network.model.post.res.CommentResponse
+import com.example.network.model.post.res.CommentsResponse
 import com.example.network.model.post.res.PostResponse
 import com.example.network.model.post.res.PostsResponse
 import okhttp3.MultipartBody
@@ -88,4 +90,10 @@ interface PostService {
     ):Response<List<CategoryResponse>>
 
 
+    @GET("/api/posts/{postId}/comments")
+    suspend fun getAllCommentsByPostId(
+        @Path("postId") postId:String,
+        @Query("page") page: Int,
+        @Query("size") limit: Int
+    ):Response<CommentsResponse>
 }

@@ -1,7 +1,7 @@
 package com.example.base.state
 
 import android.net.Uri
-import com.example.base.model.post.PostResult
+import com.example.base.model.post.Post
 
 data class ProfileState (
     val userId: String = "",
@@ -30,13 +30,13 @@ data class ProfileState (
     val status:Boolean = true,
     val selectedTabIndex: Int = 0,
 
-    val listOfSavedPosts: List<PostResult> = emptyList(),
+    val listOfSavedPosts: List<Post> = emptyList(),
     val currentPageSavedPosts: Int = 1,
     val isInitialLoadingSavedPosts:Boolean = true,
     val endReachedSavedPosts:Boolean = false,
 
 
-    val listOfMyPosts: List<PostResult> = emptyList(),
+    val listOfMyPosts: List<Post> = emptyList(),
     val currentPageMyPosts: Int = 1,
     val isInitialLoadingMyPosts:Boolean = true,
     val endReachedMyPosts:Boolean = false,

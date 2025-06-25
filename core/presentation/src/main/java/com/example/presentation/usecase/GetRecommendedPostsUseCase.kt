@@ -1,7 +1,7 @@
 package com.example.presentation.usecase
 
-import com.example.base.model.post.PostResult
+import com.example.base.model.post.Post
 
 interface GetRecommendedPostsUseCase {
-    suspend fun invoke():Result<List<PostResult>>
+    suspend fun invoke():Result<List<Post>>
 }

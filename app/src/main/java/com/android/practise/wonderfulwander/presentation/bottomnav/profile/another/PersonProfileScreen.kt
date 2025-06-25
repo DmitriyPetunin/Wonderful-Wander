@@ -1,5 +1,6 @@
 package com.android.practise.wonderfulwander.presentation.bottomnav.profile.another
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -78,28 +81,8 @@ fun PersonProfileScreen(
             modifier = Modifier.align(Alignment.Start),
             style = MaterialTheme.typography.displayLarge
         )
-        if (state.avatarUrl.isNotEmpty()) {
-            AsyncImage(
-                model = state.avatarUrl,
-                contentDescription = "Profile picture",
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_visibility_off_foreground),
-            )
-        }
-        if (state.avatarUrl.isNotEmpty()) {
-            AsyncImage(
-                model = state.avatarUrl,
-                contentDescription = "Profile picture",
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+
+        AvatarProfile(state = state)
 
         StatSection(
             state = state,
@@ -146,6 +129,36 @@ fun AnotherTopBar(
             modifier = Modifier
                 .size(28.dp)
                 .clickable { onClickFollowButton() }
+        )
+    }
+}
+@Composable
+private fun AvatarProfile(
+    state: ProfileState
+){
+    if (state.avatarUrl.isNotEmpty()) {
+        AsyncImage(
+            model = state.avatarUrl,
+            contentDescription = "Profile picture",
+            modifier = Modifier
+                .size(200.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.ic_visibility_off_foreground),
+        )
+    } else {
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "Default profile icon",
+            modifier = Modifier
+                .size(200.dp)
+                .clip(CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = CircleShape
+                ),
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }

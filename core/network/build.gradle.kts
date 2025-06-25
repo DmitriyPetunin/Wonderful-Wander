@@ -21,7 +21,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String","GEO_CODER_BASE_URL", value = "\"https://geocode-maps.yandex.ru/\"")
-        buildConfigField("String","API_BASE_URL", value = "\"https://wonderful-wander.ru\"")
+        buildConfigField("String","API_BASE_URL", value = "\"http://localhost:8080/\"")
     }
 
     buildTypes {

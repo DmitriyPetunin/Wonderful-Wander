@@ -9,12 +9,10 @@ import com.example.base.action.profile.ProfileAction
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
 import com.example.base.event.profile.ProfileEvent
-import com.example.base.model.post.PostResult
-import com.example.base.model.user.People
+import com.example.base.model.post.Post
 import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.base.state.ProfileState
 import com.example.base.state.UpdateProfileState
-import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.example.presentation.usecase.DeletePostFromMyPostsUseCase
 import com.example.presentation.usecase.DeletePostFromMySavedPostsUseCase
 import com.example.presentation.usecase.DeleteUserProfileUseCase
@@ -336,7 +334,7 @@ class ProfileViewModel @Inject constructor(
 
             _stateProfile.update { currentState ->
                 result.fold(
-                    onSuccess = { newPosts:List<PostResult> ->
+                    onSuccess = { newPosts:List<Post> ->
                         //Log.d("LoadSavedPosts", "loadSavedPosts:${newPosts.map { it.toString() }} ")
                         if(!stateProfile.value.isInitialLoadingSavedPosts && newPosts.lastOrNull() == stateProfile.value.listOfSavedPosts.lastOrNull()){
                             currentState.copy(
@@ -373,7 +371,7 @@ class ProfileViewModel @Inject constructor(
 
             _stateProfile.update { currentState ->
                 result.fold(
-                    onSuccess = { newPosts:List<PostResult> ->
+                    onSuccess = { newPosts:List<Post> ->
                         if(!stateProfile.value.isInitialLoadingMyPosts && newPosts.lastOrNull() == stateProfile.value.listOfMyPosts.lastOrNull()){
                             currentState.copy(
                                 isLoading = false,

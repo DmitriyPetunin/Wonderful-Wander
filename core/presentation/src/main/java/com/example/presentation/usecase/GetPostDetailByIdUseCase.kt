@@ -1,7 +1,7 @@
 package com.example.presentation.usecase
 
-import com.example.base.model.post.PostResult
+import com.example.base.model.post.Post
 
 interface GetPostDetailByIdUseCase {
-    suspend fun invoke(postId:String):Result<PostResult>
+    suspend fun invoke(postId:String):Result<Post>
 }

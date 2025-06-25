@@ -25,7 +25,7 @@ enum class PeopleEnum{
     };
 
     companion object{
-        fun fromString(value:String):PeopleEnum {
+        fun fromString(value:String): PeopleEnum {
             return entries.find { it.toString() == value } ?: FRIENDS
         }
     }

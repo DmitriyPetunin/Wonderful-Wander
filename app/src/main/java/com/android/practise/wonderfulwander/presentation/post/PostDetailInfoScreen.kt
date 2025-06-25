@@ -43,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ListScreen
 import com.example.base.R
 import com.example.base.action.post.PostDetailAction
 import com.example.base.state.PostDetailState
@@ -66,7 +67,7 @@ fun PostDetailInfoScreenRoute(
             .fillMaxSize()
             .wrapContentWidth(Alignment.CenterHorizontally)
         )
-    } else{
+    } else {
         PostDetailInfoScreen(state = state,postViewModel::onAction)
     }
 
@@ -198,7 +199,7 @@ fun PostDetailInfoScreen(
             }
         }
 
-        if (state.commentsCount > 0) {
+        if (!state.commentsIsVisible) {
             Button(
                 onClick = { onAction(PostDetailAction.ShowAllComments) },
                 modifier = Modifier
@@ -208,8 +209,29 @@ fun PostDetailInfoScreen(
             ) {
                 Text(text = "Показать все комментарии (${state.commentsCount})")
             }
+        } else{
+            CommentsList(state = state, onAction = onAction)
         }
+
     }
+}
+
+@Composable
+private fun CommentsList(
+    state:PostDetailState,
+    onAction: (PostDetailAction) -> Unit
+){
+    
+    ListScreen(
+        items = state.listOfComments,
+        isLoading = state.isLoadingComments,
+        endReached = state.endReached,
+        loadMore = {
+            onAction.invoke(PostDetailAction.LoadMoreComments)
+        },
+        itemContent = TODO(),
+        modifier = TODO()
+    )
 }
 
 @Composable

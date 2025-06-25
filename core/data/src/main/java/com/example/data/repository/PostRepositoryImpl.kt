@@ -1,9 +1,10 @@
 package com.example.data.repository
 
+import com.example.base.model.post.Comment
 import com.example.base.model.post.PostCreateParam
-import com.example.base.model.post.PostResult
-import com.example.base.model.post.UserDataResult
+import com.example.base.model.post.Post
 import com.example.base.model.post.category.Category
+import com.example.data.mapper.CommentResponseToCommentDomainMapper
 import com.example.data.mapper.PostResponseToPostDomainMapper
 import com.example.domain.repository.PostRepository
 import com.example.network.model.post.req.UpdatePostRequest
@@ -12,18 +13,28 @@ import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
     private val postService: PostService,
-    private val postDomainMapper: PostResponseToPostDomainMapper
+    private val postDomainMapper: PostResponseToPostDomainMapper,
+    private val commentDomainMapper: CommentResponseToCommentDomainMapper
 ) : PostRepository, BaseRepo() {
 
-    override suspend fun getRecommendedPosts(): Result<List<PostResult>> {
+    override suspend fun getRecommendedPosts(): Result<List<Post>> {
         TODO("Not yet implemented")
     }
 
     override suspend fun savePost(postId: String): Result<Unit> {
-        TODO("Not yet implemented")
+        return try {
+            val response = postService.savePost(postId)
+            when{
+                response.isSuccessful -> {Result.success(Unit)}
+                else -> {Result.failure(Exception(""))}
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 
-    override suspend fun getPostById(postId: String): Result<PostResult> {
+    override suspend fun getPostById(postId: String): Result<Post> {
         return try {
             val response = postService.getPostById(postId = postId)
             when {
@@ -51,7 +62,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSavedPosts(page: Int, limit: Int): Result<List<PostResult>> {
+    override suspend fun getSavedPosts(page: Int, limit: Int): Result<List<Post>> {
         return try {
             val response = postService.getSavedPosts(page,limit)
 
@@ -73,7 +84,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMyPosts(page: Int, limit: Int): Result<List<PostResult>> {
+    override suspend fun getMyPosts(page: Int, limit: Int): Result<List<Post>> {
         return try {
             val response = postService.getPosts(page,limit)
 
@@ -168,7 +179,7 @@ class PostRepositoryImpl @Inject constructor(
         userId: String,
         page: Int,
         limit: Int
-    ): Result<List<PostResult>> {
+    ): Result<List<Post>> {
         return try {
             val response = postService.getPostsByUserId(userId = userId,page = page,limit = limit)
 
@@ -195,7 +206,7 @@ class PostRepositoryImpl @Inject constructor(
         userId: String,
         page: Int,
         limit: Int
-    ): Result<List<PostResult>> {
+    ): Result<List<Post>> {
         return try {
             val response = postService.getSavedPostsByUserId(userId = userId,page = page,limit = limit)
 
@@ -263,6 +274,30 @@ class PostRepositoryImpl @Inject constructor(
                 else -> { Result.failure(Exception("")) }
             }
         } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getAllCommentsByPostId(
+        postId: String,
+        page: Int,
+        limit: Int
+    ): Result<List<Comment>> {
+        return try {
+            val response = postService.getAllCommentsByPostId(postId,page,limit)
+            when{
+                response.isSuccessful -> {
+                    Result.success(response.body()?.listOfComments?.map {
+                        commentDomainMapper.invoke(it)
+                    } ?: emptyList())
+            }
+                response.code() == 400 -> {Result.failure(Exception(""))}
+                response.code() == 401 -> {Result.failure(Exception(""))}
+                response.code() == 404 -> {Result.failure(Exception(""))}
+                else -> {Result.failure(Exception(""))}
+            }
+        }catch (e:Exception){
             e.printStackTrace()
             Result.failure(e)
         }

@@ -42,6 +42,7 @@ data class UserResponse(
     val userId:String,
     @SerialName("username")
     val userName:String,
-    val avatarUrl:String
+    @SerialName("avatarUrl")
+    val avatarUrl:String?
 )
 

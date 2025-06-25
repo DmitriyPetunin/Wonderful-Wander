@@ -20,21 +20,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -66,7 +62,7 @@ import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ListS
 import com.example.base.R
 import com.example.base.action.profile.ProfileAction
 import com.example.base.event.profile.ProfileEvent
-import com.example.base.model.post.PostResult
+import com.example.base.model.post.Post
 import com.example.base.state.PeopleEnum
 import com.example.base.state.ProfileState
 import com.example.presentation.viewmodel.ProfileViewModel
@@ -405,14 +401,14 @@ fun Tab1Content(
         loadMore = {
             onAction(ProfileAction.LoadMoreSavedPosts)
         },
-        itemContent = { postResult: PostResult ->
+        itemContent = { post: Post ->
             ListItemPost(
-                postResult = postResult,
-                onPostClick = { onAction(ProfileAction.SubmitPostItem(postResult.postId)) },
-                onSaveClick = { onAction(ProfileAction.SubmitSavePost(postResult.postId)) },
+                post = post,
+                onPostClick = { onAction(ProfileAction.SubmitPostItem(post.postId)) },
+                onSaveClick = { onAction(ProfileAction.SubmitSavePost(post.postId)) },
                 onLikeClick = {},
                 onCommentClick = {},
-                onDeleteClick = { onAction(ProfileAction.SubmitDeleteSavedPost(postResult.postId))},
+                onDeleteClick = { onAction(ProfileAction.SubmitDeleteSavedPost(post.postId))},
                 showDeleteButton = state.isItMyProfile,
                 showSaveButton = !state.isItMyProfile
             )
@@ -436,14 +432,14 @@ fun Tab2Content(
         loadMore = {
             onAction(ProfileAction.LoadMoreMyPosts)
         },
-        itemContent = { postResult: PostResult ->
+        itemContent = { post: Post ->
             ListItemPost(
-                postResult = postResult,
-                onPostClick = { onAction(ProfileAction.SubmitPostItem(postResult.postId)) },
-                onSaveClick = { onAction(ProfileAction.SubmitSavePost(postResult.postId)) },
+                post = post,
+                onPostClick = { onAction(ProfileAction.SubmitPostItem(post.postId)) },
+                onSaveClick = { onAction(ProfileAction.SubmitSavePost(post.postId)) },
                 onLikeClick = {},
                 onCommentClick = {},
-                onDeleteClick = { onAction(ProfileAction.SubmitDeleteMyPost(postResult.postId)) },
+                onDeleteClick = { onAction(ProfileAction.SubmitDeleteMyPost(post.postId)) },
                 showDeleteButton = state.isItMyProfile,
                 showSaveButton = !state.isItMyProfile
             )
@@ -515,7 +511,7 @@ fun CustomDropDawnMenu(
 
 @Composable
 fun ListItemPost(
-    postResult: PostResult,
+    post: Post,
     onDeleteClick: () -> Unit,
     onSaveClick: () -> Unit,
     onPostClick: () -> Unit,
@@ -542,14 +538,14 @@ fun ListItemPost(
 
         Column {
             Text(
-                text = postResult.postId,
+                text = post.title,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             AsyncImage(
-                model = postResult.photoUrl,
+                model = post.photoUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -580,7 +576,7 @@ fun ListItemPost(
                         )
                     }
                     Text(
-                        text = postResult.likesCount.toString(),
+                        text = post.likesCount.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(start = 4.dp)
@@ -604,7 +600,7 @@ fun ListItemPost(
                         )
                     }
                     Text(
-                        text = postResult.commentsCount.toString(),
+                        text = post.commentsCount.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(start = 4.dp)
@@ -637,7 +633,7 @@ fun ListItemPost(
                     }
                 }
                 Text(
-                    text = postResult.createdAt,
+                    text = post.createdAt,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.padding(start = 8.dp)

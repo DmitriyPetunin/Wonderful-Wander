@@ -10,4 +10,7 @@ sealed class PostDetailAction {
 
     data class UpdatePostId(val id:String):PostDetailAction()
     data class UserClicked(val userId: String) : PostDetailAction()
+
+
+    data object LoadMoreComments:PostDetailAction()
 }

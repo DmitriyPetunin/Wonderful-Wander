@@ -1,7 +1,7 @@
 package com.example.base.model.post
 
 
-data class PostResult (
+data class Post (
     val postId:String,
     val title:String,
     val photoUrl:String,
@@ -12,7 +12,7 @@ data class PostResult (
     val createdAt:String,
 ){
     companion object{
-        val EMPTY = PostResult(
+        val EMPTY = Post(
             postId = "",
             title = "",
             photoUrl = "",

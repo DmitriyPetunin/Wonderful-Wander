@@ -11,6 +11,7 @@ import com.example.domain.usecase.DeleteUserProfileUseCaseImpl
 import com.example.domain.usecase.FollowToUserByIdUseCaseImpl
 import com.example.domain.usecase.GetActualGeoDataUseCaseImpl
 import com.example.domain.usecase.GetAllCategoriesUseCaseImpl
+import com.example.domain.usecase.GetAllCommentsByPostIdUseCaseImpl
 import com.example.domain.usecase.GetAllFollowersUseCaseImpl
 import com.example.domain.usecase.GetAllFollowingUseCaseImpl
 import com.example.domain.usecase.GetAllFriendsUseCaseImpl
@@ -37,6 +38,7 @@ import com.example.presentation.usecase.DeleteUserProfileUseCase
 import com.example.presentation.usecase.FollowToUserByIdUseCase
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import com.example.presentation.usecase.GetAllCategoriesUseCase
+import com.example.presentation.usecase.GetAllCommentsByPostIdUseCase
 import com.example.presentation.usecase.GetAllFollowersUseCase
 import com.example.presentation.usecase.GetAllFollowingUseCase
 import com.example.presentation.usecase.GetAllFriendsUseCase
@@ -250,5 +252,12 @@ object DomainModule {
         postRepository: PostRepository
     ): GetRecommendedPostsUseCase {
         return GetRecommendedPostsUseCaseImpl(postRepository = postRepository)
+    }
+
+    @Provides
+    fun provideGetAllCommentsByPostIdUseCase(
+        postRepository: PostRepository
+    ): GetAllCommentsByPostIdUseCase {
+        return GetAllCommentsByPostIdUseCaseImpl(postRepository = postRepository)
     }
 }
