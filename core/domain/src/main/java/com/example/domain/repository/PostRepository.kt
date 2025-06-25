@@ -18,4 +18,6 @@ interface PostRepository {
     suspend fun getSavedPostsByUserId(userId:String,page: Int, limit: Int):Result<List<Post>>
     suspend fun getAllCommentsByPostId(postId:String,page: Int, limit: Int):Result<List<Comment>>
     suspend fun getAllCategories():Result<List<Category>>
+
+    suspend fun deleteComment(postId:String,commentId:String):Result<Unit>
 }

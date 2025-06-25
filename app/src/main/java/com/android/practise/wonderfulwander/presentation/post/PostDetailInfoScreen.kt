@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
@@ -40,12 +42,15 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ListScreen
 import com.example.base.R
 import com.example.base.action.post.PostDetailAction
+import com.example.base.model.post.Comment
+import com.example.base.state.CommentUi
 import com.example.base.state.PostDetailState
 import com.example.presentation.viewmodel.PostViewModel
 
@@ -229,8 +234,14 @@ private fun CommentsList(
         loadMore = {
             onAction.invoke(PostDetailAction.LoadMoreComments)
         },
-        itemContent = TODO(),
-        modifier = TODO()
+        itemContent = { comment: CommentUi ->
+            CommentListItem(
+                comment = comment,
+                onDeleteClick = { onAction.invoke(PostDetailAction.DeleteComment(comment.comment.commentId)) },
+                onCommentClick = { onAction.invoke(PostDetailAction.ClickOnComment(comment.comment.commentId)) },
+                onUserClick = { onAction.invoke(PostDetailAction.UserClicked(comment.comment.user.userId)) },
+            )
+        },
     )
 }
 
@@ -253,5 +264,76 @@ private fun StatItem(
             text = count.toString(),
             style = MaterialTheme.typography.bodyMedium
         )
+    }
+}
+@Composable
+private fun CommentListItem(
+    comment: CommentUi,
+    modifier: Modifier = Modifier,
+    onDeleteClick:() -> Unit,
+    onUserClick:() -> Unit,
+    onCommentClick: () -> Unit,
+) {
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onCommentClick() }
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable { onUserClick() }
+            ) {
+                AsyncImage(
+                    model = comment.comment.user.avatarUrl,
+                    contentDescription = "User avatar",
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(Modifier.width(8.dp))
+
+                Column {
+                    Text(
+                        text = comment.comment.user.userName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = comment.comment.createdAt,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                if(comment.canDelete){
+                    IconButton(
+                        onClick = {onDeleteClick()},
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Удалить",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = comment.comment.text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(8.dp))
+        }
     }
 }

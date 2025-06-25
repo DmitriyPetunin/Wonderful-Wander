@@ -17,7 +17,7 @@ data class PostDetailState (
     val createdAt:String = "",
 
 
-    val listOfComments:List<Comment> = emptyList(),
+    val listOfComments:List<CommentUi> = emptyList(),
 
     val isLoadingComments: Boolean = true,
     val endReached: Boolean = false,

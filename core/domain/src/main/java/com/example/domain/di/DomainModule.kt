@@ -5,6 +5,7 @@ import com.example.domain.repository.PhotoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.CreatePostUseCaseImpl
+import com.example.domain.usecase.DeleteCommentUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMyPostsUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMySavedPostsUseCaseImpl
 import com.example.domain.usecase.DeleteUserProfileUseCaseImpl
@@ -32,6 +33,7 @@ import com.example.domain.usecase.UploadAvatarPhotoUseCaseImpl
 import com.example.domain.usecase.UploadPostPhotoUseCaseImpl
 import com.example.domain.usecase.UploadWalkPhotoUseCaseImpl
 import com.example.presentation.usecase.CreatePostUseCase
+import com.example.presentation.usecase.DeleteCommentUseCase
 import com.example.presentation.usecase.DeletePostFromMyPostsUseCase
 import com.example.presentation.usecase.DeletePostFromMySavedPostsUseCase
 import com.example.presentation.usecase.DeleteUserProfileUseCase
@@ -259,5 +261,13 @@ object DomainModule {
         postRepository: PostRepository
     ): GetAllCommentsByPostIdUseCase {
         return GetAllCommentsByPostIdUseCaseImpl(postRepository = postRepository)
+    }
+
+
+    @Provides
+    fun provideDeleteCommentUseCase(
+        postRepository: PostRepository
+    ): DeleteCommentUseCase {
+        return DeleteCommentUseCaseImpl(postRepository = postRepository)
     }
 }

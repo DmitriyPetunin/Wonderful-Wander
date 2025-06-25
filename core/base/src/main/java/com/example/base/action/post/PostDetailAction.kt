@@ -13,4 +13,6 @@ sealed class PostDetailAction {
 
 
     data object LoadMoreComments:PostDetailAction()
+    data class ClickOnComment(val id:String):PostDetailAction()
+    data class DeleteComment(val id:String):PostDetailAction()
 }
