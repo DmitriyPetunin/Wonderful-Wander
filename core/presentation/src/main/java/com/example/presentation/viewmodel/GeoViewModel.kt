@@ -4,10 +4,9 @@ package com.example.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.base.action.geo.GeoAction
+import com.example.base.action.geo.MapAction
 import com.example.base.event.GeoEvent
-import com.example.base.event.post.CreatePostEvent
-import com.example.base.state.GeoState
+import com.example.base.state.MapState
 import com.example.base.state.Point
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,22 +25,22 @@ class GeoViewModel @Inject constructor(
     //val firebaseAnalytics: FirebaseAnalytics
 ) : ViewModel() {
 
-    private val _geoState = MutableStateFlow(GeoState())
-    val geoState = _geoState.asStateFlow()
+    private val _mapState = MutableStateFlow(MapState())
+    val geoState = _mapState.asStateFlow()
 
     private val _event = MutableSharedFlow<GeoEvent>()
     val event: SharedFlow<GeoEvent> = _event
 
-    fun onAction(action: GeoAction) {
+    fun onAction(action: MapAction) {
         when (action) {
-            is GeoAction.UpdateCurrentCenter -> {
+            is MapAction.UpdateCurrentCenter -> {
                 updateCurrentCenter(action.latitude, action.longitude)
             }
-            is GeoAction.UpdateText ->{
+            is MapAction.UpdateText ->{
                 updateText()
             }
 
-            GeoAction.NavigateToCreateWalkPage -> {
+            MapAction.NavigateToCreateWalkPage -> {
                 viewModelScope.launch {
                     _event.emit(GeoEvent.InteractionOne)
                 }
@@ -50,7 +49,7 @@ class GeoViewModel @Inject constructor(
     }
 
     private fun updateCurrentCenter(latitude: Double, longitude: Double) {
-        _geoState.update {
+        _mapState.update {
             it.copy(point = Point(latitude = latitude, longitude = longitude))
         }
     }
@@ -67,7 +66,7 @@ class GeoViewModel @Inject constructor(
 //            }
             val response = getActualGeoDataUseCase.invoke(geocodeString = "${geoState.value.point.longitude},${geoState.value.point.latitude}")
 
-            _geoState.update { state ->
+            _mapState.update { state ->
                 response.fold(
                     onSuccess = { model ->
                         state.copy(

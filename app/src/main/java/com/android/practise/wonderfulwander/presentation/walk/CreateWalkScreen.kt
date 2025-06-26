@@ -1,17 +1,9 @@
 package com.android.practise.wonderfulwander.presentation.walk
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,12 +17,11 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -47,23 +38,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
-import com.example.base.R
 import com.example.base.action.walk.CreateWalkAction
 import com.example.base.model.user.People
 import com.example.base.state.CreateWalkState
 import com.example.presentation.viewmodel.CreateWalkViewModel
-import java.io.File
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun CreateWalkPageRoute(
+fun CreateWalkScreenRoute(
     createWalkViewModel: CreateWalkViewModel = hiltViewModel()
 ) {
 
@@ -81,18 +73,17 @@ fun CreateWalkPageRoute(
                 .wrapContentWidth(Alignment.CenterHorizontally)
         )
     } else {
-        CreateWalkPage(state = state, createWalkViewModel::onAction)
+        CreateWalkScreen(state = state, createWalkViewModel::onAction)
     }
 }
 
 @Composable
-fun CreateWalkPage(
+fun CreateWalkScreen(
     state: CreateWalkState,
     onAction: (CreateWalkAction) -> Unit
 ) {
 
     val listOfFriends = remember { mutableStateListOf<People>().apply { addAll(state.listOfFriends) } }
-
 
     val listOfResult = remember { mutableStateListOf<People>()}
 
@@ -119,9 +110,7 @@ fun CreateWalkPage(
                     FriendListItemCustom(
                         people = person,
                         onResultClick = {
-                            if (!listOfResult.any { it.userId == person.userId }) {
-                                listOfResult.add(person)
-                            }
+                            onAction(CreateWalkAction.AddFriend(person))
                         }
                     )
                 }
@@ -138,6 +127,7 @@ fun CreateWalkPage(
                 )
             }
         }
+        StartPointSection(state = state)
     }
 }
 
@@ -228,3 +218,59 @@ private fun FriendListItemCustom(
     )
 
 }
+@Composable
+private fun StartPointSection(
+    state: CreateWalkState
+){
+
+    val mapView = remember { MutableStateFlow<MapView?>(null) }
+
+
+    val currentCenter = state.point
+
+    var counterState by remember { mutableStateOf(0) }
+
+
+    Column(
+        modifier = Modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Место сбора:",
+            style = MaterialTheme.typography.headlineMedium,
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(200.dp)
+                .clip(CircleShape.copy(CornerSize(24.dp)))
+        ){
+            AndroidView(
+                factory = { context ->
+                    MapView(context).apply {
+                        mapView.value = this
+                    }
+                }, modifier = Modifier.fillMaxSize(),
+
+                update = { mapView ->
+                    if(counterState == 0){
+                        mapView.mapWindow.map.move(
+                            CameraPosition(
+                                Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
+                            ), Animation(Animation.Type.SMOOTH, 1.5f), null
+                        )
+                    }
+                }
+            )
+        }
+    }
+}
+
+private const val ZOOM_STEP = 1f
+
+private const val ZOOM = 17.0f
+
+private const val AZIMUTH = 0.0f
+
+private const val TILT = 00.0f

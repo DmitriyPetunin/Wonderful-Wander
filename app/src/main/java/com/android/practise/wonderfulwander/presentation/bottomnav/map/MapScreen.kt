@@ -25,9 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.base.action.geo.GeoAction
+import com.example.base.action.geo.MapAction
 import com.example.base.event.GeoEvent
-import com.example.base.state.GeoState
+import com.example.base.state.MapState
 import com.example.presentation.viewmodel.GeoViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -35,7 +35,6 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 
 @Composable
 fun MapScreenRoute(
@@ -59,8 +58,8 @@ fun MapScreenRoute(
 
 @Composable
 fun MapScreen(
-    state: GeoState,
-    onAction: (GeoAction) -> Unit
+    state: MapState,
+    onAction: (MapAction) -> Unit
 ) {
     val mapView = remember { MutableStateFlow<MapView?>(null) }
 
@@ -162,13 +161,13 @@ fun MapScreen(
         }
 
         Button(
-            onClick = {onAction(GeoAction.NavigateToCreateWalkPage)},
+            onClick = { onAction(MapAction.NavigateToCreateWalkPage)},
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 24.dp, end = 12.dp)
         ) {
             Text(
-                text = "Создать прогулку"
+                text = "Запланировать прогулку"
             )
         }
     }
@@ -188,11 +187,11 @@ fun MapScreen(
             //Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
 
             onAction(
-                GeoAction.UpdateCurrentCenter(
+                MapAction.UpdateCurrentCenter(
                     longitude = newCenter.longitude,
                     latitude = newCenter.latitude)
             )
-            onAction(GeoAction.UpdateText)
+            onAction(MapAction.UpdateText)
         }
     }
 }

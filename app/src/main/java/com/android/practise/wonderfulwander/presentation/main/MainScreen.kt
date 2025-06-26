@@ -1,10 +1,9 @@
 package com.android.practise.wonderfulwander.presentation.main
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.android.practise.wonderfulwander.presentation.walk.CreateWalkPageRoute
+import com.android.practise.wonderfulwander.presentation.walk.CreateWalkScreenRoute
 import com.example.navigation.AppNavGraph
 import com.android.practise.wonderfulwander.presentation.walk.WalkScreenRoute
 import com.android.practise.wonderfulwander.presentation.bottomnav.BottomNavScreen
@@ -15,9 +14,9 @@ import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.Up
 import com.android.practise.wonderfulwander.presentation.login.LoginScreenRoute
 import com.android.practise.wonderfulwander.presentation.post.PostDetailInfoScreenRoute
 import com.android.practise.wonderfulwander.presentation.registration.RegistrationScreenRoute
+import com.android.practise.wonderfulwander.presentation.walk.StartingPointScreenRoute
 import com.example.navigation.Screen
 import com.example.navigation.ScreenBottomNav
-import com.example.presentation.viewmodel.CreatePostViewModel
 
 
 @Composable
@@ -45,7 +44,7 @@ fun MainScreen() {
                 )
             })
         },
-        createWalkScreen = { CreateWalkPageRoute() },
+        createWalkScreen = { CreateWalkScreenRoute() },
         createPostScreen = { CreatePostScreenRoute(navigateToPhotosScreen = {navigateToPhotosScreen(controller = navController)}) },
         peopleScreen = { listType ->
             PeopleScreenRoute(
@@ -61,7 +60,8 @@ fun MainScreen() {
         postDetailScreen = { id -> PostDetailInfoScreenRoute(
             postId = id,
             navigateToPersonProfile = { userId -> navigateToPersonProfile(controller = navController, userId = userId)}
-        ) }
+        ) },
+        startPointScreen = { StartingPointScreenRoute() }
     )
 }
 

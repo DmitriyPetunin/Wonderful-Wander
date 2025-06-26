@@ -34,14 +34,15 @@ class CreateWalkViewModel @Inject constructor(
             }
 
             is CreateWalkAction.AddFriend -> {
-                updateListOfFriend(action.friend)
+                updateListOfResult(action.friend)
             }
         }
     }
-    private fun updateListOfFriend(friend: People){
+
+    private fun updateListOfResult(friend: People){
         _state.update {
             it.copy(
-                listOfFriends =it.listOfFriends.toMutableList().apply { add(friend) }
+                listOfResult = state.value.listOfResult + friend
             )
         }
     }
