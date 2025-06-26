@@ -97,7 +97,7 @@ fun PeopleScreen(
 
             loadMore = { onAction(PeoplePageAction.LoadMore) },
             itemContent = { person ->
-                ListItem(
+                PersonListItem(
                     man = person,
                     onItemClick = { id ->
                         onAction(PeoplePageAction.SubmitPersonItem(userId = id))
@@ -168,7 +168,7 @@ fun <T> ListScreen(
 
 
 @Composable
-private fun ListItem(
+private fun PersonListItem(
     man: People,
     onItemClick: (String) -> Unit
 ) {

@@ -11,7 +11,7 @@ import com.example.base.event.login.LoginEvent
 import com.example.base.model.user.login.LoginUserParam
 import com.example.base.state.LoginState
 import com.example.base.state.SignInResult
-import com.example.base.util.validation.EmailValidation
+import com.example.base.util.validation.UserNameValidation
 import com.example.base.util.validation.PasswordValidation
 import com.example.presentation.googleclient.GoogleAuthUiClient
 import com.example.presentation.usecase.LoginUseCase
@@ -120,7 +120,7 @@ class SignInViewModel @Inject constructor(
 
     private fun updateEmail(input: String) {
 
-        val validation = EmailValidation.validateEmail(input)
+        val validation = UserNameValidation.validateUsername(input)
 
         if (validation != null) {
             updateSupportingTextUserName(validation)

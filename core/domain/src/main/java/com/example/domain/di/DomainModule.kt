@@ -4,6 +4,7 @@ import com.example.domain.repository.GeoRepository
 import com.example.domain.repository.PhotoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
+import com.example.domain.usecase.CreateCommentUseCaseImpl
 import com.example.domain.usecase.CreatePostUseCaseImpl
 import com.example.domain.usecase.DeleteCommentUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMyPostsUseCaseImpl
@@ -24,6 +25,7 @@ import com.example.domain.usecase.GetProfileInfoUseCaseImpl
 import com.example.domain.usecase.GetRecommendedPostsUseCaseImpl
 import com.example.domain.usecase.GetSavedPostsByUserIdUseCaseImpl
 import com.example.domain.usecase.GetSavedPostsUseCaseImpl
+import com.example.domain.usecase.LikePostUseCaseImpl
 import com.example.domain.usecase.LoginUseCaseImpl
 import com.example.domain.usecase.RegisterUseCaseImpl
 import com.example.domain.usecase.SavePostByPostIdUseCaseImpl
@@ -32,6 +34,7 @@ import com.example.domain.usecase.UpdateProfileInfoUseCaseImpl
 import com.example.domain.usecase.UploadAvatarPhotoUseCaseImpl
 import com.example.domain.usecase.UploadPostPhotoUseCaseImpl
 import com.example.domain.usecase.UploadWalkPhotoUseCaseImpl
+import com.example.presentation.usecase.CreateCommentUseCase
 import com.example.presentation.usecase.CreatePostUseCase
 import com.example.presentation.usecase.DeleteCommentUseCase
 import com.example.presentation.usecase.DeletePostFromMyPostsUseCase
@@ -52,6 +55,7 @@ import com.example.presentation.usecase.GetProfileInfoUseCase
 import com.example.presentation.usecase.GetRecommendedPostsUseCase
 import com.example.presentation.usecase.GetSavedPostsByUserIdUseCase
 import com.example.presentation.usecase.GetSavedPostsUseCase
+import com.example.presentation.usecase.LikePostUseCase
 import com.example.presentation.usecase.LoginUseCase
 import com.example.presentation.usecase.RegisterUseCase
 import com.example.presentation.usecase.SavePostByPostIdUseCase
@@ -269,5 +273,21 @@ object DomainModule {
         postRepository: PostRepository
     ): DeleteCommentUseCase {
         return DeleteCommentUseCaseImpl(postRepository = postRepository)
+    }
+
+
+    @Provides
+    fun provideCreateCommentUseCase(
+        postRepository: PostRepository
+    ): CreateCommentUseCase {
+        return CreateCommentUseCaseImpl(postRepository = postRepository)
+    }
+
+
+    @Provides
+    fun provideLikePostUseCase(
+        postRepository: PostRepository
+    ): LikePostUseCase {
+        return LikePostUseCaseImpl(postRepository = postRepository)
     }
 }

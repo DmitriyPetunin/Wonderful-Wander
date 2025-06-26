@@ -15,6 +15,8 @@ sealed class ProfileAction {
     data object LoadMoreMyPosts:ProfileAction()
 
 
+    data class SubmitLikeMyPost(val postId:String):ProfileAction()
+    data class SubmitLikeSavedPost(val postId:String):ProfileAction()
     data class SubmitSavePost(val postId:String):ProfileAction()
     data class UpdateUserId(val userId:String):ProfileAction()
     data class SubmitPostItem(val postId:String):ProfileAction()

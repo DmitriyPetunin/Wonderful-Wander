@@ -12,6 +12,6 @@ sealed class ScreenBottomNav(
     val iconId:ImageVector
 ) {
     object MapScreen: ScreenBottomNav(route = "mapScreen", label = "map", iconId = Icons.Default.LocationOn)
-    object PhotosScreen: ScreenBottomNav(route = "photosScreen", label = "photos", iconId = Icons.Default.DateRange)
+    object PostsScreen: ScreenBottomNav(route = "postsScreen", label = "posts", iconId = Icons.Default.DateRange)
     object ProfileScreen: ScreenBottomNav(route = "profileScreen", label = "profile", iconId = Icons.Default.AccountCircle)
 }

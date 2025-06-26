@@ -16,6 +16,7 @@ import com.example.base.state.UserData
 import com.example.presentation.usecase.DeleteCommentUseCase
 import com.example.presentation.usecase.GetAllCommentsByPostIdUseCase
 import com.example.presentation.usecase.GetPostDetailByIdUseCase
+import com.example.presentation.usecase.LikePostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,6 +35,7 @@ class PostViewModel @Inject constructor(
     private val getPostDetailByIdUseCase: GetPostDetailByIdUseCase,
     private val getAllCommentsByPostIdUseCase: GetAllCommentsByPostIdUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val likePostUseCase: LikePostUseCase,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
@@ -62,9 +64,9 @@ class PostViewModel @Inject constructor(
             }
 
             is PostDetailAction.UserClicked -> {
-//                viewModelScope.launch {
-//                    _event.emit()
-//                }
+                viewModelScope.launch {
+                    _event.emit(PostDetailEvent.NavigateToPersonProfile(action.userId))
+                }
             }
 
             PostDetailAction.LoadMoreComments -> TODO()
@@ -156,12 +158,11 @@ class PostViewModel @Inject constructor(
 
     private fun deleteComment(commentId: String) {
         viewModelScope.launch {
-            val result =
-                deleteCommentUseCase.invoke(postId = state.value.postId, commentId = commentId)
+            val result = deleteCommentUseCase.invoke(postId = state.value.postId, commentId = commentId)
 
             result.fold(
                 onSuccess = {
-                    _event.emit(PostDetailEvent.DeleteComment(message = ""))
+                    _event.emit(PostDetailEvent.DeleteComment(message = "коммент успешно удалён"))
                 },
                 onFailure = { exception ->
                     exception.message?.let {

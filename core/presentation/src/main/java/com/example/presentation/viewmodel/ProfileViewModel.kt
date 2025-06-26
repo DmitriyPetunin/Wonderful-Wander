@@ -23,6 +23,7 @@ import com.example.presentation.usecase.GetPostsByUserIdUseCase
 import com.example.presentation.usecase.GetProfileInfoUseCase
 import com.example.presentation.usecase.GetSavedPostsByUserIdUseCase
 import com.example.presentation.usecase.GetSavedPostsUseCase
+import com.example.presentation.usecase.LikePostUseCase
 import com.example.presentation.usecase.SavePostByPostIdUseCase
 import com.example.presentation.usecase.UnFollowToUserByIdUseCase
 import com.example.presentation.usecase.UpdateProfileInfoUseCase
@@ -52,7 +53,8 @@ class ProfileViewModel @Inject constructor(
     private val deletePostFromMyPostsUseCase: DeletePostFromMyPostsUseCase,
     private val getSavedPostsByUserIdUseCase: GetSavedPostsByUserIdUseCase,
     private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase,
-    private val savePostByPostIdUseCase: SavePostByPostIdUseCase
+    private val savePostByPostIdUseCase: SavePostByPostIdUseCase,
+    private val likePostUseCase: LikePostUseCase
 ) : ViewModel() {
 
     private val _stateProfile: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
@@ -163,6 +165,13 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileAction.SubmitSavePost -> {
                 savePost(action.postId)
+            }
+
+            is ProfileAction.SubmitLikeMyPost -> {
+                likeMyPost(action.postId)
+            }
+            is ProfileAction.SubmitLikeSavedPost -> {
+                likeSavedPost(postId = action.postId)
             }
         }
     }
@@ -552,6 +561,48 @@ class ProfileViewModel @Inject constructor(
                 )
             }
             _event.emit(ProfileEvent.UpdateProfileInfo)
+        }
+    }
+    private fun likeMyPost(postId: String){
+        viewModelScope.launch {
+            val result = likePostUseCase.invoke(postId = postId)
+            result.fold(
+                onSuccess = { model ->
+                    _stateProfile.update { currentState ->
+                        currentState.copy(
+                            listOfMyPosts = currentState.listOfMyPosts.map { post ->
+                                if (post.postId == postId){
+                                    post.copy(likesCount = model.likesCount)
+                                } else { post }
+                            }
+                        )
+                    }
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                }
+            )
+        }
+    }
+    private fun likeSavedPost(postId: String){
+        viewModelScope.launch {
+            val result = likePostUseCase.invoke(postId = postId)
+            result.fold(
+                onSuccess = { model ->
+                    _stateProfile.update { currentState ->
+                        currentState.copy(
+                            listOfSavedPosts = currentState.listOfSavedPosts.map { post ->
+                                if (post.postId == postId){
+                                    post.copy(likesCount = model.likesCount)
+                                } else { post }
+                            }
+                        )
+                    }
+                },
+                onFailure = { exception ->
+                    exception.printStackTrace()
+                }
+            )
         }
     }
 

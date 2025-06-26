@@ -3,6 +3,7 @@ package com.example.data.repository
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.example.base.exceptions.UserNotAuthenticatedException
 import com.example.domain.repository.PhotoRepository
 import com.example.network.model.error.ExampleErrorResponse
 import com.example.network.service.photo.PhotoService
@@ -30,16 +31,7 @@ class PhotoRepositoryImpl @Inject constructor(
                     } ?: Result.failure(Exception("Empty response body"))
                 }
                 response.code() == 401 -> {
-                    val errorBody = try {
-                        response.errorBody()?.string()?.let {
-                            Json.decodeFromString<ExampleErrorResponse>(it)
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    Result.failure(
-                        Exception(errorBody?.message ?: "Don`t Auth: ${response.code()}")
-                    )
+                    Result.failure(UserNotAuthenticatedException())
                 }
                 else -> {Result.failure(Exception("Server error: ${response.code()}"))}
             }
@@ -61,16 +53,7 @@ class PhotoRepositoryImpl @Inject constructor(
                     } ?: Result.failure(Exception("Empty response body"))
                 }
                 response.code() == 401 -> {
-                    val errorBody = try {
-                        response.errorBody()?.string()?.let {
-                            Json.decodeFromString<ExampleErrorResponse>(it)
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    Result.failure(
-                        Exception(errorBody?.message ?: "Don`t Auth: ${response.code()}")
-                    )
+                    Result.failure(UserNotAuthenticatedException())
                 }
                 else -> {Result.failure(Exception("Server error: ${response.code()}"))}
             }
@@ -90,16 +73,7 @@ class PhotoRepositoryImpl @Inject constructor(
                     Result.success(Unit)
                 }
                 response.code() == 401 -> {
-                    val errorBody = try {
-                        response.errorBody()?.string()?.let {
-                            Json.decodeFromString<ExampleErrorResponse>(it)
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    Result.failure(
-                        Exception(errorBody?.message ?: "Don`t Auth: ${response.code()}")
-                    )
+                    Result.failure(UserNotAuthenticatedException())
                 }
                 else -> {
                     Result.failure(Exception("Server error: ${response.code()}"))

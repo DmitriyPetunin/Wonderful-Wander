@@ -25,7 +25,7 @@ fun MainScreen() {
     val navController = rememberNavController()
 
     AppNavGraph(
-        startDestination = Screen.AuthScreen.route,
+        startDestination = Screen.BottomNavScreen.route,
         navHostController = navController,
         authScreen = {
             LoginScreenRoute(navigateToProfile = { navigateToProfileScreen(navController) })
@@ -58,7 +58,10 @@ fun MainScreen() {
                 })
         },
         personProfile = { id -> PersonProfileScreenRoute(userId = id) },
-        postDetailScreen = { id -> PostDetailInfoScreenRoute(postId = id) }
+        postDetailScreen = { id -> PostDetailInfoScreenRoute(
+            postId = id,
+            navigateToPersonProfile = { userId -> navigateToPersonProfile(controller = navController, userId = userId)}
+        ) }
     )
 }
 
@@ -75,5 +78,5 @@ private fun navigateToMapScreen(controller: NavController) {
 }
 
 private fun navigateToPhotosScreen(controller: NavController) {
-    controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.PhotosScreen.route}")
+    controller.navigate(Screen.BottomNavScreen.route + "/${ScreenBottomNav.PostsScreen.route}")
 }

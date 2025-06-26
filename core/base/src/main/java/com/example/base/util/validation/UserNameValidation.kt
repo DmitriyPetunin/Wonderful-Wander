@@ -1,10 +1,10 @@
 package com.example.base.util.validation
 
-class EmailValidation {
+class UserNameValidation {
     companion object{
-        fun validateEmail(email: String): String? {
+        fun validateUsername(userName: String): String? {
             return when {
-                email.isBlank() -> "Email is required"
+                userName.isBlank() -> "UserName is required"
                 else -> null
             }
         }

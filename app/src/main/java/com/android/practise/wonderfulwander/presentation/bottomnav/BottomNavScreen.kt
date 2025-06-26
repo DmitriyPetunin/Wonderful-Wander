@@ -21,7 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.android.practise.wonderfulwander.presentation.bottomnav.photos.PhotosScreenRoute
+import com.android.practise.wonderfulwander.presentation.post.PostsScreenRoute
 import com.example.navigation.ScreenBottomNav
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.ProfileScreenRoute
 import com.example.base.state.PeopleEnum
@@ -56,9 +56,11 @@ fun BottomNavScreen(
                 )
             }
 
-            composable(ScreenBottomNav.PhotosScreen.route) {
-                PhotosScreenRoute(
-                    navigateToCreatePost = { navigateToCreatePostScreen(controller = navController) })
+            composable(ScreenBottomNav.PostsScreen.route) {
+                PostsScreenRoute(
+                    navigateToCreatePost = { navigateToCreatePostScreen(controller = navController) },
+                    navigateToDetailPost = { postId -> navigateToPostDetailInfoScreen(controller = navController, postId = postId)}
+                )
             }
 
             composable(ScreenBottomNav.ProfileScreen.route) {
@@ -111,7 +113,7 @@ fun MyBottomNavigationBar(navController: NavHostController, currentRoute: String
 
     val items = listOf(
         ScreenBottomNav.MapScreen,
-        ScreenBottomNav.PhotosScreen,
+        ScreenBottomNav.PostsScreen,
         ScreenBottomNav.ProfileScreen
     )
 

@@ -383,14 +383,14 @@ fun TabScreen(
             }
         }
         when (selectedTabIndex) {
-            0 -> Tab1Content(state = state, onAction = onAction)
-            1 -> Tab2Content(state = state, onAction = onAction)
+            0 -> SavedPosts(state = state, onAction = onAction)
+            1 -> MyPosts(state = state, onAction = onAction)
         }
     }
 }
 
 @Composable
-fun Tab1Content(
+fun SavedPosts(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit
 ) {
@@ -406,8 +406,8 @@ fun Tab1Content(
                 post = post,
                 onPostClick = { onAction(ProfileAction.SubmitPostItem(post.postId)) },
                 onSaveClick = { onAction(ProfileAction.SubmitSavePost(post.postId)) },
-                onLikeClick = {},
-                onCommentClick = {},
+                onLikeClick = { onAction(ProfileAction.SubmitLikeSavedPost(post.postId)) },
+                onFastCommentClick = {},
                 onDeleteClick = { onAction(ProfileAction.SubmitDeleteSavedPost(post.postId))},
                 showDeleteButton = state.isItMyProfile,
                 showSaveButton = !state.isItMyProfile
@@ -421,7 +421,7 @@ fun Tab1Content(
 }
 
 @Composable
-fun Tab2Content(
+fun MyPosts(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit
 ) {
@@ -437,8 +437,8 @@ fun Tab2Content(
                 post = post,
                 onPostClick = { onAction(ProfileAction.SubmitPostItem(post.postId)) },
                 onSaveClick = { onAction(ProfileAction.SubmitSavePost(post.postId)) },
-                onLikeClick = {},
-                onCommentClick = {},
+                onLikeClick = { onAction(ProfileAction.SubmitDeleteMyPost(post.postId)) },
+                onFastCommentClick = {},
                 onDeleteClick = { onAction(ProfileAction.SubmitDeleteMyPost(post.postId)) },
                 showDeleteButton = state.isItMyProfile,
                 showSaveButton = !state.isItMyProfile
@@ -516,7 +516,7 @@ fun ListItemPost(
     onSaveClick: () -> Unit,
     onPostClick: () -> Unit,
     onLikeClick: () -> Unit,
-    onCommentClick: () -> Unit,
+    onFastCommentClick: () -> Unit,
     showDeleteButton: Boolean,
     showSaveButton:Boolean,
 ) {
@@ -589,7 +589,7 @@ fun ListItemPost(
                     modifier = Modifier.weight(1f)
                 ) {
                     IconButton(
-                        onClick = { onCommentClick() },
+                        onClick = { onFastCommentClick() },
                         modifier = Modifier.size(40.dp)
                     ) {
                         Icon(

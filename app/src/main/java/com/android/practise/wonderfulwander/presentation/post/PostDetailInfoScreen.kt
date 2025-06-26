@@ -49,6 +49,8 @@ import coil.compose.AsyncImage
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ListScreen
 import com.example.base.R
 import com.example.base.action.post.PostDetailAction
+import com.example.base.event.post.PostDetailEvent
+import com.example.base.event.profile.ProfileEvent
 import com.example.base.model.post.Comment
 import com.example.base.state.CommentUi
 import com.example.base.state.PostDetailState
@@ -57,8 +59,9 @@ import com.example.presentation.viewmodel.PostViewModel
 
 @Composable
 fun PostDetailInfoScreenRoute(
-    postId:String,
-    postViewModel: PostViewModel = hiltViewModel()
+    postId: String,
+    postViewModel: PostViewModel = hiltViewModel(),
+    navigateToPersonProfile: (String) -> Unit
 ) {
 
     val state by postViewModel.state.collectAsState()
@@ -67,13 +70,25 @@ fun PostDetailInfoScreenRoute(
         postViewModel.onAction(PostDetailAction.UpdatePostId(postId))
     }
 
-    if(state.isLoading){
-        CircularProgressIndicator(modifier = Modifier
-            .fillMaxSize()
-            .wrapContentWidth(Alignment.CenterHorizontally)
+    LaunchedEffect(Unit) {
+        postViewModel.event.collect { event ->
+            when (event) {
+                is PostDetailEvent.NavigateToPersonProfile -> {
+                    navigateToPersonProfile(event.userId)
+                }
+            }
+
+        }
+    }
+
+    if (state.isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentWidth(Alignment.CenterHorizontally)
         )
     } else {
-        PostDetailInfoScreen(state = state,postViewModel::onAction)
+        PostDetailInfoScreen(state = state, postViewModel::onAction)
     }
 
 }
@@ -214,7 +229,7 @@ fun PostDetailInfoScreen(
             ) {
                 Text(text = "Показать все комментарии (${state.commentsCount})")
             }
-        } else{
+        } else {
             CommentsList(state = state, onAction = onAction)
         }
 
@@ -223,10 +238,10 @@ fun PostDetailInfoScreen(
 
 @Composable
 private fun CommentsList(
-    state:PostDetailState,
+    state: PostDetailState,
     onAction: (PostDetailAction) -> Unit
-){
-    
+) {
+
     ListScreen(
         items = state.listOfComments,
         isLoading = state.isLoadingComments,
@@ -266,12 +281,13 @@ private fun StatItem(
         )
     }
 }
+
 @Composable
 private fun CommentListItem(
     comment: CommentUi,
     modifier: Modifier = Modifier,
-    onDeleteClick:() -> Unit,
-    onUserClick:() -> Unit,
+    onDeleteClick: () -> Unit,
+    onUserClick: () -> Unit,
     onCommentClick: () -> Unit,
 ) {
 
@@ -310,9 +326,9 @@ private fun CommentListItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                if(comment.canDelete){
+                if (comment.canDelete) {
                     IconButton(
-                        onClick = {onDeleteClick()},
+                        onClick = { onDeleteClick() },
                         modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
