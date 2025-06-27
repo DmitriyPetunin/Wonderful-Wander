@@ -14,7 +14,6 @@ import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.Up
 import com.android.practise.wonderfulwander.presentation.login.LoginScreenRoute
 import com.android.practise.wonderfulwander.presentation.post.PostDetailInfoScreenRoute
 import com.android.practise.wonderfulwander.presentation.registration.RegistrationScreenRoute
-import com.android.practise.wonderfulwander.presentation.walk.StartingPointScreenRoute
 import com.example.navigation.Screen
 import com.example.navigation.ScreenBottomNav
 
@@ -24,7 +23,7 @@ fun MainScreen() {
     val navController = rememberNavController()
 
     AppNavGraph(
-        startDestination = Screen.BottomNavScreen.route,
+        startDestination = Screen.CreateWalkScreen.route,
         navHostController = navController,
         authScreen = {
             LoginScreenRoute(navigateToProfile = { navigateToProfileScreen(navController) })
@@ -61,7 +60,6 @@ fun MainScreen() {
             postId = id,
             navigateToPersonProfile = { userId -> navigateToPersonProfile(controller = navController, userId = userId)}
         ) },
-        startPointScreen = { StartingPointScreenRoute() }
     )
 }
 

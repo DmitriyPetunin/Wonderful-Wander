@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -61,11 +62,22 @@ fun MapScreen(
     state: MapState,
     onAction: (MapAction) -> Unit
 ) {
-    val mapView = remember { MutableStateFlow<MapView?>(null) }
+    val context = LocalContext.current
+
+    val mapView = remember { MapView(context) }
 
     val currentCenter = state.point
 
     var counterState by remember { mutableStateOf(0) }
+
+    val cameraPosition = remember {
+        CameraPosition(
+            Point(currentCenter.latitude, currentCenter.longitude),
+            ZOOM,
+            AZIMUTH,
+            TILT
+        )
+    }
 
 
     Box(
@@ -73,19 +85,12 @@ fun MapScreen(
     ) {
         AndroidView(
             factory = { context ->
-                MapView(context).apply {
-                    mapView.value = this
+                mapView.apply {
+                    mapWindow.map.move(cameraPosition)
                 }
             }, modifier = Modifier.fillMaxSize(),
 
             update = { mapView ->
-                if(counterState == 0){
-                    mapView.mapWindow.map.move(
-                        CameraPosition(
-                            Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
-                        ), Animation(Animation.Type.SMOOTH, 1.5f), null
-                    )
-                }
 
 //                mapView.mapWindow.map.addCameraListener { map, cameraPosition, cameraUpdateReason, isFinished ->
 //
@@ -109,56 +114,14 @@ fun MapScreen(
                 .padding(top = 16.dp)
                 .padding(horizontal = 24.dp)
         )
-        Column(
+
+        ButtonsColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterStart),
-            horizontalAlignment = Alignment.End,
-        ) {
-            Button(
-                onClick = {
-                    mapView.value?.let {
-                        changeZoomByStep(
-                            mapView = it,
-                            value = ZOOM_STEP
-                        )
-                    }
-                },
-                modifier = Modifier,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            mapView = mapView
+        )
 
-            Button(
-                onClick = {
-                    mapView.value?.let {
-                        changeZoomByStep(
-                            mapView = it,
-                            value = -ZOOM_STEP
-                        )
-                    }
-                },
-                modifier = Modifier,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
 
         Button(
             onClick = { onAction(MapAction.NavigateToCreateWalkPage)},
@@ -182,7 +145,7 @@ fun MapScreen(
     LaunchedEffect(counterState) {
 
         if (counterState != 0){
-            val newCenter = (mapView.value?.mapWindow?.map?.cameraPosition?.target ?: currentCenter) as Point
+            val newCenter = (mapView.mapWindow.map.cameraPosition.target ?: currentCenter) as Point
 
             //Log.d("TEST-TAG", "newCenter = ${newCenter.latitude} + ${newCenter.longitude} ")
 
@@ -203,6 +166,61 @@ fun changeZoomByStep(mapView: MapView, value: Float) {
             Animation(com.yandex.mapkit.Animation.Type.SMOOTH, 0.5f),
             null,
         )
+    }
+}
+
+@Composable
+fun ButtonsColumn(
+    mapView: MapView,
+    modifier: Modifier
+){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End,
+    ) {
+        Button(
+            onClick = {
+                mapView.let {
+                    changeZoomByStep(
+                        mapView = it,
+                        value = ZOOM_STEP
+                    )
+                }
+            },
+            modifier = Modifier,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        Button(
+            onClick = {
+                mapView.let {
+                    changeZoomByStep(
+                        mapView = it,
+                        value = -ZOOM_STEP
+                    )
+                }
+            },
+            modifier = Modifier,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 

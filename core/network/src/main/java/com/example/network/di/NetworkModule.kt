@@ -1,7 +1,5 @@
 package com.example.network.di
 
-import android.content.Context
-import com.example.base.SessionManager
 import com.example.network.BuildConfig
 import com.example.network.interceptor.AuthInterceptor
 import com.example.network.interceptor.TokenInterceptor
@@ -10,6 +8,7 @@ import com.example.network.service.geo.GeoService
 import com.example.network.service.photo.PhotoService
 import com.example.network.service.post.PostService
 import com.example.network.service.user.UserService
+import com.example.network.service.walk.WalkService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -62,6 +61,14 @@ class NetworkModule {
         retrofit: Retrofit
     ): PostService {
         return retrofit.create(PostService::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideWalkService(
+        @Named(ApiRetrofit)
+        retrofit: Retrofit
+    ): WalkService {
+        return retrofit.create(WalkService::class.java)
     }
 
     @Provides

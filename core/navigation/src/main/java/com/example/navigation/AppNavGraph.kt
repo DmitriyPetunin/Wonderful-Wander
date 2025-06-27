@@ -21,7 +21,6 @@ fun AppNavGraph(
     peopleScreen: @Composable (String) -> Unit,
     personProfile: @Composable (String) -> Unit,
     postDetailScreen: @Composable (String) -> Unit,
-    startPointScreen: @Composable () -> Unit,
 ) {
     NavHost(
         navController = navHostController,
@@ -47,9 +46,6 @@ fun AppNavGraph(
         }
         composable(route = Screen.CreateWalkScreen.route) {
             createWalkScreen()
-        }
-        composable(route = Screen.StartingPointScreen.route){
-            startPointScreen()
         }
 
         composable(

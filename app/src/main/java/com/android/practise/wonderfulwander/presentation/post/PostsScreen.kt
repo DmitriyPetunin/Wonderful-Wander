@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.ListScreen
 import com.android.practise.wonderfulwander.presentation.bottomnav.profile.me.ListItemPost
+import com.android.practise.wonderfulwander.utils.showToast
 import com.example.base.action.post.PostsAction
 import com.example.base.action.profile.ProfileAction
 import com.example.base.event.post.PostsEvent
@@ -82,11 +83,11 @@ fun PostsScreenRoute(
                 }
 
                 is PostsEvent.SavePost -> {
-                    Toast.makeText(context,event.text,Toast.LENGTH_SHORT).show()
+                    context.showToast(event.text)
                 }
 
                 is PostsEvent.CreateComment -> {
-                    Toast.makeText(context,event.text,Toast.LENGTH_SHORT).show()
+                    context.showToast(event.text)
                 }
             }
         }

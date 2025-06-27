@@ -5,7 +5,6 @@ sealed class Screen(
 ) {
     data object AuthScreen : Screen(Routes.AUTH)
     data object WalkScreen : Screen(Routes.WALK)
-    data object StartingPointScreen: Screen(Routes.START_POINT)
 
     data object RegisterScreen : Screen(Routes.REGISTER)
     data object UpdateProfileInfoScreen : Screen(Routes.UPDATE)
@@ -34,5 +33,4 @@ object Routes {
     const val CREATE_WALK = "createWalkScreen"
     const val PERSON_PROFILE = "personProfileScreen"
     const val POST_DETAIL = "postDetailScreen"
-    const val START_POINT = "startPointScreen"
 }

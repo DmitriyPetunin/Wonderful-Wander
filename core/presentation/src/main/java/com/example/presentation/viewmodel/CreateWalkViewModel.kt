@@ -1,11 +1,13 @@
 package com.example.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.walk.CreateWalkAction
 import com.example.base.model.user.People
+import com.example.base.model.walk.Point
+import com.example.base.model.walk.WalkCreateParam
 import com.example.base.state.CreateWalkState
+import com.example.presentation.usecase.CreateWalkUseCase
 import com.example.presentation.usecase.GetAllFriendsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateWalkViewModel @Inject constructor(
-    private val getAllFriendsUseCase: GetAllFriendsUseCase
+    private val getAllFriendsUseCase: GetAllFriendsUseCase,
+    private val createWalkUseCase: CreateWalkUseCase
 ):ViewModel() {
 
     private val _state = MutableStateFlow(CreateWalkState())
@@ -35,6 +38,14 @@ class CreateWalkViewModel @Inject constructor(
 
             is CreateWalkAction.AddFriend -> {
                 updateListOfResult(action.friend)
+            }
+
+            is CreateWalkAction.UpdateStartPoint -> {
+                updatePoint(action.data)
+            }
+
+            CreateWalkAction.SubmitSaveWalk -> {
+                saveWalk()
             }
         }
     }
@@ -71,6 +82,17 @@ class CreateWalkViewModel @Inject constructor(
             _state.update {
                 it.copy(isLoading = false)
             }
+        }
+    }
+    private fun saveWalk(){
+        viewModelScope.launch {
+            //val result = createWalkUseCase.invoke(WalkCreateParam())
+        }
+    }
+
+    private fun updatePoint(data:Point){
+        _state.update {
+            it.copy(point = data)
         }
     }
 

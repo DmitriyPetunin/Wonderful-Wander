@@ -29,10 +29,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-//        lifecycleScope.launch {
-//            delay(5000L)
-//            throw IllegalStateException("Crash test")
-//        }
     }
 
     override fun onStart() {

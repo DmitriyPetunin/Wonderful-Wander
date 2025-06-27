@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.practise.wonderfulwander.presentation.walk.SearchBarCustom
+import com.android.practise.wonderfulwander.utils.showToast
 import com.example.base.action.post.CreatePostAction
 import com.example.base.event.post.CreatePostEvent
 import com.example.base.model.post.category.Category
@@ -66,11 +67,11 @@ fun CreatePostScreenRoute(
         createPostViewModel.event.collect { event ->
             when (event) {
                 is CreatePostEvent.ErrorCreatePost -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    context.showToast(event.message)
                 }
                 CreatePostEvent.SuccessCreatePost -> {
                     navigateToPhotosScreen()
-                    Toast.makeText(context, "пост успешно создан", Toast.LENGTH_SHORT).show()
+                    context.showToast("пост успешно создан")
                 }
             }
         }

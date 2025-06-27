@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.practise.wonderfulwander.R
+import com.android.practise.wonderfulwander.utils.showToast
 import com.example.base.action.register.RegistrationAction
 import com.example.base.event.register.RegistrationEvent
 import com.example.base.state.RegistrationState
@@ -71,7 +72,7 @@ fun RegistrationScreenRoute(
                     onButtonClick()
                 }
                 is RegistrationEvent.ShowErrorMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    context.showToast(event.message)
                 }
             }
         }
