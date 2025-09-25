@@ -11,13 +11,10 @@
 
 -   📺 [Скринкаст работы приложения](https://disk.360.yandex.ru/d/GcEvVR2xIxaqMQ)
 -   Скриншоты:
-    ![Страница входа][photo_2025-09-24 19 58 23](https://github.com/user-attachments/assets/7e071016-829d-418c-86fd-9d381b7f1357)
-
-    ![Профиль][photo_2025-09-24 19 58 17](https://github.com/user-attachments/assets/0cca3309-1ede-40df-8fd0-b83badfb9bc7)
-
-    ![Создание поста][photo_2025-09-24 19 58 15](https://github.com/user-attachments/assets/f3c13536-8a48-416a-8809-f506623a282e)
-
-    ![Карта][photo_2025-09-24 19 58 20](https://github.com/user-attachments/assets/cb5b14b3-47a9-4901-83fc-3d7b2fd94adf)
+-   ![photo_2025-09-24 19 58 23](https://github.com/user-attachments/assets/095fc58c-488e-4427-8442-0da869a6e5b6)
+-   ![photo_2025-09-24 19 58 17](https://github.com/user-attachments/assets/c11fe633-bd04-4c79-b69b-3b6887a271ea)
+-   ![photo_2025-09-24 19 58 15](https://github.com/user-attachments/assets/98b12f15-6057-4c71-bbaa-289ad9f4e24e)
+-   ![photo_2025-09-24 19 58 20](https://github.com/user-attachments/assets/9da80f66-a6c9-4f4e-8f39-3334c14cd6b4)
 
 
 ------------------------------------------------------------------------
