@@ -4,10 +4,12 @@ import com.example.data.repository.GeoRepositoryImpl
 import com.example.data.repository.PhotoRepositoryImpl
 import com.example.data.repository.PostRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
+import com.example.data.repository.WalkRepositoryImpl
 import com.example.domain.repository.GeoRepository
 import com.example.domain.repository.PhotoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
+import com.example.domain.repository.WalkRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -45,5 +47,12 @@ interface DataModule {
     fun bindPhotoRepository(
         impl: PhotoRepositoryImpl
     ): PhotoRepository
+
+
+    @Binds
+    @Singleton
+    fun bindWalkRepository(
+        impl: WalkRepositoryImpl
+    ): WalkRepository
 
 }

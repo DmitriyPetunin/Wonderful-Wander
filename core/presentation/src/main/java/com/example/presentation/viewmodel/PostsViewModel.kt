@@ -29,7 +29,7 @@ class PostsViewModel @Inject constructor(
     private val savePostByPostIdUseCase: SavePostByPostIdUseCase,
     private val createCommentUseCase: CreateCommentUseCase,
     private val likePostUseCase: LikePostUseCase
-):ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(PostsState())
     val state: StateFlow<PostsState> = _state.asStateFlow()
@@ -38,19 +38,20 @@ class PostsViewModel @Inject constructor(
     private val _event = MutableSharedFlow<PostsEvent>()
     val event: SharedFlow<PostsEvent> = _event.asSharedFlow()
 
-    fun onAction(action:PostsAction){
-        when(action){
-            PostsAction.SubmitCreatePost -> {
+    fun onAction(action: PostsAction) {
+        when (action) {
+            is PostsAction.SubmitCreatePost -> {
                 viewModelScope.launch {
                     _event.emit(PostsEvent.NavigateToCreatePost)
                 }
             }
-            PostsAction.UpdateBottomSheetVisible -> {
+
+            is PostsAction.UpdateBottomSheetVisible -> {
                 updateBottomSheetState()
                 resetPostId()
             }
 
-            PostsAction.LoadMorePosts -> {
+            is PostsAction.LoadMorePosts -> {
                 loadRecommendedPosts()
             }
 
@@ -59,14 +60,16 @@ class PostsViewModel @Inject constructor(
                     _event.emit(PostsEvent.NavigateToDetailPost(action.postId))
                 }
             }
+
             is PostsAction.SubmitSavePost -> {
                 savePost(action.postId)
             }
+
             is PostsAction.UpdateCommentMessage -> {
                 updateCommentMessage(action.message)
             }
 
-            PostsAction.SuccessWritingCommentForPost -> {
+            is PostsAction.SuccessWritingCommentForPost -> {
                 createComment()
                 updateBottomSheetState()
             }
@@ -83,19 +86,22 @@ class PostsViewModel @Inject constructor(
     }
 
 
-    private fun loadRecommendedPosts(){
+    private fun loadRecommendedPosts() {
         if ((!state.value.isInitialLoadingPosts && state.value.isLoading) || state.value.endReachedPosts) return
         _state.update {
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
             delay(1000L)
-            val result = getRecommendedPostsUseCase.invoke(page = state.value.currentPagePosts, limit = state.value.limit)
+            val result = getRecommendedPostsUseCase.invoke(
+                page = state.value.currentPagePosts,
+                limit = state.value.limit
+            )
 
             _state.update { currentState ->
                 result.fold(
-                    onSuccess = { newPosts:List<Post> ->
-                        if(!state.value.isInitialLoadingPosts && newPosts.lastOrNull() == state.value.listOfPosts.lastOrNull()){
+                    onSuccess = { newPosts: List<Post> ->
+                        if (!state.value.isInitialLoadingPosts && newPosts.lastOrNull() == state.value.listOfPosts.lastOrNull()) {
                             currentState.copy(
                                 isLoading = false,
                                 endReachedPosts = true
@@ -117,9 +123,13 @@ class PostsViewModel @Inject constructor(
             }
         }
     }
-    private fun createComment(){
+
+    private fun createComment() {
         viewModelScope.launch {
-            val result = createCommentUseCase.invoke(postId = state.value.postId, data = CommentCreateParam(state.value.commentText,null))
+            val result = createCommentUseCase.invoke(
+                postId = state.value.postId,
+                data = CommentCreateParam(state.value.commentText, null)
+            )
             result.fold(
                 onSuccess = {
                     _event.emit(PostsEvent.CreateComment(text = "успешно"))
@@ -133,7 +143,8 @@ class PostsViewModel @Inject constructor(
         }
 
     }
-    private fun savePost(postId:String){
+
+    private fun savePost(postId: String) {
         viewModelScope.launch {
             val result = savePostByPostIdUseCase.invoke(postId = postId)
             result.fold(
@@ -147,7 +158,8 @@ class PostsViewModel @Inject constructor(
             )
         }
     }
-    private fun likePost(postId: String){
+
+    private fun likePost(postId: String) {
         viewModelScope.launch {
             val result = likePostUseCase.invoke(postId = postId)
             result.fold(
@@ -155,9 +167,11 @@ class PostsViewModel @Inject constructor(
                     _state.update { currentState ->
                         currentState.copy(
                             listOfPosts = currentState.listOfPosts.map { post ->
-                                if (post.postId == postId){
+                                if (post.postId == postId) {
                                     post.copy(likesCount = model.likesCount)
-                                } else { post }
+                                } else {
+                                    post
+                                }
                             }
                         )
                     }
@@ -169,24 +183,25 @@ class PostsViewModel @Inject constructor(
         }
     }
 
-    private fun updatePostId(postId:String){
+    private fun updatePostId(postId: String) {
         _state.update {
             it.copy(postId = postId)
         }
     }
 
-    private fun updateBottomSheetState(){
+    private fun updateBottomSheetState() {
         _state.update {
             it.copy(showBottomSheet = !state.value.showBottomSheet)
         }
     }
 
-    private fun updateCommentMessage(input:String){
+    private fun updateCommentMessage(input: String) {
         _state.update {
             it.copy(commentText = input)
         }
     }
-    private fun resetPostId(){
+
+    private fun resetPostId() {
         _state.update {
             it.copy(postId = "")
         }

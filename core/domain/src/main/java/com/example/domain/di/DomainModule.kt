@@ -4,8 +4,10 @@ import com.example.domain.repository.GeoRepository
 import com.example.domain.repository.PhotoRepository
 import com.example.domain.repository.PostRepository
 import com.example.domain.repository.UserRepository
+import com.example.domain.repository.WalkRepository
 import com.example.domain.usecase.CreateCommentUseCaseImpl
 import com.example.domain.usecase.CreatePostUseCaseImpl
+import com.example.domain.usecase.CreateWalkUseCaseImpl
 import com.example.domain.usecase.DeleteCommentUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMyPostsUseCaseImpl
 import com.example.domain.usecase.DeletePostFromMySavedPostsUseCaseImpl
@@ -36,6 +38,7 @@ import com.example.domain.usecase.UploadPostPhotoUseCaseImpl
 import com.example.domain.usecase.UploadWalkPhotoUseCaseImpl
 import com.example.presentation.usecase.CreateCommentUseCase
 import com.example.presentation.usecase.CreatePostUseCase
+import com.example.presentation.usecase.CreateWalkUseCase
 import com.example.presentation.usecase.DeleteCommentUseCase
 import com.example.presentation.usecase.DeletePostFromMyPostsUseCase
 import com.example.presentation.usecase.DeletePostFromMySavedPostsUseCase
@@ -289,5 +292,12 @@ object DomainModule {
         postRepository: PostRepository
     ): LikePostUseCase {
         return LikePostUseCaseImpl(postRepository = postRepository)
+    }
+
+    @Provides
+    fun provideCreateWalkUseCase(
+        walkRepository: WalkRepository
+    ): CreateWalkUseCase {
+        return CreateWalkUseCaseImpl(walkRepository = walkRepository)
     }
 }

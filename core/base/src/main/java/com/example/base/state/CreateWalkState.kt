@@ -1,6 +1,7 @@
 package com.example.base.state
 
 import com.example.base.model.user.People
+import com.example.base.model.walk.Point
 
 data class CreateWalkState (
     val isLoading:Boolean = false,

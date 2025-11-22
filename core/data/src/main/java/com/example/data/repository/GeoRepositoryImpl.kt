@@ -7,9 +7,9 @@ import javax.inject.Inject
 
 class GeoRepositoryImpl @Inject constructor(
     private val geoService: GeoService
-): GeoRepository {
+) : GeoRepository {
 
-    override suspend fun getActualGeoData(geocodeData:String): Result<ActualGeoLocationResult> {
+    override suspend fun getActualGeoData(geocodeData: String): Result<ActualGeoLocationResult> {
         return try {
             val response = geoService.fetchGeoData(geocode = geocodeData)
 
@@ -22,11 +22,11 @@ class GeoRepositoryImpl @Inject constructor(
                     } else {
                         ActualGeoLocationResult("")
                     }
-                }?: ActualGeoLocationResult(""))
+                } ?: ActualGeoLocationResult(""))
             } else {
                 Result.failure(Exception("Failed with code ${response.code()}"))
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }

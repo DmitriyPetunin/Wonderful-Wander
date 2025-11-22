@@ -11,7 +11,7 @@ data class Post (
     val commentsCount:Int,
     val createdAt:String,
 ){
-    companion object{
+    companion object {
         val EMPTY = Post(
             postId = "",
             title = "",

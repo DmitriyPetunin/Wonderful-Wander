@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.base.action.geo.MapAction
 import com.example.base.event.GeoEvent
+import com.example.base.model.walk.Point
 import com.example.base.state.MapState
-import com.example.base.state.Point
 import com.example.presentation.usecase.GetActualGeoDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -27,7 +27,7 @@ fun loadMapkitApiKey(): String {
 
 android {
     namespace = "com.android.practise.wonderfulwander"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.android.practise.wonderfulwander"

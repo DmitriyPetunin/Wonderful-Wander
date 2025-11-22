@@ -18,24 +18,28 @@ import javax.inject.Inject
 class PhotoRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val photoService: PhotoService
-): PhotoRepository {
+) : PhotoRepository {
     override suspend fun uploadWalkImage(walkId: String, uri: Uri): Result<Unit> {
         return try {
-            val photo = createMultipartBody(uri,context, name = "walk")
+            val photo = createMultipartBody(uri, context, name = "walk")
 
-            val response = photoService.uploadWalkPhoto(walkId = walkId,photo = photo)
-            when{
+            val response = photoService.uploadWalkPhoto(walkId = walkId, photo = photo)
+            when {
                 response.isSuccessful -> {
                     response.body()?.let {
                         Result.success(Unit)
                     } ?: Result.failure(Exception("Empty response body"))
                 }
+
                 response.code() == 401 -> {
                     Result.failure(UserNotAuthenticatedException())
                 }
-                else -> {Result.failure(Exception("Server error: ${response.code()}"))}
+
+                else -> {
+                    Result.failure(Exception("Server error: ${response.code()}"))
+                }
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("TEST-TAG", "Error upload Photo")
             Result.failure(e)
         }
@@ -43,21 +47,25 @@ class PhotoRepositoryImpl @Inject constructor(
 
     override suspend fun uploadPostImage(uri: Uri): Result<String> {
         return try {
-            val photo = createMultipartBody(uri,context,name = "photo")
+            val photo = createMultipartBody(uri, context, name = "photo")
 
             val response = photoService.uploadPostPhoto(photo)
-            when{
+            when {
                 response.isSuccessful -> {
                     response.body()?.let {
                         Result.success(it.fileName)
                     } ?: Result.failure(Exception("Empty response body"))
                 }
+
                 response.code() == 401 -> {
                     Result.failure(UserNotAuthenticatedException())
                 }
-                else -> {Result.failure(Exception("Server error: ${response.code()}"))}
+
+                else -> {
+                    Result.failure(Exception("Server error: ${response.code()}"))
+                }
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("TEST-TAG", "Error upload Photo")
             Result.failure(e)
         }
@@ -65,31 +73,33 @@ class PhotoRepositoryImpl @Inject constructor(
 
     override suspend fun uploadAvatarImage(uri: Uri): Result<Unit> {
         return try {
-            val photo = createMultipartBody(uri,context,name = "avatar")
+            val photo = createMultipartBody(uri, context, name = "avatar")
 
             val response = photoService.uploadAvatarPhoto(photo)
-            when{
+            when {
                 response.isSuccessful -> {
                     Result.success(Unit)
                 }
+
                 response.code() == 401 -> {
                     Result.failure(UserNotAuthenticatedException())
                 }
+
                 else -> {
                     Result.failure(Exception("Server error: ${response.code()}"))
                 }
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("TEST-TAG", "Error upload Photo")
             Result.failure(e)
         }
     }
 
 
-    private fun createMultipartBody(uri: Uri, context: Context,name:String): MultipartBody.Part?{
+    private fun createMultipartBody(uri: Uri, context: Context, name: String): MultipartBody.Part? {
         return try {
             val mime = context.contentResolver.getType(uri)
-            Log.d("URI","mimetype = ${mime}")
+            Log.d("URI", "mimetype = ${mime}")
 
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 val file = File.createTempFile("upload", ".jpg", context.cacheDir)

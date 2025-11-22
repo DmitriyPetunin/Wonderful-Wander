@@ -28,7 +28,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,7 +56,8 @@ import com.example.base.state.CreateWalkState
 import com.example.presentation.viewmodel.CreateWalkViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.LinearRing
-import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Point as YandexPoint
+import com.example.base.model.walk.Point as MyPoint
 import com.yandex.mapkit.geometry.Polygon
 import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.CameraPosition
@@ -285,7 +285,7 @@ private fun StartPointSection(
     var lastPlaceMark by remember {
         mutableStateOf(
             pinsCollection.addPlacemark().apply {
-                geometry = Point(currentCenter.latitude, currentCenter.longitude)
+                geometry = YandexPoint(currentCenter.latitude, currentCenter.longitude)
                 addTapListener(placemarkTapListener)
                 useAnimation().apply {
                     setIcon(
@@ -302,16 +302,16 @@ private fun StartPointSection(
 
     val cameraPosition = remember {
         CameraPosition(
-            Point(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
+            YandexPoint(currentCenter.latitude, currentCenter.longitude), ZOOM, AZIMUTH, TILT
         )
     }
 
     val inputListener = object : InputListener {
-        override fun onMapTap(p0: Map, p1: Point) {
+        override fun onMapTap(p0: Map, p1: YandexPoint) {
             Log.d("MapTap", "onMapTap: ")
         }
 
-        override fun onMapLongTap(map: Map, point: Point) {
+        override fun onMapLongTap(map: Map, point: YandexPoint) {
 
             pinsCollection.remove(lastPlaceMark)
 
@@ -327,7 +327,7 @@ private fun StartPointSection(
                     )
                 }.play()
             }
-            onAction(CreateWalkAction.UpdateStartPoint(com.example.base.state.Point(point.latitude,point.longitude)))
+            onAction(CreateWalkAction.UpdateStartPoint(MyPoint(point.latitude,point.longitude)))
         }
     }
 
@@ -358,9 +358,9 @@ private fun StartPointSection(
                         mapWindow.map.addInputListener(inputListener)
 
                         val points = listOf(
-                            Point(59.9343, 30.3351),
-                            Point(55.7558, 37.6176),
-                            Point(55.78874,49.12214)
+                            YandexPoint(59.9343, 30.3351),
+                            YandexPoint(55.7558, 37.6176),
+                            YandexPoint(55.78874,49.12214)
                         )
                         val polyline = Polyline(points)
                         val polylineObject = mapWindow.map.mapObjects.addPolyline(polyline)
