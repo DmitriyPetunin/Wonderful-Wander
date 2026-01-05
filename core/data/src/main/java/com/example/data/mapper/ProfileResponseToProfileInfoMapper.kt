@@ -3,14 +3,14 @@ package com.example.data.mapper
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.Role
 import com.example.base.enums.WalkVisibility
-import com.example.base.model.user.profile.ProfileInfoResult
+import com.example.domain.model.user.profile.ProfileInfoResult
 import com.example.network.model.user.profile.res.GetProfileResponse
 import javax.inject.Inject
 
-class ProfileResponseToProfileInfoMapper @Inject constructor() : (GetProfileResponse?) -> ProfileInfoResult {
-    override fun invoke(profileResponse: GetProfileResponse?): ProfileInfoResult {
+class ProfileResponseToProfileInfoMapper @Inject constructor() : (GetProfileResponse?) -> com.example.domain.model.user.profile.ProfileInfoResult {
+    override fun invoke(profileResponse: GetProfileResponse?): com.example.domain.model.user.profile.ProfileInfoResult {
         return profileResponse?.let {
-            ProfileInfoResult(
+            _root_ide_package_.com.example.domain.model.user.profile.ProfileInfoResult(
                 userId = it.userId.orEmpty(),
                 username = it.username.orEmpty(),
                 email = it.email.orEmpty(),
@@ -26,6 +26,6 @@ class ProfileResponseToProfileInfoMapper @Inject constructor() : (GetProfileResp
                 savedPhotoVisibility = PhotosVisibility.fromString(it.savedPhotoVisibility),
                 walkVisibility = WalkVisibility.fromString(it.walkVisibility)
             )
-        } ?: ProfileInfoResult.EMPTY
+        } ?: _root_ide_package_.com.example.domain.model.user.profile.ProfileInfoResult.EMPTY
     }
 }

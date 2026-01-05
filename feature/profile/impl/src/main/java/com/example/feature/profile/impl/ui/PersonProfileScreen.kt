@@ -1,0 +1,159 @@
+package com.example.feature.profile.impl.ui
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.example.base.R
+import com.example.feature.profile.api.action.ProfileAction
+import com.example.feature.profile.api.state.ProfileState
+import com.example.feature.profile.impl.viewmodel.ProfileViewModel
+
+@Composable
+fun PersonProfileScreenRoute(
+    userId: String,
+    profileViewModel: ProfileViewModel = hiltViewModel()
+) {
+
+    val state by profileViewModel.stateProfile.collectAsState()
+
+    LaunchedEffect(Unit) {
+        profileViewModel.onAction(ProfileAction.UpdateUserId(userId = userId))
+    }
+
+
+    PersonProfileScreen(state = state, onAction = profileViewModel::onAction)
+}
+
+@Composable
+fun PersonProfileScreen(
+    state: ProfileState,
+    onAction: (ProfileAction) -> Unit
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        AnotherTopBar(
+            username = state.username,
+            isFollowedByUser = state.isFollowedByUser,
+            onClickFollowButton = { onAction(ProfileAction.SubmitBellIcon(input = state.userId))},
+        )
+
+        Text(
+            text = "Profile",
+            modifier = Modifier.align(Alignment.Start),
+            style = MaterialTheme.typography.displayLarge
+        )
+
+        AvatarProfile(state = state)
+
+        StatSection(
+            state = state,
+            onAction = onAction,
+            modifier = Modifier.weight(0.5f)
+        )
+
+
+        TabScreen(
+            state = state,
+            modifier = Modifier.weight(1.5f),
+            selectedTabIndex = state.selectedTabIndex,
+            onTabSelected = { index -> onAction(ProfileAction.UpdateSelectedTab(index)) },
+            onAction = onAction
+        )
+
+    }
+}
+
+@Composable
+fun AnotherTopBar(
+    username: String,
+    isFollowedByUser:Boolean,
+    modifier: Modifier = Modifier,
+    onClickFollowButton: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = username,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
+        )
+        Icon(
+            painter = painterResource(
+                id = if (isFollowedByUser) R.drawable.ic_bell_filled
+                else R.drawable.ic_bell
+            ),
+            contentDescription = "bell",
+            modifier = Modifier
+                .size(28.dp)
+                .clickable { onClickFollowButton() }
+        )
+    }
+}
+@Composable
+private fun AvatarProfile(
+    state: ProfileState
+){
+    if (state.avatarUrl.isNotEmpty()) {
+        AsyncImage(
+            model = state.avatarUrl,
+            contentDescription = "Profile picture",
+            modifier = Modifier
+                .size(200.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.ic_visibility_off_foreground),
+        )
+    } else {
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "Default profile icon",
+            modifier = Modifier
+                .size(200.dp)
+                .clip(CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = CircleShape
+                ),
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+}

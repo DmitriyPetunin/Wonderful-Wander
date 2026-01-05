@@ -1,0 +1,7 @@
+package com.example.domain.usecase
+
+import com.example.base.model.post.Post
+
+interface GetPostsByUserIdUseCase {
+    suspend fun invoke(userId:String,page:Int = 0,limit:Int = 10):Result<List<Post>>
+}

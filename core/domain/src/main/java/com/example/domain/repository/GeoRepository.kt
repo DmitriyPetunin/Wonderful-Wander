@@ -1,6 +1,6 @@
 package com.example.domain.repository
 
-import com.example.base.model.geo.ActualGeoLocationResult
+import com.example.domain.model.geo.ActualGeoLocationResult
 
 
 interface GeoRepository {

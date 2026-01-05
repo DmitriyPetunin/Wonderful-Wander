@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -8,6 +10,20 @@ plugins {
 
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+}
+
+
+val geoCoderApiKey:String = loadMapkitApiKey()
+
+fun loadMapkitApiKey(): String {
+    val properties = Properties()
+    val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
+
+    localPropertiesFile.inputStream().use { stream ->
+        properties.load(stream)
+    }
+
+    return properties.getProperty("GEO_CODER_API", "")
 }
 
 android {
@@ -22,6 +38,7 @@ android {
 
         buildConfigField("String","GEO_CODER_BASE_URL", value = "\"https://geocode-maps.yandex.ru/\"")
         buildConfigField("String","API_BASE_URL", value = "\"http://localhost:8080/\"")
+        buildConfigField("String","GEO_CODER_API", value = "\"$geoCoderApiKey\"")
     }
 
     buildTypes {

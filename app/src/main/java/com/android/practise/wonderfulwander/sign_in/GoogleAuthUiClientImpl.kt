@@ -3,16 +3,14 @@ package com.android.practise.wonderfulwander.sign_in
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import com.example.base.state.SignInResult
+import com.example.feature.auth.api.state.SignInResult
 import com.example.base.state.UserData
-import com.example.presentation.googleclient.GoogleAuthUiClient
+import com.example.feature.auth.api.googleclient.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import com.example.base.R as baseR
 

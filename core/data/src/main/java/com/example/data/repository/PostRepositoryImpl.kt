@@ -23,37 +23,24 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository, BaseRepo() {
 
     override suspend fun getRecommendedPosts(page: Int, limit: Int): Result<List<Post>> {
-//        return try {
-//            val response = postService.getRecommendedPosts(page = page,limit = limit)
-//            when {
-//                response.isSuccessful -> {
-//                    Result.success(
-//                        response.body()?.listOfPosts?.map {
-//                            postDomainMapper.invoke(it)
-//                        } ?: emptyList()
-//                    )
-//                }
-//                response.code() == 401 -> { Result.failure(UserNotAuthenticatedException()) }
-//                else -> {Result.failure(Exception(""))}
-//            }
-//        } catch (e:Exception){
-//            e.printStackTrace()
-//            Result.failure(e)
-//        }
-
-        val list = List(100) { index: Int ->
-            Post(
-                postId = "post_id_${index}",
-                title = "тралалело тралала",
-                photoUrl = "",
-                categoryName = "тополя",
-                user = UserDataResult.EMPTY,
-                likesCount = 12,
-                commentsCount = 44,
-                createdAt = "2024:223:222"
-            )
+        return try {
+            val response = postService.getRecommendedPosts(page = page,limit = limit)
+            when {
+                response.isSuccessful -> {
+                    Result.success(
+                        response.body()?.listOfPosts?.map {
+                            postDomainMapper.invoke(it)
+                        } ?: emptyList()
+                    )
+                }
+                response.code() == 401 -> { Result.failure(UserNotAuthenticatedException()) }
+                else -> {Result.failure(Exception(""))}
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+            Result.failure(e)
         }
-        return Result.success(list)
+
     }
 
     override suspend fun savePost(postId: String): Result<Unit> {

@@ -1,13 +1,13 @@
 package com.example.data.mapper
 
-import com.example.base.model.user.profile.PersonProfileInfoResult
+import com.example.domain.model.user.profile.PersonProfileInfoResult
 import com.example.network.model.user.people.PersonProfileInfoResponse
 import javax.inject.Inject
 
-class PersonProfileInfoResponseToPersonProfileInfoResultMapper @Inject constructor(): (PersonProfileInfoResponse) -> PersonProfileInfoResult {
-    override fun invoke(p1: PersonProfileInfoResponse): PersonProfileInfoResult {
+class PersonProfileInfoResponseToPersonProfileInfoResultMapper @Inject constructor(): (PersonProfileInfoResponse) -> com.example.domain.model.user.profile.PersonProfileInfoResult {
+    override fun invoke(p1: PersonProfileInfoResponse): com.example.domain.model.user.profile.PersonProfileInfoResult {
         return p1.let {
-            PersonProfileInfoResult(
+            _root_ide_package_.com.example.domain.model.user.profile.PersonProfileInfoResult(
                 userId = it.userId,
                 userName = it.userName,
                 firstname = it.lastname,

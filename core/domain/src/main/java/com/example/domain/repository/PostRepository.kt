@@ -1,11 +1,12 @@
 package com.example.domain.repository
 
-import com.example.base.model.post.Comment
-import com.example.base.model.post.CommentCreateParam
-import com.example.base.model.post.LikeResult
-import com.example.base.model.post.PostCreateParam
-import com.example.base.model.post.Post
-import com.example.base.model.post.category.Category
+import com.example.domain.model.post.Comment
+import com.example.domain.model.post.CommentCreateParam
+import com.example.domain.model.post.LikeResult
+import com.example.domain.model.post.Post
+import com.example.domain.model.post.PostCreateParam
+import com.example.domain.model.post.category.Category
+
 
 interface PostRepository {
     suspend fun getRecommendedPosts(page: Int, limit: Int): Result<List<Post>>

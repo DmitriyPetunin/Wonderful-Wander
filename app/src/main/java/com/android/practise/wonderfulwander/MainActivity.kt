@@ -3,15 +3,14 @@ package com.android.practise.wonderfulwander
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Surface
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import com.android.practise.wonderfulwander.presentation.main.MainScreen
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import com.android.practise.wonderfulwander.presentation.MainScreen
 import com.example.compose.WonderfulWanderTheme
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,8 +23,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WonderfulWanderTheme {
-                Surface() {
-                    MainScreen()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MainScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }

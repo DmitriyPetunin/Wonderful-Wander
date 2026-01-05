@@ -3,7 +3,7 @@ package com.android.practise.wonderfulwander.di
 import android.content.Context
 import com.android.practise.wonderfulwander.sign_in.GoogleAuthUiClientImpl
 import com.example.base.SessionManager
-import com.example.presentation.googleclient.GoogleAuthUiClient
+import com.example.feature.auth.api.googleclient.GoogleAuthUiClient
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.Firebase

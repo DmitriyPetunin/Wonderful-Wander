@@ -39,8 +39,8 @@ dependencies {
 
     //Core
     implementation(project(path = ":core:base"))
-    implementation(project(path = ":core:presentation"))
 
+    //Inject
     implementation(libs.javax.inject)
 
     //Hilt
