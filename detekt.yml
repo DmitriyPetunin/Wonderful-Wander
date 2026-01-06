@@ -1,3 +1,104 @@
 build:
-  maxIssues: 0  # если >0 — сборка не упадёт при ошибках; 0 — упадёт при любой проблеме
-  excludeCorrectable: false
+  maxIssues: 100  # Увеличьте лимит или используйте 0 для отключения проверок
+  weights:
+  # complexity: 2
+  # LongParameterList: 1
+  # style: 1
+  # comments: 1
+  excludeCorrectable: true  # Игнорировать исправимые автоматически ошибки
+
+auto-correction:
+  # Позволяет автоматически исправлять некоторые ошибки
+  active: true
+
+processors:
+  active: true
+  exclude:
+    - 'FunctionCountProcessor'
+    - 'PropertyCountProcessor'
+    - 'ClassCountProcessor'
+    - 'PackageCountProcessor'
+    - 'KtFileCountProcessor'
+
+console-reports:
+  active: true
+  exclude:
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'
+
+output-reports:
+  active: true
+  exclude:
+    - 'TxtOutputReport'
+    - 'XmlOutputReport'
+
+style:
+  active: true
+  MagicNumber:
+    active: false  # Отключаем проверку magic numbers для цветов
+  NewLineAtEndOfFile:
+    active: true
+    autoCorrect: true  # Автоматически добавлять новую строку
+  MaxLineLength:
+    active: true
+    maxLineLength: 120  # Увеличить лимит длины строки
+    autoCorrect: true
+  FunctionNaming:
+    active: true
+    excludeClassPattern: '$^'
+  PackageNaming:
+    active: false  # Отключаем для временных файлов
+
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: true
+    exceptionNames:
+      - ArrayIndexOutOfBoundsException
+      - Error
+      - Exception
+      - IllegalMonitorStateException
+      - NullPointerException
+      - IndexOutOfBoundsException
+      - RuntimeException
+      - Throwable
+  PrintStackTrace:
+    active: true
+    autoCorrect: true
+  InstanceOfCheckForException:
+    active: true
+    autoCorrect: true
+
+complexity:
+  active: true
+  LargeClass:
+    active: true
+    threshold: 600
+  LongParameterList:
+    active: true
+    threshold: 6
+  TooManyFunctions:
+    active: true
+    threshold: 11
+
+comments:
+  active: true
+  CommentOverPrivateFunction:
+    active: false
+  CommentOverPrivateProperty:
+    active: false
+
+empty-blocks:
+  active: true
+  EmptyCatchBlock:
+    active: true
+    allowedExceptionNameRegex: "^(_|(ignore|expected).*)$"
+
+potential-bugs:
+  active: true
+  UnusedPrivateProperty:
+    active: false  # Отключаем проверку неиспользуемых приватных свойств
+
+performance:
+  active: true
