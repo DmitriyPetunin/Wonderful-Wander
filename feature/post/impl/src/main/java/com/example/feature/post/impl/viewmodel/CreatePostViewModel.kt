@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.post.PostCreateParam
+import com.example.domain.model.post.category.Category
 import com.example.feature.post.api.action.CreatePostAction
 import com.example.feature.post.api.event.CreatePostEvent
-import com.example.base.model.post.PostCreateParam
-import com.example.base.model.post.category.Category
 import com.example.feature.post.api.state.CreatePostState
 import com.example.feature.post.api.state.PhotoState
 import com.example.domain.usecase.CreatePostUseCase

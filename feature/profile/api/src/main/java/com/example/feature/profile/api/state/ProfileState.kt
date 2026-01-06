@@ -1,7 +1,7 @@
 package com.example.feature.profile.api.state
 
 import android.net.Uri
-import com.example.base.model.post.Post
+import com.example.domain.model.post.Post
 
 data class ProfileState (
     val userId: String = "",

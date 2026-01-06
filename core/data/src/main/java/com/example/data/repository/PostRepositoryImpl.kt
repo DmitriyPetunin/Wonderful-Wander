@@ -1,15 +1,15 @@
 package com.example.data.repository
 
 import com.example.base.exceptions.UserNotAuthenticatedException
-import com.example.base.model.post.Comment
-import com.example.base.model.post.CommentCreateParam
-import com.example.base.model.post.LikeResult
-import com.example.base.model.post.PostCreateParam
-import com.example.base.model.post.Post
-import com.example.base.model.post.UserDataResult
-import com.example.base.model.post.category.Category
+
 import com.example.data.mapper.CommentResponseToCommentDomainMapper
 import com.example.data.mapper.PostResponseToPostDomainMapper
+import com.example.domain.model.post.Comment
+import com.example.domain.model.post.CommentCreateParam
+import com.example.domain.model.post.LikeResult
+import com.example.domain.model.post.Post
+import com.example.domain.model.post.PostCreateParam
+import com.example.domain.model.post.category.Category
 import com.example.domain.repository.PostRepository
 import com.example.network.model.post.req.CreateCommentRequest
 import com.example.network.model.post.req.UpdatePostRequest
@@ -20,7 +20,7 @@ class PostRepositoryImpl @Inject constructor(
     private val postService: PostService,
     private val postDomainMapper: PostResponseToPostDomainMapper,
     private val commentDomainMapper: CommentResponseToCommentDomainMapper
-) : PostRepository, BaseRepo() {
+) : PostRepository {
 
     override suspend fun getRecommendedPosts(page: Int, limit: Int): Result<List<Post>> {
         return try {

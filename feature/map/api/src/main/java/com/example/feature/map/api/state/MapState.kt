@@ -1,6 +1,7 @@
 package com.example.feature.map.api.state
 
-import com.example.base.model.walk.Point
+import com.example.domain.model.walk.Point
+
 
 data class MapState(
     val text: String = "Площадь Тукая",

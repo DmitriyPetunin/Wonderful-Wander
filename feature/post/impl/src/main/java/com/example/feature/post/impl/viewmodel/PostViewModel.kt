@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.base.SessionManager
 import com.example.feature.post.api.action.PostDetailAction
 import com.example.feature.post.api.event.PostDetailEvent
-import com.example.base.model.post.Comment
-import com.example.base.model.post.Post
 import com.example.base.state.UserData
+import com.example.domain.model.post.Comment
+import com.example.domain.model.post.Post
 import com.example.feature.post.api.state.CommentUi
 import com.example.feature.post.api.state.PostDetailState
 import com.example.domain.usecase.DeleteCommentUseCase

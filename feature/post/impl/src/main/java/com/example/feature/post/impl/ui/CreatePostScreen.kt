@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ui.components.SearchBarCustom
 import com.example.base.util.showToast
+import com.example.domain.model.post.category.Category
 import com.example.feature.post.api.action.CreatePostAction
 import com.example.feature.post.api.event.CreatePostEvent
-import com.example.base.model.post.category.Category
 import com.example.feature.post.api.state.CreatePostState
 import com.example.feature.post.impl.viewmodel.CreatePostViewModel
 

@@ -1,7 +1,8 @@
 package com.example.feature.walk.api.state
 
-import com.example.base.model.user.People
-import com.example.base.model.walk.Point
+import com.example.domain.model.user.People
+import com.example.domain.model.walk.Point
+
 
 data class CreateWalkState (
     val isLoading:Boolean = false,

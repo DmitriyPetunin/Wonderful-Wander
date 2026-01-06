@@ -9,9 +9,9 @@ import com.example.feature.profile.api.action.UpdateProfileAction
 import com.example.feature.profile.api.action.ProfileAction
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
+import com.example.domain.model.post.Post
+import com.example.domain.model.user.profile.UpdateProfileParam
 import com.example.feature.profile.api.event.ProfileEvent
-import com.example.base.model.post.Post
-import com.example.base.model.user.profile.UpdateProfileParam
 import com.example.feature.profile.api.state.ProfileState
 import com.example.feature.profile.api.state.UpdateProfileState
 import com.example.domain.usecase.DeletePostFromMyPostsUseCase

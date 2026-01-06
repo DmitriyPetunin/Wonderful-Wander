@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.user.register.RegisterUserParam
 import com.example.feature.auth.api.action.register.RegistrationAction
 import com.example.feature.auth.api.event.register.RegistrationEvent
-import com.example.base.model.user.register.RegisterUserParam
 import com.example.feature.auth.api.state.RegistrationState
 import com.example.domain.usecase.RegisterUseCase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -75,14 +75,14 @@ class RegisterViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = registerUseCase.invoke(
-                    RegisterUserParam(
-                        email = state.value.email,
-                        username = state.value.username,
-                        password = state.value.password,
-                        confirmPassword = state.value.password,
-                        firstName = state.value.firstName,
-                        lastName = state.value.lastName
-                    )
+                RegisterUserParam(
+                    email = state.value.email,
+                    username = state.value.username,
+                    password = state.value.password,
+                    confirmPassword = state.value.password,
+                    firstName = state.value.firstName,
+                    lastName = state.value.lastName
+                )
                 )
 
             _state.value = result.fold(

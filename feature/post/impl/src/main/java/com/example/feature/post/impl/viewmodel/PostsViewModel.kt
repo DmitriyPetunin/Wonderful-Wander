@@ -3,10 +3,10 @@ package com.example.feature.post.impl.viewmodel
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.post.CommentCreateParam
+import com.example.domain.model.post.Post
 import com.example.feature.post.api.action.PostsAction
 import com.example.feature.post.api.event.PostsEvent
-import com.example.base.model.post.CommentCreateParam
-import com.example.base.model.post.Post
 import com.example.feature.post.api.state.PostsState
 import com.example.domain.usecase.CreateCommentUseCase
 import com.example.domain.usecase.GetRecommendedPostsUseCase

@@ -3,9 +3,9 @@ package com.example.feature.walk.impl.viewmodel
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.user.People
+import com.example.domain.model.walk.Point
 import com.example.feature.walk.api.action.CreateWalkAction
-import com.example.base.model.user.People
-import com.example.base.model.walk.Point
 import com.example.feature.walk.api.state.CreateWalkState
 import com.example.domain.usecase.CreateWalkUseCase
 import com.example.domain.usecase.GetAllFriendsUseCase
@@ -99,7 +99,7 @@ class CreateWalkViewModel @Inject constructor(
         }
     }
 
-    private fun updatePoint(data:Point){
+    private fun updatePoint(data: Point){
         _state.update {
             it.copy(point = data)
         }

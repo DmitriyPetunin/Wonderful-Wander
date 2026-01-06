@@ -1,6 +1,6 @@
 package com.example.data.repository
 
-import com.example.base.model.walk.WalkCreateParam
+import com.example.domain.model.walk.WalkCreateParam
 import com.example.domain.repository.WalkRepository
 import com.example.network.model.walk.req.CreateWalkRequest
 import com.example.network.service.walk.WalkService

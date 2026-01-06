@@ -2,7 +2,7 @@ package com.example.feature.post.api.state
 
 import android.net.Uri
 import android.net.Uri.EMPTY
-import com.example.base.model.post.category.Category
+import com.example.domain.model.post.category.Category
 
 data class CreatePostState (
     val photoState: PhotoState = PhotoState.Init,
@@ -10,7 +10,7 @@ data class CreatePostState (
     val status: String = "",
     val title:String = "",
     val queryParam:String = "",
-    val selectedCategory:Category? = null,
+    val selectedCategory: Category? = null,
 
     val isLoading:Boolean = true,
     val searchBarIsActive:Boolean = false,

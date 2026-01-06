@@ -1,7 +1,8 @@
 package com.example.feature.walk.api.action
 
-import com.example.base.model.user.People
-import com.example.base.model.walk.Point
+import com.example.domain.model.user.People
+import com.example.domain.model.walk.Point
+
 
 sealed class CreateWalkAction {
 
@@ -11,5 +12,5 @@ sealed class CreateWalkAction {
     data class UpdateQueryParam(val input: String): CreateWalkAction()
     data class UpdateStartPoint(val data: Point): CreateWalkAction()
 
-    data class AddFriend(val friend:People):CreateWalkAction()
+    data class AddFriend(val friend: People):CreateWalkAction()
 }

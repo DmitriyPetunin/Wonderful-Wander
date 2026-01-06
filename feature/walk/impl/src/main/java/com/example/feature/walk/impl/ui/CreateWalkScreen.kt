@@ -51,16 +51,16 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.base.R
 import com.example.feature.walk.api.action.CreateWalkAction
-import com.example.base.model.user.People
 import com.example.feature.walk.api.state.CreateWalkState
 import com.example.feature.walk.impl.viewmodel.CreateWalkViewModel
 import com.example.ui.components.SearchBarCustom
 import coil.compose.AsyncImage
 import com.example.base.util.showToast
+import com.example.domain.model.user.People
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point as YandexPoint
-import com.example.base.model.walk.Point as MyPoint
+import com.example.domain.model.walk.Point as MyPoint
 import com.yandex.mapkit.geometry.Polygon
 import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.CameraPosition

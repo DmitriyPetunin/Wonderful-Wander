@@ -1,22 +1,24 @@
 package com.example.data.repository
 
 import android.util.Log
-import com.example.base.model.user.login.LoginResult
-import com.example.base.model.user.login.LoginUserParam
-import com.example.base.model.user.register.RegisterResult
-import com.example.base.model.user.register.RegisterUserParam
-import com.example.base.model.user.People
+
 import com.example.domain.repository.UserRepository
 import com.example.base.SessionManager
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
-import com.example.base.model.user.profile.PersonProfileInfoResult
-import com.example.base.model.user.profile.ProfileInfoResult
-import com.example.base.model.user.profile.UpdateProfileParam
-import com.example.base.model.user.profile.UpdateProfileResult
+
 import com.example.data.mapper.FriendApiToFriendDomainMapper
 import com.example.data.mapper.PersonProfileInfoResponseToPersonProfileInfoResultMapper
 import com.example.data.mapper.ProfileResponseToProfileInfoMapper
+import com.example.domain.model.user.People
+import com.example.domain.model.user.login.LoginResult
+import com.example.domain.model.user.login.LoginUserParam
+import com.example.domain.model.user.profile.PersonProfileInfoResult
+import com.example.domain.model.user.profile.ProfileInfoResult
+import com.example.domain.model.user.profile.UpdateProfileParam
+import com.example.domain.model.user.profile.UpdateProfileResult
+import com.example.domain.model.user.register.RegisterResult
+import com.example.domain.model.user.register.RegisterUserParam
 import com.example.network.model.error.ExampleErrorResponse
 import com.example.network.model.user.login.req.LoginRequest
 import com.example.network.model.user.profile.req.UpdateProfileRequest

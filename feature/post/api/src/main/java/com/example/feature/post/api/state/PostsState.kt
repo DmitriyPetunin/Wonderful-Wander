@@ -1,6 +1,7 @@
 package com.example.feature.post.api.state
 
-import com.example.base.model.post.Post
+import com.example.domain.model.post.Post
+
 
 data class PostsState (
     val isLoading:Boolean = true,

@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.walk.Point
 import com.example.feature.map.api.action.MapAction
 import com.example.feature.map.api.event.GeoEvent
-import com.example.base.model.walk.Point
 import com.example.feature.map.api.state.MapState
 import com.example.domain.usecase.GetActualGeoDataUseCase
 import com.google.firebase.analytics.FirebaseAnalytics

@@ -31,8 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.feature.profile.api.action.PeoplePageAction
 import com.example.base.enums.PeopleEnum.Companion.fromString
+import com.example.domain.model.user.People
 import com.example.feature.profile.api.event.PeoplePageEvent
-import com.example.base.model.user.People
 import com.example.feature.profile.api.state.ListScreenState
 import com.example.feature.profile.impl.viewmodel.PeopleViewModel
 import com.example.ui.components.ListScreen

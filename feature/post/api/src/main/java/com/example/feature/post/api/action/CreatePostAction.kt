@@ -1,7 +1,7 @@
 package com.example.feature.post.api.action
 
 import android.net.Uri
-import com.example.base.model.post.category.Category
+import com.example.domain.model.post.category.Category
 
 sealed class CreatePostAction {
 

@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.feature.auth.api.action.login.LoginAction
 import com.example.feature.auth.api.event.login.LoginEvent
-import com.example.base.model.user.login.LoginUserParam
 import com.example.feature.auth.api.state.LoginState
 import com.example.feature.auth.api.state.SignInResult
 import com.example.base.util.validation.UserNameValidation
 import com.example.base.util.validation.PasswordValidation
+import com.example.domain.model.user.login.LoginUserParam
 import com.example.domain.usecase.LoginUseCase
 import com.example.feature.auth.api.googleclient.GoogleAuthUiClient
 import com.google.firebase.analytics.FirebaseAnalytics

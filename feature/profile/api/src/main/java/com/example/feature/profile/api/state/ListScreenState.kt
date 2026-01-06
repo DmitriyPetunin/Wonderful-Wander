@@ -1,7 +1,7 @@
 package com.example.feature.profile.api.state
 
 import com.example.base.enums.PeopleEnum
-import com.example.base.model.user.People
+import com.example.domain.model.user.People
 
 data class ListScreenState (
     val people: PeopleEnum = PeopleEnum.FRIENDS,
