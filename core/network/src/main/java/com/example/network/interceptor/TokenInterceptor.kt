@@ -11,7 +11,7 @@ class TokenInterceptor @Inject constructor() : Interceptor {
         val req = chain.request()
 
         val newUrl = req.url.newBuilder()
-            .addQueryParameter("apikey", BuildConfig.GEO_CODER_API)
+            .addQueryParameter("apikey", BuildConfig.GEO_CODER_API_KEY)
             .addQueryParameter("format","json")
             .build()
 
