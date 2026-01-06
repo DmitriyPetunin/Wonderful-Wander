@@ -1,6 +1,6 @@
 package com.example.domain.usecaseimpl
 
-import com.example.base.model.user.profile.PersonProfileInfoResult
+import com.example.domain.model.user.profile.PersonProfileInfoResult
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.GetPersonProfileInfoByIdUseCase
 

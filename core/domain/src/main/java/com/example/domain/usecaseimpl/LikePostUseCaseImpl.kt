@@ -1,6 +1,6 @@
 package com.example.domain.usecaseimpl
 
-import com.example.base.model.post.LikeResult
+import com.example.domain.model.post.LikeResult
 import com.example.domain.repository.PostRepository
 import com.example.domain.usecase.LikePostUseCase
 

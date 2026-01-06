@@ -1,6 +1,6 @@
 package com.example.domain.usecaseimpl
 
-import com.example.base.model.user.People
+import com.example.domain.model.user.People
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.GetAllFollowersUseCase
 

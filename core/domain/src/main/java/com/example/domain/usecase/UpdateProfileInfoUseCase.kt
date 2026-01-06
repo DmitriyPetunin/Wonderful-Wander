@@ -1,7 +1,8 @@
 package com.example.domain.usecase
 
-import com.example.base.model.user.profile.ProfileInfoResult
-import com.example.base.model.user.profile.UpdateProfileParam
+import com.example.domain.model.user.profile.ProfileInfoResult
+import com.example.domain.model.user.profile.UpdateProfileParam
+
 
 interface UpdateProfileInfoUseCase {
     suspend fun invoke(param: UpdateProfileParam): Result<ProfileInfoResult>

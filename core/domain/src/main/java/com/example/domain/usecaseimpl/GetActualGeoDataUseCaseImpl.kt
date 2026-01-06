@@ -1,6 +1,6 @@
 package com.example.domain.usecaseimpl
 
-import com.example.base.model.geo.ActualGeoLocationResult
+import com.example.domain.model.geo.ActualGeoLocationResult
 import com.example.domain.repository.GeoRepository
 import com.example.domain.usecase.GetActualGeoDataUseCase
 

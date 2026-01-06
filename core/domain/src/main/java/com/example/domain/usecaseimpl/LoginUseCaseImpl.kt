@@ -1,7 +1,7 @@
 package com.example.domain.usecaseimpl
 
-import com.example.base.model.user.login.LoginResult
-import com.example.base.model.user.login.LoginUserParam
+import com.example.domain.model.user.login.LoginResult
+import com.example.domain.model.user.login.LoginUserParam
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.LoginUseCase
 

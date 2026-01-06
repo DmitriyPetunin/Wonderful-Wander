@@ -1,7 +1,7 @@
 package com.example.domain.usecaseimpl
 
-import com.example.base.model.user.register.RegisterResult
-import com.example.base.model.user.register.RegisterUserParam
+import com.example.domain.model.user.register.RegisterResult
+import com.example.domain.model.user.register.RegisterUserParam
 import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.RegisterUseCase
 
