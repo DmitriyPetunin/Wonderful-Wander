@@ -1,15 +1,9 @@
 build:
-  maxIssues: 100  # Увеличьте лимит или используйте 0 для отключения проверок
-  weights:
-  # complexity: 2
-  # LongParameterList: 1
-  # style: 1
-  # comments: 1
-  excludeCorrectable: true  # Игнорировать исправимые автоматически ошибки
+  maxIssues: 1000
+  weights: {}
+  excludeCorrectable: true
 
-auto-correction:
-  # Позволяет автоматически исправлять некоторые ошибки
-  active: true
+autoCorrect: true
 
 processors:
   active: true
@@ -36,39 +30,40 @@ output-reports:
 style:
   active: true
   MagicNumber:
-    active: false  # Отключаем проверку magic numbers для цветов
+    active: false
   NewLineAtEndOfFile:
     active: true
-    autoCorrect: true  # Автоматически добавлять новую строку
+    autoCorrect: true
   MaxLineLength:
     active: true
-    maxLineLength: 120  # Увеличить лимит длины строки
-    autoCorrect: true
+    maxLineLength: 120
+    autoCorrect: false
   FunctionNaming:
     active: true
-    excludeClassPattern: '$^'
+    excludeClassPattern: '^$'
   PackageNaming:
-    active: false  # Отключаем для временных файлов
+    active: false
+
+formatting:
+  active: false
 
 exceptions:
   active: true
   TooGenericExceptionCaught:
     active: true
     exceptionNames:
-      - ArrayIndexOutOfBoundsException
-      - Error
-      - Exception
-      - IllegalMonitorStateException
-      - NullPointerException
-      - IndexOutOfBoundsException
-      - RuntimeException
-      - Throwable
+      - 'ArrayIndexOutOfBoundsException'
+      - 'Error'
+      - 'Exception'
+      - 'IllegalMonitorStateException'
+      - 'NullPointerException'
+      - 'IndexOutOfBoundsException'
+      - 'RuntimeException'
+      - 'Throwable'
   PrintStackTrace:
     active: true
-    autoCorrect: true
   InstanceOfCheckForException:
     active: true
-    autoCorrect: true
 
 complexity:
   active: true
@@ -77,10 +72,15 @@ complexity:
     threshold: 600
   LongParameterList:
     active: true
-    threshold: 6
+    functionThreshold: 6
+    constructorThreshold: 6
   TooManyFunctions:
     active: true
-    threshold: 11
+    thresholdInFiles: 11
+    thresholdInClasses: 11
+    thresholdInInterfaces: 11
+    thresholdInObjects: 11
+    thresholdInEnums: 11
 
 comments:
   active: true
@@ -93,12 +93,9 @@ empty-blocks:
   active: true
   EmptyCatchBlock:
     active: true
-    allowedExceptionNameRegex: "^(_|(ignore|expected).*)$"
+    allowedExceptionNameRegex: '^(_|(ignore|expected).*)$'
 
 potential-bugs:
   active: true
-  UnusedPrivateProperty:
-    active: false  # Отключаем проверку неиспользуемых приватных свойств
-
-performance:
-  active: true
+  UnusedPrivateMember:
+    active: false
