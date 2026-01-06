@@ -30,8 +30,8 @@ fun loadMapkitApiKey(): String {
             properties.load(stream)
         }
     }
-
-    return properties.getProperty("MAPKIT_API_KEY", "")
+    return System.getenv("MAPKIT_API_KEY")
+        ?: properties.getProperty("MAPKIT_API_KEY", "")
 }
 
 android {

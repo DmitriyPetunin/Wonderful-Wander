@@ -13,9 +13,9 @@ plugins {
 }
 
 
-val geoCoderApiKey:String = loadMapkitApiKey()
+val geoCoderApiKey:String = loadGeoCoderApiKey()
 
-fun loadMapkitApiKey(): String {
+fun loadGeoCoderApiKey(): String {
     val properties = Properties()
     val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
 
@@ -25,7 +25,8 @@ fun loadMapkitApiKey(): String {
         }
     }
 
-    return properties.getProperty("GEO_CODER_API", "")
+    return System.getenv("GEO_CODER_API_KEY")
+        ?: properties.getProperty("GEO_CODER_API_KEY", "")
 }
 
 android {
@@ -40,7 +41,7 @@ android {
 
         buildConfigField("String","GEO_CODER_BASE_URL", value = "\"https://geocode-maps.yandex.ru/\"")
         buildConfigField("String","API_BASE_URL", value = "\"http://localhost:8080/\"")
-        buildConfigField("String","GEO_CODER_API", value = "\"$geoCoderApiKey\"")
+        buildConfigField("String","GEO_CODER_API_KEY", value = "\"$geoCoderApiKey\"")
     }
 
     buildTypes {
