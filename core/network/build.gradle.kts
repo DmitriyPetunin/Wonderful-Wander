@@ -16,17 +16,36 @@ plugins {
 val geoCoderApiKey:String = loadGeoCoderApiKey()
 
 fun loadGeoCoderApiKey(): String {
-    val properties = Properties()
-    val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
-
-    if (localPropertiesFile.exists()) {
-        localPropertiesFile.inputStream().use { stream ->
-            properties.load(stream)
-        }
+    // Always check environment variable first (for CI/CD)
+    val envApiKey = System.getenv("GEO_CODER_API_KEY")
+    if (envApiKey != null && envApiKey.isNotBlank()) {
+        println("Using GEO_CODER_API_KEY from environment variable")
+        return envApiKey
     }
 
-    return System.getenv("GEO_CODER_API_KEY")
-        ?: properties.getProperty("GEO_CODER_API_KEY", "")
+    // Try local.properties file for local development
+    val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
+    if (localPropertiesFile.exists()) {
+        try {
+            val properties = Properties()
+            localPropertiesFile.inputStream().use { stream ->
+                properties.load(stream)
+            }
+            val fileApiKey = properties.getProperty("GEO_CODER_API_KEY", "")
+            if (fileApiKey.isNotBlank()) {
+                println("Using GEO_CODER_API_KEY from local.properties")
+                return fileApiKey
+            }
+        } catch (e: Exception) {
+            println("Warning: Could not read local.properties: ${e.message}")
+        }
+    } else {
+        println("local.properties not found. Make sure to set GEO_CODER_API_KEY environment variable in CI/CD.")
+    }
+
+    // Return empty string as fallback (build will likely fail, but gracefully)
+    println("Warning: GEO_CODER_API_KEY not found in environment or local.properties")
+    return ""
 }
 
 android {
