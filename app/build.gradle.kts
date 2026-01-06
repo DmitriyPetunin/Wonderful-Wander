@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.ksp)
     id("com.google.firebase.crashlytics")
 
+
+
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 detekt {
