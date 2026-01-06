@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 
-    id(libs.plugins.secrets.gradle.plugin.get().pluginId)
 
     alias(libs.plugins.pluginSerialization)
 
