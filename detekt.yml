@@ -1,0 +1,3 @@
+build:
+  maxIssues: 0  # если >0 — сборка не упадёт при ошибках; 0 — упадёт при любой проблеме
+  excludeCorrectable: false
