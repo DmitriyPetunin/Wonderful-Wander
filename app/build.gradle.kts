@@ -25,8 +25,10 @@ fun loadMapkitApiKey(): String {
     val properties = Properties()
     val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
 
-    localPropertiesFile.inputStream().use { stream ->
-        properties.load(stream)
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { stream ->
+            properties.load(stream)
+        }
     }
 
     return properties.getProperty("MAPKIT_API_KEY", "")
