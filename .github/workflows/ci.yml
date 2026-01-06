@@ -1,4 +1,4 @@
-name: PR CI
+name: CI
 
 on:
   pull_request:
@@ -22,12 +22,18 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run Detekt
+        env:
+          GEO_CODER_API_KEY: ${{ secrets.GEO_CODER_API_KEY }}
         run: ./gradlew detekt
 
       - name: Run Unit Tests
+        env:
+          GEO_CODER_API_KEY: ${{ secrets.GEO_CODER_API_KEY }}
         run: ./gradlew testDebugUnitTest
 
       - name: Build Debug APK
+        env:
+          GEO_CODER_API_KEY: ${{ secrets.GEO_CODER_API_KEY }}
         run: ./gradlew assembleDebug
 
       - name: Install Firebase CLI
