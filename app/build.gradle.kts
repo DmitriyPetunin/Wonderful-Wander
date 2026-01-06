@@ -10,6 +10,13 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     id("com.google.firebase.crashlytics")
+
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+}
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom(files("$rootDir/detekt.yml"))
 }
 
 val mapkitApiKey:String = loadMapkitApiKey()
