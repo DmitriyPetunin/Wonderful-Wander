@@ -4,7 +4,7 @@ import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.Role
 import com.example.base.enums.WalkVisibility
 
-class ProfileInfoResult(
+data class ProfileInfoResult(
     val userId: String,
 
     val username: String,

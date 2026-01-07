@@ -1,6 +1,6 @@
 package com.example.domain.model.post
 
-class PostCreateParam (
+data class PostCreateParam (
     val title:String,
     val imageFilename:String,
     val categoryId:Long,

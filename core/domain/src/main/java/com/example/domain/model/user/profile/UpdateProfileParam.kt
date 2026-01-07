@@ -3,7 +3,7 @@ package com.example.domain.model.user.profile
 import com.example.base.enums.PhotosVisibility
 import com.example.base.enums.WalkVisibility
 
-class UpdateProfileParam (
+data class UpdateProfileParam (
     val email: String,
     val firstName: String,
     val lastName: String,
