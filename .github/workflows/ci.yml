@@ -15,11 +15,14 @@ jobs:
       # 1. Создание необходимых файлов
       - name: Create required files
         run: |
-          # google-services.json для debug сборки
+          # 1. google-services.json для сборки приложения
           mkdir -p app/src/debug
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > app/src/debug/google-services.json
-          
-          # local.properties с ключами
+          echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" | base64 --decode > app/src/debug/google-services.json
+
+          # 2. service-account-key.json для загрузки в Firebase
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" | base64 --decode > service-account-key.json
+
+          # 3. local.properties
           echo "GEO_CODER_API_KEY=${{ secrets.GEO_CODER_API_KEY }}" > local.properties
           echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" >> local.properties
           echo "sdk.dir=/usr/local/lib/android/sdk" >> local.properties
@@ -65,10 +68,9 @@ jobs:
 
       # 8. Загрузка на Firebase App Distribution
       - name: Upload to Firebase App Distribution
-        if: success() && github.event.pull_request.head.repo.full_name == github.repository  # Только для PR из того же репозитория
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFile: app/src/debug/google-services.json
+          serviceCredentialsFile: service-account-key.json
           file: app/build/outputs/apk/debug/app-debug.apk
           debug: true
