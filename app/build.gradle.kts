@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,13 +7,38 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
 
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    id("com.google.firebase.crashlytics")
+
+
+
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+}
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom(files("$rootDir/detekt.yml"))
+}
+
+val mapkitApiKey:String = loadMapkitApiKey()
+
+fun loadMapkitApiKey(): String {
+    val properties = Properties()
+    val localPropertiesFile = File(project.rootProject.file("local.properties").toString())
+
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { stream ->
+            properties.load(stream)
+        }
+    }
+    return System.getenv("MAPKIT_API_KEY")
+        ?: properties.getProperty("MAPKIT_API_KEY", "")
 }
 
 android {
     namespace = "com.android.practise.wonderfulwander"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.android.practise.wonderfulwander"
@@ -24,6 +51,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "MAPKIT_API_KEY", "\"$mapkitApiKey\"")
     }
 
     buildTypes {
@@ -36,13 +65,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -52,14 +82,29 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 
 dependencies {
 
+    //Core
+    implementation(project(path = ":core:navigation"))
+    implementation(project(path = ":core:base"))
+    implementation(project(path = ":core:network"))
+    implementation(project(path = ":core:domain"))
+    implementation(project(path = ":core:data"))
+    implementation(project(":core:baseUi"))
 
-    implementation(project(":domain"))
-    implementation(project(":data"))
+    //Feature modules
+    implementation(project(path = ":feature:auth:api"))
+    implementation(project(path = ":feature:auth:impl"))
+    implementation(project(path = ":feature:profile:impl"))
+    implementation(project(path = ":feature:post:impl"))
+    implementation(project(path = ":feature:walk:impl"))
+    implementation(project(path = ":feature:map:impl"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -80,27 +125,34 @@ dependencies {
 
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.android.gms:play-services-auth:20.4.1")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.crashlytics)
 
+
+    implementation("com.google.android.gms:play-services-auth:20.4.1")
 
 
     //viewmodel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
     implementation ("androidx.navigation:navigation-compose:2.5.3")
-    implementation ("io.coil-kt:coil-compose:2.2.2")
+
+    //Coil
+    implementation ("io.coil-kt:coil-compose:2.4.0")
 
 
     //google font
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
-
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.56.1")
     ksp("com.google.dagger:hilt-android-compiler:2.56.1")
 
     implementation(libs.androidx.hilt.navigation.compose)
+
+    //Yandex Map
+    implementation(libs.maps.mobile)
 }

@@ -1,0 +1,13 @@
+package com.example.domain.usecaseimpl
+
+import com.example.domain.model.post.Post
+import com.example.domain.repository.PostRepository
+import com.example.domain.usecase.GetRecommendedPostsUseCase
+
+class GetRecommendedPostsUseCaseImpl(
+    private val postRepository: PostRepository
+): GetRecommendedPostsUseCase {
+    override suspend fun invoke(page:Int,limit:Int): Result<List<Post>> {
+        return postRepository.getRecommendedPosts(page,limit)
+    }
+}
