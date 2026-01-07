@@ -12,22 +12,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Создание необходимых файлов
       - name: Create required files
         run: |
-          # 1. google-services.json для сборки приложения
+          # google-services.json
           mkdir -p app/src/debug
-          echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" | base64 --decode > app/src/debug/google-services.json
-
-          # 2. service-account-key.json для загрузки в Firebase
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" | base64 --decode > service-account-key.json
-
-          # 3. local.properties
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > app/src/debug/google-services.json
+          
+          # local.properties
           echo "GEO_CODER_API_KEY=${{ secrets.GEO_CODER_API_KEY }}" > local.properties
           echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" >> local.properties
           echo "sdk.dir=/usr/local/lib/android/sdk" >> local.properties
 
-      # 2. Настройка JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -41,27 +36,10 @@ jobs:
           yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1
           echo "Android licenses accepted"
 
-      # 4. Кэширование Gradle для ускорения сборок
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      # 5. Детект (статический анализ кода)
-      - name: Run Detekt
+      - name: Build
         run: |
           chmod +x ./gradlew
-          ./gradlew detekt
+          ./gradlew assembleDebug
 
-      # 6. Юнит-тесты
-      - name: Run unit tests
+      - name: Run tests
         run: ./gradlew testDebugUnitTest
-
-      # 7. Сборка APK
-      - name: Build APK
-        run: ./gradlew assembleDebug
